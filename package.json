@@ -13,7 +13,7 @@
     "android",
     "ios",
     "cpp",
-    "react-native-admob-admob.podspec",
+    "RNAdmob.podspec",
     "!lib/typescript/example",
     "!android/build",
     "!ios/build",
@@ -37,7 +37,7 @@
     "android"
   ],
   "repository": "https://github.com/react-native-admob/admob",
-  "author": "Jay Kim <me@wjay.kim> (https://github.com/react-native-admob)",
+  "author": "Jay Kim <me@wjay.kim> (https://github.com/wjaykim)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/react-native-admob/admob/issues"
