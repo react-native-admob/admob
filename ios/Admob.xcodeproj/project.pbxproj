@@ -7,9 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-
-		5E555C0D2413F4C50049A1A2 /* Admob.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* Admob.m */; };
-
+		F458815626AC1D2500B0AE02 /* RNDFPBannerViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F458814626AC1D2500B0AE02 /* RNDFPBannerViewManager.m */; };
+		F458815726AC1D2500B0AE02 /* RNAdMobRewarded.m in Sources */ = {isa = PBXBuildFile; fileRef = F458814726AC1D2500B0AE02 /* RNAdMobRewarded.m */; };
+		F458815826AC1D2500B0AE02 /* RNGADBannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = F458814926AC1D2500B0AE02 /* RNGADBannerView.m */; };
+		F458815926AC1D2500B0AE02 /* RNDFPBannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = F458814B26AC1D2500B0AE02 /* RNDFPBannerView.m */; };
+		F458815A26AC1D2500B0AE02 /* RNAdMobInterstitial.m in Sources */ = {isa = PBXBuildFile; fileRef = F458814E26AC1D2500B0AE02 /* RNAdMobInterstitial.m */; };
+		F458815B26AC1D2500B0AE02 /* RNAdMobUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F458814F26AC1D2500B0AE02 /* RNAdMobUtils.m */; };
+		F458815C26AC1D2500B0AE02 /* RNGADBannerViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F458815026AC1D2500B0AE02 /* RNGADBannerViewManager.m */; };
+		F458815D26AC1D2500B0AE02 /* RCTConvert+GADAdSize.m in Sources */ = {isa = PBXBuildFile; fileRef = F458815126AC1D2500B0AE02 /* RCTConvert+GADAdSize.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,10 +31,22 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libAdmob.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAdmob.a; sourceTree = BUILT_PRODUCTS_DIR; };
-
-		B3E7B5881CC2AC0600A0062D /* Admob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Admob.h; sourceTree = "<group>"; };
-		B3E7B5891CC2AC0600A0062D /* Admob.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Admob.m; sourceTree = "<group>"; };
-
+		F458814626AC1D2500B0AE02 /* RNDFPBannerViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNDFPBannerViewManager.m; sourceTree = "<group>"; };
+		F458814726AC1D2500B0AE02 /* RNAdMobRewarded.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNAdMobRewarded.m; sourceTree = "<group>"; };
+		F458814826AC1D2500B0AE02 /* RNDFPBannerViewManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNDFPBannerViewManager.h; sourceTree = "<group>"; };
+		F458814926AC1D2500B0AE02 /* RNGADBannerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGADBannerView.m; sourceTree = "<group>"; };
+		F458814A26AC1D2500B0AE02 /* RNAdMobInterstitial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNAdMobInterstitial.h; sourceTree = "<group>"; };
+		F458814B26AC1D2500B0AE02 /* RNDFPBannerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNDFPBannerView.m; sourceTree = "<group>"; };
+		F458814C26AC1D2500B0AE02 /* RNGADBannerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGADBannerView.h; sourceTree = "<group>"; };
+		F458814D26AC1D2500B0AE02 /* RNAdMobUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNAdMobUtils.h; sourceTree = "<group>"; };
+		F458814E26AC1D2500B0AE02 /* RNAdMobInterstitial.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNAdMobInterstitial.m; sourceTree = "<group>"; };
+		F458814F26AC1D2500B0AE02 /* RNAdMobUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNAdMobUtils.m; sourceTree = "<group>"; };
+		F458815026AC1D2500B0AE02 /* RNGADBannerViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGADBannerViewManager.m; sourceTree = "<group>"; };
+		F458815126AC1D2500B0AE02 /* RCTConvert+GADAdSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCTConvert+GADAdSize.m"; sourceTree = "<group>"; };
+		F458815226AC1D2500B0AE02 /* RNAdMobRewarded.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNAdMobRewarded.h; sourceTree = "<group>"; };
+		F458815326AC1D2500B0AE02 /* RNDFPBannerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNDFPBannerView.h; sourceTree = "<group>"; };
+		F458815426AC1D2500B0AE02 /* RNGADBannerViewManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGADBannerViewManager.h; sourceTree = "<group>"; };
+		F458815526AC1D2500B0AE02 /* RCTConvert+GADAdSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RCTConvert+GADAdSize.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,10 +71,22 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-
-				B3E7B5881CC2AC0600A0062D /* Admob.h */,
-				B3E7B5891CC2AC0600A0062D /* Admob.m */,
-
+				F458815526AC1D2500B0AE02 /* RCTConvert+GADAdSize.h */,
+				F458815126AC1D2500B0AE02 /* RCTConvert+GADAdSize.m */,
+				F458814A26AC1D2500B0AE02 /* RNAdMobInterstitial.h */,
+				F458814E26AC1D2500B0AE02 /* RNAdMobInterstitial.m */,
+				F458815226AC1D2500B0AE02 /* RNAdMobRewarded.h */,
+				F458814726AC1D2500B0AE02 /* RNAdMobRewarded.m */,
+				F458814D26AC1D2500B0AE02 /* RNAdMobUtils.h */,
+				F458814F26AC1D2500B0AE02 /* RNAdMobUtils.m */,
+				F458815326AC1D2500B0AE02 /* RNDFPBannerView.h */,
+				F458814B26AC1D2500B0AE02 /* RNDFPBannerView.m */,
+				F458814826AC1D2500B0AE02 /* RNDFPBannerViewManager.h */,
+				F458814626AC1D2500B0AE02 /* RNDFPBannerViewManager.m */,
+				F458814C26AC1D2500B0AE02 /* RNGADBannerView.h */,
+				F458814926AC1D2500B0AE02 /* RNGADBannerView.m */,
+				F458815426AC1D2500B0AE02 /* RNGADBannerViewManager.h */,
+				F458815026AC1D2500B0AE02 /* RNGADBannerViewManager.m */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -119,9 +148,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-
-				B3E7B58A1CC2AC0600A0062D /* Admob.m in Sources */,
-
+				F458815C26AC1D2500B0AE02 /* RNGADBannerViewManager.m in Sources */,
+				F458815626AC1D2500B0AE02 /* RNDFPBannerViewManager.m in Sources */,
+				F458815D26AC1D2500B0AE02 /* RCTConvert+GADAdSize.m in Sources */,
+				F458815726AC1D2500B0AE02 /* RNAdMobRewarded.m in Sources */,
+				F458815A26AC1D2500B0AE02 /* RNAdMobInterstitial.m in Sources */,
+				F458815826AC1D2500B0AE02 /* RNGADBannerView.m in Sources */,
+				F458815926AC1D2500B0AE02 /* RNDFPBannerView.m in Sources */,
+				F458815B26AC1D2500B0AE02 /* RNAdMobUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -234,7 +268,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Admob;
 				SKIP_INSTALL = YES;
-
 			};
 			name = Debug;
 		};
@@ -251,7 +284,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Admob;
 				SKIP_INSTALL = YES;
-
 			};
 			name = Release;
 		};
