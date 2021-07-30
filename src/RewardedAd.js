@@ -1,7 +1,5 @@
 import { NativeModules, NativeEventEmitter } from 'react-native';
 
-import { createErrorFromErrorData } from './utils';
-
 const RNAdMobRewarded = NativeModules.RNAdMobRewarded;
 
 const eventEmitter = new NativeEventEmitter(RNAdMobRewarded);
@@ -18,14 +16,7 @@ const _subscriptions = new Map();
 const addEventListener = (event, handler) => {
   const mappedEvent = eventMap[event];
   if (mappedEvent) {
-    let listener;
-    if (event === 'adFailedToLoad') {
-      listener = eventEmitter.addListener(mappedEvent, (error) =>
-        handler(createErrorFromErrorData(error))
-      );
-    } else {
-      listener = eventEmitter.addListener(mappedEvent, handler);
-    }
+    const listener = eventEmitter.addListener(mappedEvent, handler);
     _subscriptions.set(handler, listener);
     return {
       remove: () => removeEventListener(event, handler),

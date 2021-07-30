@@ -1,7 +1,7 @@
-#import "RNGADBannerView.h"
-#import "RNAdMobUtils.h"
+#import "RNAdMobBannerView.h"
+#import "RNAdMobCommon.h"
 
-@implementation RNGADBannerView
+@implementation RNAdMobBannerView
 
 - (void)initBanner:(GADAdSize)adSize {
     if (_requested) {
@@ -17,8 +17,8 @@
     [self requestAd];
 }
 
-- (void)setAdSize:(NSString *)adSize {
-    _adSize = adSize;
+- (void)setSize:(NSString *)size {
+    _size = size;
     [self requestAd];
 }
 
@@ -29,7 +29,7 @@
         return;
     }
     
-    [self initBanner:RNAdmobStringToAdSize(_adSize)];
+    [self initBanner:[RNAdMobCommon stringToAdSize:_size]];
     [self addSubview:_bannerView];
     _bannerView.adUnitID = _unitId;
     [self setRequested:YES];

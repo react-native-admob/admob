@@ -4,7 +4,6 @@ import {
   requireNativeComponent,
   UIManager,
 } from 'react-native';
-import { createErrorFromErrorData } from './utils';
 
 class BannerAd extends Component {
   constructor(props) {
@@ -14,13 +13,12 @@ class BannerAd extends Component {
       height: 0,
     };
     this.handleSizeChange = this.handleSizeChange.bind(this);
-    this.handleAdFailedToLoad = this.handleAdFailedToLoad.bind(this);
   }
 
   loadAd() {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this._bannerView),
-      UIManager.getViewManagerConfig('RNGADBannerView').Commands.requestAd,
+      UIManager.getViewManagerConfig('RNAdMobBannerView').Commands.requestAd,
       null
     );
   }
@@ -33,27 +31,22 @@ class BannerAd extends Component {
     }
   }
 
-  handleAdFailedToLoad(event) {
-    if (this.props.onAdFailedToLoad) {
-      this.props.onAdFailedToLoad(
-        createErrorFromErrorData(event.nativeEvent.error)
-      );
-    }
-  }
-
   render() {
     return (
-      <RNGADBannerView
+      <RNAdMobBannerView
         {...this.props}
         style={[this.props.style, this.state.style]}
         onSizeChange={this.handleSizeChange}
-        onAdFailedToLoad={this.handleAdFailedToLoad}
+        onAdLoaded={this.props.onAdLoaded}
+        onAdFailedToLoad={this.props.onAdFailedToLoad}
+        onAdOpened={this.props.onAdOpened}
+        onAdClosed={this.props.onAdClosed}
         ref={(el) => (this._bannerView = el)}
       />
     );
   }
 }
 
-const RNGADBannerView = requireNativeComponent('RNGADBannerView');
+const RNAdMobBannerView = requireNativeComponent('RNAdMobBannerView');
 
 export default BannerAd;

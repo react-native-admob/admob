@@ -15,12 +15,13 @@ import {
   RewardedAd,
   Reward,
   AdManager,
-} from '../../index';
+  BannerAdSize,
+} from '@react-native-admob/admob';
 
 interface BannerExampleProps {
   style?: StyleProp<ViewStyle>;
   title: string;
-  children: JSX.Element | JSX.Element[];
+  children: React.ReactNode;
 }
 
 const BannerExample = ({
@@ -42,7 +43,7 @@ export default function Example() {
 
   useEffect(() => {
     const init = async () => {
-      await AdManager.setRequestConfiguration({});
+      await AdManager.setRequestConfiguration();
 
       setLoading(false);
     };
@@ -53,7 +54,7 @@ export default function Example() {
   useEffect(() => {
     if (loading) return;
 
-    RewardedAd.setAdUnitID('ca-app-pub-3940256099942544/5224354917');
+    RewardedAd.setUnitId('ca-app-pub-3940256099942544/5224354917');
 
     RewardedAd.addEventListener('rewarded', (reward: Reward) =>
       console.log('RewardedAd => rewarded', reward)
@@ -71,7 +72,7 @@ export default function Example() {
 
     RewardedAd.requestAd().catch((error) => console.warn(error));
 
-    InterstitialAd.setAdUnitID('ca-app-pub-3940256099942544/1033173712');
+    InterstitialAd.setUnitId('ca-app-pub-3940256099942544/1033173712');
 
     InterstitialAd.addEventListener('adPresented', () =>
       console.log('InterstitialAd => adPresented')
@@ -106,8 +107,9 @@ export default function Example() {
         <ScrollView>
           <BannerExample title="AdMob - Basic">
             <BannerAd
-              adSize="banner"
-              adUnitID="ca-app-pub-3940256099942544/2934735716"
+              size={BannerAdSize.MEDIUM_RECTANGLE}
+              unitId="ca-app-pub-3940256099942544/6300978111"
+              onAdLoaded={() => console.log('Ad loaded!')}
               ref={bannerRef}
             />
             <Button
@@ -117,8 +119,8 @@ export default function Example() {
           </BannerExample>
           <BannerExample title="Adaptive Banner">
             <BannerAd
-              adSize="adaptiveBanner"
-              adUnitID="ca-app-pub-3940256099942544/2934735716"
+              size={BannerAdSize.ADAPTIVE_BANNER}
+              unitId="ca-app-pub-3940256099942544/6300978111"
               ref={adaptiveBannerRef}
             />
             <Button

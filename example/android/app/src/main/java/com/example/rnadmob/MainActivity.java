@@ -1,4 +1,4 @@
-package com.example.reactnativeadmobadmob;
+package com.example.rnadmob;
 
 import com.facebook.react.ReactActivity;
 

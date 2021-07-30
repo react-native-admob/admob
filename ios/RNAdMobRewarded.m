@@ -9,7 +9,7 @@ static NSString *const kEventAdRewarded = @"rewardedAdRewarded";
 @implementation RNAdMobRewarded
 {
     GADRewardedAd *_rewardedAd;
-    NSString *_adUnitID;
+    NSString *_unitId;
     RCTPromiseResolveBlock _presentAdResolve;
     RCTPromiseRejectBlock _presentAdReject;
     BOOL hasListeners;
@@ -39,15 +39,15 @@ RCT_EXPORT_MODULE();
 
 #pragma mark exported methods
 
-RCT_EXPORT_METHOD(setAdUnitID:(NSString *)adUnitID)
+RCT_EXPORT_METHOD(setUnitId:(NSString *)unitId)
 {
-    _adUnitID = adUnitID;
+    _unitId = unitId;
 }
 
 RCT_EXPORT_METHOD(requestAd:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
     GADRequest *request = [GADRequest request];
-    [GADRewardedAd loadWithAdUnitID:_adUnitID
+    [GADRewardedAd loadWithAdUnitID:_unitId
                             request:request
                   completionHandler:^(GADRewardedAd *ad, NSError *error) {
         if (error) {

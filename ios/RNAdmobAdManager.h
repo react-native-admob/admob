@@ -1,4 +1,4 @@
 @import React;
 
-@interface RNAdmobAdManager : NSObject <RCTBridgeModule>
+@interface RNAdMobAdManager : NSObject <RCTBridgeModule>
 @end

@@ -8,7 +8,7 @@ static NSString *const kEventAdDismissed = @"interstitialAdDismissed";
 @implementation RNAdMobInterstitial
 {
     GADInterstitialAd  *_interstitial;
-    NSString *_adUnitID;
+    NSString *_unitID;
     RCTPromiseResolveBlock _presentAdResolve;
     RCTPromiseRejectBlock _presentAdReject;
     BOOL hasListeners;
@@ -37,16 +37,16 @@ RCT_EXPORT_MODULE();
 
 #pragma mark exported methods
 
-RCT_EXPORT_METHOD(setAdUnitID:(NSString *)adUnitID)
+RCT_EXPORT_METHOD(setUnitID:(NSString *)unitID)
 {
-    _adUnitID = adUnitID;
+    _unitID = unitID;
 }
 
 RCT_EXPORT_METHOD(requestAd:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
     if (![self canPresentAd]) {
         GADRequest *request = [GADRequest request];
-        [GADInterstitialAd loadWithAdUnitID:_adUnitID
+        [GADInterstitialAd loadWithAdUnitID:_unitID
                                     request:request
                           completionHandler:^(GADInterstitialAd *ad, NSError *error) {
             if (error) {

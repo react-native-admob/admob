@@ -1,66 +1,87 @@
 import React from 'react';
 import type { ViewProps } from 'react-native';
 
-export type BannerAdSize =
-  | 'banner'
-  | 'largeBanner'
-  | 'mediumRectangle'
-  | 'fullBanner'
-  | 'leaderboard'
-  | 'adaptiveBanner';
+export interface BannerAdSize {
+  /**
+   * Mobile Marketing Association (MMA) banner ad size (320x50 density-independent pixels).
+   */
+  BANNER: 'BANNER';
 
-export type AppEvent = {
-  name: string;
-  info: string;
-};
+  /**
+   * Interactive Advertising Bureau (IAB) full banner ad size (468x60 density-independent pixels).
+   */
+  FULL_BANNER: 'FULL_BANNER';
+
+  /**
+   * Large banner ad size (320x100 density-independent pixels).
+   */
+  LARGE_BANNER: 'LARGE_BANNER';
+
+  /**
+   * Interactive Advertising Bureau (IAB) leaderboard ad size (728x90 density-independent pixels).
+   */
+  LEADERBOARD: 'LEADERBOARD';
+
+  /**
+   * Interactive Advertising Bureau (IAB) medium rectangle ad size (300x250 density-independent pixels).
+   */
+  MEDIUM_RECTANGLE: 'MEDIUM_RECTANGLE';
+
+  /**
+   * A (next generation) dynamically sized banner that is full-width and auto-height.
+   */
+  ADAPTIVE_BANNER: 'ADAPTIVE_BANNER';
+
+  /**
+   * A dynamically sized banner that matches its parent's width and expands/contracts its height to match the ad's content after loading completes.
+   */
+  FLUID: 'FLUID';
+
+  /**
+   * IAB wide skyscraper ad size (160x600 density-independent pixels). This size is currently not supported by the Google Mobile Ads network; this is intended for mediation ad networks only.
+   */
+  WIDE_SKYSCRAPER: 'WIDE_SKYSCRAPER';
+}
+
+export const BannerAdSize: BannerAdSize;
 
 export interface BannerAdProps extends ViewProps {
   /**
-   * AdMob iOS library banner size constants
-   * (https://developers.google.com/admob/ios/banner)
-   * banner (320x50, Standard Banner for Phones and Tablets)
-   * largeBanner (320x100, Large Banner for Phones and Tablets)
-   * mediumRectangle (300x250, IAB Medium Rectangle for Phones and Tablets)
-   * fullBanner (468x60, IAB Full-Size Banner for Tablets)
-   * leaderboard (728x90, IAB Leaderboard for Tablets)
-   * adaptiveBanner (320x50, https://developers.google.com/admob/ios/banner/adaptive)
-   *
-   * banner is default
+   * The AdMob unit ID for the banner.
    */
-  adSize?: BannerAdSize;
+  unitId: string;
 
   /**
-   * AdMob ad unit ID
+   * The size of the banner. Can be a predefined size via `BannerAdSize` or custom dimensions, e.g. `300x200`.
+   *
+   * Inventory must be available for the banner size specified, otherwise a no-fill error will be sent to `onAdFailedToLoad`.
    */
-  adUnitID: string;
+  size: BannerAdSize | string;
 
   /**
    * AdMob iOS library events
    */
   onSizeChange?: (size: { height: number; width: number }) => void;
 
+  /**
+   * When an ad has finished loading.
+   */
   onAdLoaded?: () => void;
+  /**
+   * When an ad has failed to load. Callback contains an Error.
+   */
   onAdFailedToLoad?: (err: Error) => void;
+  /**
+   * The ad is now visible to the user.
+   */
   onAdOpened?: () => void;
+  /**
+   * Called when the user is about to return to the app after tapping on an ad.
+   */
   onAdClosed?: () => void;
 }
 
-export class BannerAd extends React.Component<AdMobBannerProps> {
-  loadAd: () => void;
-}
-
-export interface PublisherBannerAdProps extends BannerAdProps {
-  adSize?: BannerAdSize | 'fluid';
-
-  /**
-   * Optional array specifying all valid sizes that are appropriate for this slot.
-   */
-  validAdSizes?: string[];
-
-  onAppEvent?: (event: AppEvent) => void;
-}
-
-export class PublisherBannerAd extends React.Component<PublisherBannerAdProps> {
+export class BannerAd extends React.Component<BannerAdProps> {
   loadAd: () => void;
 }
 
@@ -70,7 +91,7 @@ export type FullScreenContentEvent =
   | 'adDismissed';
 
 export const InterstitialAd: {
-  setAdUnitID: (adUnitID: string) => void;
+  setUnitId: (unitId: string) => void;
   requestAd: () => Promise<void>;
   presentAd: () => Promise<void>;
   addEventListener: (event: FullScreenContentEvent, handler: Function) => void;
@@ -79,7 +100,7 @@ export const InterstitialAd: {
 };
 
 export const RewardedAd: {
-  setAdUnitID: (adUnitID: string) => void;
+  setUnitId: (unitId: string) => void;
   requestAd: () => Promise<unknown>;
   presentAd: () => Promise<unknown>;
   addEventListener: (
@@ -154,7 +175,7 @@ export const AdManager: {
     */
 
   setRequestConfiguration: (
-    config: Partial<AdManagerConfiguration>
+    config?: Partial<AdManagerConfiguration>
   ) => Promise<MediationAdapterStatus[]>;
 
   /**

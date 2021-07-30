@@ -1,13 +1,13 @@
 import { NativeModules } from 'react-native';
 
-const RNAdmobAdManager = NativeModules.RNAdmobAdManager;
+const RNAdMobAdManager = NativeModules.RNAdMobAdManager;
 
 async function setRequestConfiguration(config) {
-  return RNAdmobAdManager.setRequestConfiguration(config);
+  return RNAdMobAdManager.setRequestConfiguration(config || {});
 }
 
 async function isTestDevice() {
-  return RNAdmobAdManager.isTestDevice();
+  return RNAdMobAdManager.isTestDevice();
 }
 
 export default {

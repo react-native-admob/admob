@@ -1,20 +1,20 @@
-#import "RNGADBannerViewManager.h"
-#import "RNGADBannerView.h"
+#import "RNAdMobBannerViewManager.h"
+#import "RNAdMobBannerView.h"
 
-@implementation RNGADBannerViewManager
+@implementation RNAdMobBannerViewManager
 
 RCT_EXPORT_MODULE();
 
 - (UIView *)view
 {
-    return [RNGADBannerView new];
+    return [RNAdMobBannerView new];
 }
 
 RCT_EXPORT_METHOD(requestAd:(nonnull NSNumber *)reactTag)
 {
-    [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, RNGADBannerView *> *viewRegistry) {
-        RNGADBannerView *view = viewRegistry[reactTag];
-        if (![view isKindOfClass:[RNGADBannerView class]]) {
+    [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, RNAdMobBannerView *> *viewRegistry) {
+        RNAdMobBannerView *view = viewRegistry[reactTag];
+        if (![view isKindOfClass:[RNAdMobBannerView class]]) {
             RCTLogError(@"Invalid view returned from registry, expecting RNGADBannerView, got: %@", view);
         } else {
             [view requestAd];
@@ -22,8 +22,8 @@ RCT_EXPORT_METHOD(requestAd:(nonnull NSNumber *)reactTag)
     }];
 }
 
-RCT_EXPORT_VIEW_PROPERTY(adSize, NSString)
-RCT_REMAP_VIEW_PROPERTY(adUnitID, unitId, NSString)
+RCT_EXPORT_VIEW_PROPERTY(size, NSString)
+RCT_EXPORT_VIEW_PROPERTY(unitId, NSString)
 
 RCT_EXPORT_VIEW_PROPERTY(onSizeChange, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onAdLoaded, RCTBubblingEventBlock)

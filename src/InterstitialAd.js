@@ -1,5 +1,4 @@
 import { NativeEventEmitter, NativeModules } from 'react-native';
-import { createErrorFromErrorData } from './utils';
 
 const RNAdMobInterstitial = NativeModules.RNAdMobInterstitial;
 
@@ -16,14 +15,7 @@ const _subscriptions = new Map();
 const addEventListener = (event, handler) => {
   const mappedEvent = eventMap[event];
   if (mappedEvent) {
-    let listener;
-    if (event === 'adFailedToLoad') {
-      listener = eventEmitter.addListener(mappedEvent, (error) =>
-        handler(createErrorFromErrorData(error))
-      );
-    } else {
-      listener = eventEmitter.addListener(mappedEvent, handler);
-    }
+    const listener = eventEmitter.addListener(mappedEvent, handler);
     _subscriptions.set(handler, listener);
     return {
       remove: () => removeEventListener(event, handler),

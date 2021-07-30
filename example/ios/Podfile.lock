@@ -412,7 +412,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - RNAdmob (from `../..`)
+  - "RNAdmob (from `../node_modules/@react-native-admob/admob`)"
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -492,7 +492,7 @@ EXTERNAL SOURCES:
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
   RNAdmob:
-    :path: "../.."
+    :path: "../node_modules/@react-native-admob/admob"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -545,6 +545,6 @@ SPEC CHECKSUMS:
   Yoga: 575c581c63e0d35c9a83f4b46d01d63abc1100ac
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 1a35b2d4a1be2fd92dd5eb3a0853921545bf0716
+PODFILE CHECKSUM: c6df2858c186c7bd624ddf846fce425825db9780
 
 COCOAPODS: 1.10.1

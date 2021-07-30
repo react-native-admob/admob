@@ -128,7 +128,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.example.reactnativeadmobadmob"
+        applicationId "com.example.rnadmob"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -203,8 +203,6 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-
-    implementation project(':reactnativeadmobadmob')
 }
 
 // Run this once to be able to run the application with BUCK

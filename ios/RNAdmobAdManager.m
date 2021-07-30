@@ -1,4 +1,4 @@
-#import "RNAdmobAdManager.h"
+#import "RNAdMobAdManager.h"
 #import "RNAdMobUtils.h"
 
 @import GoogleMobileAds;
@@ -7,7 +7,7 @@
 @import FBAudienceNetwork;
 #endif
 
-@implementation RNAdmobAdManager
+@implementation RNAdMobAdManager
 
 RCT_EXPORT_MODULE();
 
