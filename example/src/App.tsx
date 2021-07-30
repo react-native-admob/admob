@@ -10,12 +10,12 @@ import {
   ViewStyle,
 } from 'react-native';
 import {
-  BannerAd,
-  InterstitialAd,
-  RewardedAd,
-  Reward,
   AdManager,
+  BannerAd,
   BannerAdSize,
+  InterstitialAd,
+  Reward,
+  RewardedAd,
 } from '@react-native-admob/admob';
 
 interface BannerExampleProps {
@@ -52,7 +52,9 @@ export default function Example() {
   }, []);
 
   useEffect(() => {
-    if (loading) return;
+    if (loading) {
+      return;
+    }
 
     RewardedAd.setUnitId('ca-app-pub-3940256099942544/5224354917');
 
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   title: {
-    margin: 10,
     fontSize: 20,
+    margin: 10,
   },
 });
