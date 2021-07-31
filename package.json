@@ -24,27 +24,25 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/react-native-admob/admob",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/software-mansion/react-native-screens.git"
+  },
   "author": "Jay Kim <me@wjay.kim> (https://github.com/wjaykim)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/react-native-admob/admob/issues"
   },
   "homepage": "https://github.com/react-native-admob/admob#readme",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
-  },
   "devDependencies": {
-    "@commitlint/config-conventional": "^11.0.0",
+    "@babel/core": "^7.14.8",
     "@react-native-community/eslint-config": "^3.0.0",
-    "@release-it/conventional-changelog": "^2.0.0",
     "@types/react-native": "^0.64.12",
-    "commitlint": "^11.0.0",
+    "babel-eslint": "^10.1.0",
     "eslint": "^7.2.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "eslint-plugin-unused-imports": "^1.1.2",
-    "husky": "^4.2.5",
     "prettier": "^2.3.2",
     "react": "17.0.1",
     "react-native": "0.64.2",
@@ -54,34 +52,6 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "yarn lint && yarn typescript"
-    }
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
-  "release-it": {
-    "git": {
-      "commitMessage": "chore: release ${version}",
-      "tagName": "v${version}"
-    },
-    "npm": {
-      "publish": true
-    },
-    "github": {
-      "release": true
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": "angular"
-      }
-    }
   },
   "dependencies": {}
 }
