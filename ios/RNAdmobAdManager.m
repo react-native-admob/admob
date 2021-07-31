@@ -1,11 +1,12 @@
 #import "RNAdMobAdManager.h"
 #import "RNAdMobUtils.h"
 
-@import GoogleMobileAds;
-
-#ifdef MEDIATION_FACEBOOK
-@import FBAudienceNetwork;
+#import <AppTrackingTransparency/AppTrackingTransparency.h>
+#if __has_include("<FBAudienceNetwork/FBAdSettings.h>")
+#import <FBAudienceNetwork/FBAdSettings.h>
 #endif
+
+@import GoogleMobileAds;
 
 @implementation RNAdMobAdManager
 
@@ -43,13 +44,14 @@ RCT_EXPORT_METHOD(setRequestConfiguration:(NSDictionary *)config resolver:(RCTPr
         NSArray *testDevices = RNAdMobProcessTestDevices([config valueForKey:@"testDeviceIds"],kGADSimulatorID);
         [[[GADMobileAds sharedInstance] requestConfiguration] setTestDeviceIdentifiers:testDevices];
     };
-
-    if ([[config allKeys] containsObject:@"trackingAuthorized"]) {
-        NSNumber *trackingAuthorized = [config valueForKey:@"trackingAuthorized"];
-        #ifdef MEDIATION_FACEBOOK
-        [FBAdSettings setAdvertiserTrackingEnabled:trackingAuthorized];
-        #endif
-    };
+    
+#if __has_include("<FBAudienceNetwork/FBAdSettings.h>")
+    if (@available(iOS 14, *)) {
+        if ([ATTrackingManager trackingAuthorizationStatus] == ATTrackingManagerAuthorizationStatusAuthorized) {
+            [FBAdSettings setAdvertiserTrackingEnabled:trackingAuthorizationStatus];
+        }
+    }
+#endif
 
     GADMobileAds *ads = [GADMobileAds sharedInstance];
     [ads startWithCompletionHandler:^(GADInitializationStatus *status) {

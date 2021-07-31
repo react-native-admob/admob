@@ -12,10 +12,10 @@
 @property (nonatomic, copy) NSString *size;
 
 @property (nonatomic, copy) RCTBubblingEventBlock onSizeChange;
-@property (nonatomic, copy) RCTBubblingEventBlock onAdLoaded;
-@property (nonatomic, copy) RCTBubblingEventBlock onAdFailedToLoad;
-@property (nonatomic, copy) RCTBubblingEventBlock onAdOpened;
-@property (nonatomic, copy) RCTBubblingEventBlock onAdClosed;
+@property (nonatomic, copy) RCTDirectEventBlock onAdLoaded;
+@property (nonatomic, copy) RCTDirectEventBlock onAdFailedToLoad;
+@property (nonatomic, copy) RCTDirectEventBlock onAdOpened;
+@property (nonatomic, copy) RCTDirectEventBlock onAdClosed;
 
 - (void)requestAd;
 

@@ -13,6 +13,7 @@
 }
 
 - (void)setUnitId:(NSString *)unitId {
+    NSLog(@"%@", unitId);
     _unitId = unitId;
     [self requestAd];
 }
@@ -24,7 +25,7 @@
 
 - (void)requestAd
 {
-    if (_unitId == nil) {
+    if (_unitId == nil || _size == nil) {
         [self setRequested:NO];
         return;
     }
@@ -35,13 +36,6 @@
     [self setRequested:YES];
     GADRequest *request = [GADRequest request];
     [_bannerView loadRequest:request];
-    
-    self.onSizeChange(@{
-        @"width": @(_bannerView.bounds.size.width),
-        @"height": @(_bannerView.bounds.size.height),
-                      });
-    
-    NSLog(@"%f %f", _bannerView.bounds.size.width, _bannerView.bounds.size.height);
 }
 
 # pragma mark GADBannerViewDelegate
@@ -49,17 +43,22 @@
 /// Tells the delegate an ad request loaded an ad.
 - (void)bannerViewDidReceiveAd:(__unused GADBannerView *)bannerView
 {
-    if (self.onAdLoaded) {
-        self.onAdLoaded(@{});
+    if (_onAdLoaded) {
+        _onAdLoaded(@{});
     }
+    
+    _onSizeChange(@{
+        @"width": @(_bannerView.bounds.size.width),
+        @"height": @(_bannerView.bounds.size.height),
+                  });
 }
 
 /// Tells the delegate an ad request failed.
 - (void)bannerView:(__unused GADBannerView *)bannerView
 didFailToReceiveAdWithError:(NSError *)error
 {
-    if (self.onAdFailedToLoad) {
-        self.onAdFailedToLoad(@{ @"error": @{ @"message": [error localizedDescription] } });
+    if (_onAdFailedToLoad) {
+        _onAdFailedToLoad(@{ @"error": @{ @"message": [error localizedDescription] } });
     }
 }
 
@@ -67,16 +66,16 @@ didFailToReceiveAdWithError:(NSError *)error
 /// to the user clicking on an ad.
 - (void)bannerViewWillPresentScreen:(__unused GADBannerView *)bannerView
 {
-    if (self.onAdOpened) {
-        self.onAdOpened(@{});
+    if (_onAdOpened) {
+        _onAdOpened(@{});
     }
 }
 
 /// Tells the delegate that the full screen view will be dismissed.
 - (void)bannerViewWillDismissScreen:(__unused GADBannerView *)bannerView
 {
-    if (self.onAdClosed) {
-        self.onAdClosed(@{});
+    if (_onAdClosed) {
+        _onAdClosed(@{});
     }
 }
 

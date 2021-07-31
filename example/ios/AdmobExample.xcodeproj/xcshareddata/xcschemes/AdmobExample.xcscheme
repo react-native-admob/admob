@@ -50,6 +50,8 @@
             ReferencedContainer = "container:AdmobExample.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+      <Testables>
+      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"

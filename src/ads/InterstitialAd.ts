@@ -1,4 +1,10 @@
-import { NativeEventEmitter, NativeModules } from 'react-native';
+import {
+  EmitterSubscription,
+  NativeEventEmitter,
+  NativeModules,
+} from 'react-native';
+
+import { FullScreenAdInterface, InterstitialAdEvent } from '../types';
 
 const RNAdMobInterstitial = NativeModules.RNAdMobInterstitial;
 
@@ -10,15 +16,17 @@ const eventMap = {
   adDismissed: 'interstitialAdDismissed',
 };
 
-const _subscriptions = new Map();
+type HandlerType = () => void | ((error: Error) => void);
 
-const addEventListener = (event, handler) => {
+const _subscriptions = new Map<HandlerType, EmitterSubscription>();
+
+const addEventListener = (event: InterstitialAdEvent, handler: HandlerType) => {
   const mappedEvent = eventMap[event];
   if (mappedEvent) {
     const listener = eventEmitter.addListener(mappedEvent, handler);
     _subscriptions.set(handler, listener);
     return {
-      remove: () => removeEventListener(event, handler),
+      remove: () => removeEventListener(handler),
     };
   } else {
     console.warn(`Trying to subscribe to unknown event: "${event}"`);
@@ -28,7 +36,7 @@ const addEventListener = (event, handler) => {
   }
 };
 
-const removeEventListener = (type, handler) => {
+const removeEventListener = (handler: HandlerType) => {
   const listener = _subscriptions.get(handler);
   if (!listener) {
     return;
@@ -45,7 +53,7 @@ const removeAllListeners = () => {
 };
 
 export default {
-  ...RNAdMobInterstitial,
+  ...(RNAdMobInterstitial as FullScreenAdInterface),
   addEventListener,
   removeEventListener,
   removeAllListeners,

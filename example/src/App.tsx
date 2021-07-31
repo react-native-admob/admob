@@ -10,12 +10,12 @@ import {
   ViewStyle,
 } from 'react-native';
 import {
+  AdHookOptions,
   AdManager,
   BannerAd,
   BannerAdSize,
-  InterstitialAd,
-  Reward,
-  RewardedAd,
+  useInterstitialAd,
+  useRewardedAd,
 } from '@react-native-admob/admob';
 
 interface BannerExampleProps {
@@ -36,10 +36,19 @@ const BannerExample = ({
   </View>
 );
 
+const UNIT_ID_REWARDED = 'ca-app-pub-3940256099942544/5224354917';
+const UNIT_ID_INTERSTITIAL = 'ca-app-pub-3940256099942544/1033173712';
+
+const hookOptions: AdHookOptions = {
+  requestOnDismissed: true,
+};
+
 export default function Example() {
   const bannerRef = useRef<BannerAd>(null);
   const adaptiveBannerRef = useRef<BannerAd>(null);
   const [loading, setLoading] = useState(true);
+  const rewardedAd = useRewardedAd(UNIT_ID_REWARDED, hookOptions);
+  const interstitalAd = useInterstitialAd(UNIT_ID_INTERSTITIAL, hookOptions);
 
   useEffect(() => {
     const init = async () => {
@@ -52,56 +61,22 @@ export default function Example() {
   }, []);
 
   useEffect(() => {
-    if (loading) {
-      return;
+    const { adLoadError, adPresentError } = rewardedAd;
+    if (adLoadError) {
+      console.error(adLoadError);
+    } else if (adPresentError) {
+      console.error(adPresentError);
     }
+  }, [rewardedAd]);
 
-    RewardedAd.setUnitId('ca-app-pub-3940256099942544/5224354917');
-
-    RewardedAd.addEventListener('rewarded', (reward: Reward) =>
-      console.log('RewardedAd => rewarded', reward)
-    );
-    RewardedAd.addEventListener('adPresented', () =>
-      console.log('RewardedAd => adPresented')
-    );
-    RewardedAd.addEventListener('adFailedToPresent', () =>
-      console.warn('RewardedAd => adFailedToPresent')
-    );
-    RewardedAd.addEventListener('adDismissed', () => {
-      console.log('RewardedAd => adDismissed');
-      RewardedAd.requestAd().catch((error) => console.warn(error));
-    });
-
-    RewardedAd.requestAd().catch((error) => console.warn(error));
-
-    InterstitialAd.setUnitId('ca-app-pub-3940256099942544/1033173712');
-
-    InterstitialAd.addEventListener('adPresented', () =>
-      console.log('InterstitialAd => adPresented')
-    );
-    InterstitialAd.addEventListener('adFailedToPresent', () =>
-      console.warn('InterstitialAd => adFailedToPresent')
-    );
-    InterstitialAd.addEventListener('adDismissed', () => {
-      console.log('InterstitialAd => adDismissed');
-      InterstitialAd.requestAd().catch((error) => console.warn(error));
-    });
-
-    InterstitialAd.requestAd().catch((error) => console.warn(error));
-
-    return () => {
-      RewardedAd.removeAllListeners();
-      InterstitialAd.removeAllListeners();
-    };
-  }, [loading]);
-
-  function showRewarded() {
-    RewardedAd.presentAd().catch((error) => console.warn(error));
-  }
-
-  function showInterstitial() {
-    InterstitialAd.presentAd().catch((error) => console.warn(error));
-  }
+  useEffect(() => {
+    const { adLoadError, adPresentError } = interstitalAd;
+    if (adLoadError) {
+      console.error(adLoadError);
+    } else if (adPresentError) {
+      console.error(adPresentError);
+    }
+  }, [interstitalAd]);
 
   return (
     <View style={styles.container}>
@@ -109,7 +84,7 @@ export default function Example() {
         <ScrollView>
           <BannerExample title="AdMob - Basic">
             <BannerAd
-              size={BannerAdSize.MEDIUM_RECTANGLE}
+              size={BannerAdSize.BANNER}
               unitId="ca-app-pub-3940256099942544/6300978111"
               onAdLoaded={() => console.log('Ad loaded!')}
               ref={bannerRef}
@@ -133,13 +108,15 @@ export default function Example() {
           <BannerExample title="Rewarded">
             <Button
               title="Show Rewarded Video and preload next"
-              onPress={showRewarded}
+              disabled={!rewardedAd.adLoaded}
+              onPress={() => rewardedAd.presentAd()}
             />
           </BannerExample>
           <BannerExample title="Interstitial">
             <Button
               title="Show Interstitial and preload next"
-              onPress={showInterstitial}
+              disabled={!interstitalAd.adLoaded}
+              onPress={() => interstitalAd.presentAd()}
             />
           </BannerExample>
         </ScrollView>
