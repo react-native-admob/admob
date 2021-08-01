@@ -21,7 +21,6 @@ export default class InterstitialAd extends MobileAd<
   }
 
   requestAd() {
-    console.log(this.requested);
     if (!this.requested) {
       this.requested = true;
       return requestAd(this.requestId, this.unitId);
