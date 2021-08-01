@@ -1,19 +1,13 @@
 #import "RNAdMobRewarded.h"
+#import "RNAdMobEvent.h"
 #import "RNAdMobUtils.h"
 
-static NSString *const kEventAdPresented = @"rewardedAdPresented";
-static NSString *const kEventAdFailedToPresent = @"rewardedAdFailedToPresent";
-static NSString *const kEventAdDismissed = @"rewardedAdDismissed";
-static NSString *const kEventAdRewarded = @"rewardedAdRewarded";
+static __strong NSMutableDictionary *requestIdMap;
+static __strong NSMutableDictionary *rewardedMap;
+static __strong NSMutableDictionary *presentAdResolveMap;
+static __strong NSMutableDictionary *presentAdRejectMap;
 
 @implementation RNAdMobRewarded
-{
-    GADRewardedAd *_rewardedAd;
-    NSString *_unitId;
-    RCTPromiseResolveBlock _presentAdResolve;
-    RCTPromiseRejectBlock _presentAdReject;
-    BOOL hasListeners;
-}
 
 - (dispatch_queue_t)methodQueue
 {
@@ -25,56 +19,71 @@ static NSString *const kEventAdRewarded = @"rewardedAdRewarded";
     return NO;
 }
 
-RCT_EXPORT_MODULE();
-
-- (NSArray<NSString *> *)supportedEvents
-{
-    return @[
-        kEventAdPresented,
-        kEventAdFailedToPresent,
-        kEventAdDismissed,
-        kEventAdRewarded
-    ];
+- (id)init {
+    self = [super init];
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        requestIdMap = [[NSMutableDictionary alloc] init];
+        rewardedMap = [[NSMutableDictionary alloc] init];
+        presentAdResolveMap = [[NSMutableDictionary alloc] init];
+        presentAdRejectMap = [[NSMutableDictionary alloc] init];
+    });
+    return self;
 }
+
+
+- (void)dealloc {
+    [self invalidate];
+}
+
+- (void)invalidate {
+    [requestIdMap removeAllObjects];
+    [rewardedMap removeAllObjects];
+    [presentAdResolveMap removeAllObjects];
+    [presentAdRejectMap removeAllObjects];
+}
+
+RCT_EXPORT_MODULE();
 
 #pragma mark exported methods
 
-RCT_EXPORT_METHOD(setUnitId:(NSString *)unitId)
+RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId unitId:(NSString *_Nonnull)unitId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    _unitId = unitId;
+    if (![self canPresentAd:requestId]) {
+        GADRequest *request = [GADRequest request];
+        [GADRewardedAd loadWithAdUnitID:unitId
+                                request:request
+                      completionHandler:^(GADRewardedAd *ad, NSError *error) {
+            if (error) {
+                reject(@"E_AD_LOAD_FAILED", [error localizedDescription], nil);
+                return;
+            }
+            
+            ad.fullScreenContentDelegate = self;
+            
+            requestIdMap[ad.responseInfo.responseIdentifier] = requestId;
+            rewardedMap[requestId] = ad;
+            
+            resolve(nil);
+        }];
+    } else {
+        reject(@"E_AD_ALREADY_LOADED", @"Ad is already loaded.", nil);
+    }
 }
 
-RCT_EXPORT_METHOD(requestAd:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    GADRequest *request = [GADRequest request];
-    [GADRewardedAd loadWithAdUnitID:_unitId
-                            request:request
-                  completionHandler:^(GADRewardedAd *ad, NSError *error) {
-        if (error) {
-            reject(@"E_AD_LOAD_FAILED", [error localizedDescription], nil);
-            return;
-        }
-        self->_rewardedAd = ad;
-        self->_rewardedAd.fullScreenContentDelegate = self;
-        
-        resolve(nil);
-    }];
-}
-
-RCT_EXPORT_METHOD(presentAd:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
-{
-    _presentAdResolve = resolve;
-    _presentAdReject = reject;
-    if ([self canPresentAd]) {
+    GADRewardedAd *rewarded = rewardedMap[requestId];
+    presentAdResolveMap[requestId] = resolve;
+    presentAdRejectMap[requestId] = resolve;
+    if ([self canPresentAd:requestId]) {
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
         UIViewController *rootViewController = [keyWindow rootViewController];
         
-        [_rewardedAd presentFromRootViewController:rootViewController
-                          userDidEarnRewardHandler:^ {
-            GADAdReward *reward = self->_rewardedAd.adReward;
-            if (self->hasListeners) {
-                [self sendEventWithName:kEventAdRewarded body:@{@"type": reward.type, @"amount": reward.amount}];
-            }
+        [rewarded presentFromRootViewController:rootViewController
+                       userDidEarnRewardHandler:^ {
+            GADAdReward *reward = rewarded.adReward;
+            [self sendEvent:kEventRewarded requestId:requestId data:@{@"type": reward.type, @"amount": reward.amount}];
         }];
     }
     else {
@@ -82,54 +91,54 @@ RCT_EXPORT_METHOD(presentAd:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromise
     }
 }
 
-- (BOOL) canPresentAd
+- (BOOL) canPresentAd:(NSNumber *)requestId
 {
-    if (_rewardedAd)
+    GADRewardedAd *rewarded = rewardedMap[requestId];
+    if (rewarded)
     {
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
         UIViewController *rootViewController = [keyWindow rootViewController];
         
-        return [_rewardedAd canPresentFromRootViewController:rootViewController error:nil];
+        return [rewarded canPresentFromRootViewController:rootViewController error:nil];
     }
     else {
         return NO;
     }
 }
 
-- (void)startObserving
+- (void)sendEvent:(NSString *)eventName requestId:(NSNumber *)requestId data:(NSDictionary *)data
 {
-    hasListeners = YES;
-}
-
-- (void)stopObserving
-{
-    hasListeners = NO;
+    [RNAdMobEvent sendEvent:eventName type:@"Rewarded" requestId:requestId data:data];
 }
 
 #pragma mark GADFullScreenContentDelegate
 
-- (void)adDidPresentFullScreenContent:(__unused GADRewardedAd *)ad
+- (void)adDidPresentFullScreenContent:(GADRewardedAd *)ad
 {
-    if (hasListeners) {
-        [self sendEventWithName:kEventAdPresented body:nil];
-    }
-    _presentAdResolve(nil);
+    NSNumber *requestId = requestIdMap[ad.responseInfo.responseIdentifier];
+    
+    [self sendEvent:kEventAdPresented requestId:requestId data:nil];
+    
+    RCTPromiseResolveBlock resolve = presentAdResolveMap[requestId];
+    resolve(nil);
 }
 
-- (void)ad:(__unused GADRewardedAd *)ad didFailToPresentFullScreenContentWithError:(NSError *)error
+- (void)ad:(GADRewardedAd *)ad didFailToPresentFullScreenContentWithError:(NSError *)error
 {
-    if (hasListeners){
-        NSDictionary *jsError = RCTJSErrorFromCodeMessageAndNSError(@"E_AD_PRESENT_FAILED", error.localizedDescription, error);
-        [self sendEventWithName:kEventAdFailedToPresent body:jsError];
-    }
-    _presentAdReject(@"E_AD_PRESENT_FAILED", [error localizedDescription], nil);
+    NSNumber *requestId = requestIdMap[ad.responseInfo.responseIdentifier];
+    
+    NSDictionary *jsError = RCTJSErrorFromCodeMessageAndNSError(@"E_AD_PRESENT_FAILED", error.localizedDescription, error);
+    [self sendEvent:kEventAdFailedToPresent requestId:requestId data:jsError];
+    
+    RCTPromiseRejectBlock reject = presentAdRejectMap[requestId];
+    reject(@"E_AD_PRESENT_FAILED", [error localizedDescription], nil);
 }
 
-- (void)adDidDismissFullScreenContent:(__unused GADRewardedAd *)ad
+- (void)adDidDismissFullScreenContent:(GADRewardedAd *)ad
 {
-    if (hasListeners) {
-        [self sendEventWithName:kEventAdDismissed body:nil];
-    }
+    NSNumber *requestId = requestIdMap[ad.responseInfo.responseIdentifier];
+    
+    [self sendEvent:kEventAdDismissed requestId:requestId data:nil];
 }
 
 @end

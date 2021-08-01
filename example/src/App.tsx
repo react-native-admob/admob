@@ -70,6 +70,13 @@ export default function Example() {
   }, [rewardedAd]);
 
   useEffect(() => {
+    if (rewardedAd.reward) {
+      console.log('Reward earned: ');
+      console.log(rewardedAd.reward);
+    }
+  }, [rewardedAd.reward]);
+
+  useEffect(() => {
     const { adLoadError, adPresentError } = interstitalAd;
     if (adLoadError) {
       console.error(adLoadError);
@@ -86,7 +93,7 @@ export default function Example() {
             <BannerAd
               size={BannerAdSize.BANNER}
               unitId="ca-app-pub-3940256099942544/6300978111"
-              onAdLoaded={() => console.log('Ad loaded!')}
+              onAdLoaded={() => console.log('Banner Ad loaded!')}
               ref={bannerRef}
             />
             <Button

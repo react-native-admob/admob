@@ -28,7 +28,6 @@ public class RNAdmobBannerView extends ReactViewGroup {
 
     private AdView adView;
 
-    private Boolean requested = false;
     private AdSize size;
     private String unitId;
 
@@ -65,7 +64,6 @@ public class RNAdmobBannerView extends ReactViewGroup {
                     height = adView.getAdSize().getHeightInPixels(getContext());
                 }
 
-                // TODO size=FLUID not loading ad, height of child FrameLayout incorrect?
                 adView.measure(width, height);
                 adView.layout(left, top, left + width, top + height);
 
@@ -146,8 +144,6 @@ public class RNAdmobBannerView extends ReactViewGroup {
         adView.setAdUnitId(unitId);
         adView.setAdSize(size);
         adView.loadAd(request);
-
-        requested = true;
     }
 
     private void sendEvent(String type, WritableMap payload) {

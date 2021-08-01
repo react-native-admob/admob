@@ -1,64 +1,35 @@
-import {
-  EmitterSubscription,
-  NativeEventEmitter,
-  NativeModules,
-} from 'react-native';
+import { NativeModules } from 'react-native';
 
-import { FullScreenAdInterface, Reward, RewardedAdEvent } from './types';
+import { FullScreenAdInterface, Reward, RewardedAdEvent } from '../types';
 
-const RNAdMobRewarded = NativeModules.RNAdMobRewarded;
+import MobileAd from './MobileAd';
 
-const eventEmitter = new NativeEventEmitter(RNAdMobRewarded);
-
-const eventMap = {
-  adPresented: 'rewardedAdPresented',
-  adFailedToPresent: 'rewardedAdFailedToPresent',
-  adDismissed: 'rewardedAdDismissed',
-  rewarded: 'rewardedAdRewarded',
-};
+const { requestAd, presentAd } =
+  NativeModules.RNAdMobRewarded as FullScreenAdInterface;
 
 type HandlerType =
   | (() => void)
   | ((error: Error) => void)
   | ((reward: Reward) => void);
 
-const _subscriptions = new Map<HandlerType, EmitterSubscription>();
+let _rewardedRequest = 0;
 
-const addEventListener = (event: RewardedAdEvent, handler: HandlerType) => {
-  const mappedEvent = eventMap[event];
-  if (mappedEvent) {
-    const listener = eventEmitter.addListener(mappedEvent, handler);
-    _subscriptions.set(handler, listener);
-    return {
-      remove: () => removeEventListener(handler),
-    };
-  } else {
-    console.warn(`Trying to subscribe to unknown event: "${event}"`);
-    return {
-      remove: () => {},
-    };
+export default class RewardedAd extends MobileAd<HandlerType, RewardedAdEvent> {
+  static createAd(unitId: string) {
+    const requestId = _rewardedRequest++;
+    return new RewardedAd('Rewarded', requestId, unitId);
   }
-};
 
-const removeEventListener = (handler: HandlerType) => {
-  const listener = _subscriptions.get(handler);
-  if (!listener) {
-    return;
+  requestAd() {
+    if (!this.requested) {
+      this.requested = true;
+      return requestAd(this.requestId, this.unitId);
+    } else {
+      return Promise.reject('Ad is already requested');
+    }
   }
-  listener.remove();
-  _subscriptions.delete(handler);
-};
 
-const removeAllListeners = () => {
-  _subscriptions.forEach((listener, key, map) => {
-    listener.remove();
-    map.delete(key);
-  });
-};
-
-export default {
-  ...(RNAdMobRewarded as FullScreenAdInterface),
-  addEventListener,
-  removeEventListener,
-  removeAllListeners,
-};
+  presentAd() {
+    return presentAd(this.requestId);
+  }
+}

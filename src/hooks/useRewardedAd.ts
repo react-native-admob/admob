@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import RewardedAd from '../ads/RewardedAd';
-import { AdHookOptions, Reward } from '../types';
+import { AdHookOptions, AdHookResult, Reward } from '../types';
 
 const defaultOptions: AdHookOptions = {
   requestOnMounted: true,
@@ -9,23 +9,31 @@ const defaultOptions: AdHookOptions = {
   requestOnDismissed: false,
 };
 
-const useRewardedAd = (unitId: string, options = defaultOptions) => {
-  const [prevUnitId, setPrevUnitId] = useState('');
+/**
+ * React Hook for AdMob Rewarded ad.
+ * @param unitId Rewarded Ad Unit Id
+ * @param options `AdHookOptions`
+ */
+export default function useRewardedAd(
+  unitId: string,
+  options = defaultOptions
+): AdHookResult {
+  const rewardedAd = useMemo(() => RewardedAd.createAd(unitId), [unitId]);
   const [adLoaded, setAdLoaded] = useState(false);
   const [adPresented, setAdPresented] = useState(false);
   const [adDismissed, setAdDismissed] = useState(false);
-  const [adLoadError, setAdLoadError] = useState<Error | null>(null);
-  const [adPresentError, setAdPresentError] = useState<Error | null>(null);
-  const [reward, setReward] = useState<Reward | null>(null);
+  const [adLoadError, setAdLoadError] = useState<Error>();
+  const [adPresentError, setAdPresentError] = useState<Error>();
+  const [reward, setReward] = useState<Reward>();
   const _options = Object.assign(defaultOptions, options);
 
   const init = () => {
     setAdLoaded(false);
     setAdPresented(false);
     setAdDismissed(false);
-    setAdLoadError(null);
-    setAdPresentError(null);
-    setReward(null);
+    setAdLoadError(undefined);
+    setAdPresentError(undefined);
+    setReward(undefined);
   };
 
   const adShowing = useMemo(
@@ -34,39 +42,31 @@ const useRewardedAd = (unitId: string, options = defaultOptions) => {
   );
 
   const requestAd = useCallback(() => {
-    if (adShowing) {
-      console.warn(
-        '[RNAdmob(RewardedAd)] You can not request ad when the ad is showing.'
-      );
-      return;
-    }
     init();
-    setPrevUnitId(unitId);
-    RewardedAd.requestAd()
+    rewardedAd
+      .requestAd()
       .catch((e: Error) => setAdLoadError(e))
       .then(() => setAdLoaded(true));
-  }, [unitId, adShowing]);
+  }, [rewardedAd]);
 
   const presentAd = useCallback(() => {
-    if (adLoaded) {
-      RewardedAd.presentAd()
+    if (adPresented) {
+      console.warn('[RNAdmob(RewardedAd)] Ad is already presented once.');
+    } else if (adLoaded) {
+      rewardedAd
+        .presentAd()
         .catch((e: Error) => setAdPresentError(e))
         .then(() => setAdPresented(true));
     } else {
-      console.log('[RNAdmob(RewardedAd)] Ad is not loaded.');
+      console.warn('[RNAdmob(RewardedAd)] Ad is not loaded.');
     }
-  }, [adLoaded]);
+  }, [rewardedAd, adPresented, adLoaded]);
 
   useEffect(() => {
-    if (unitId === prevUnitId) {
-      return;
-    }
-
-    RewardedAd.setUnitId(unitId);
-    if (_options?.requestOnMounted) {
+    if (!rewardedAd.requested && _options?.requestOnMounted) {
       requestAd();
     }
-  }, [unitId, prevUnitId, _options, requestAd]);
+  }, [rewardedAd, _options, requestAd]);
 
   useEffect(() => {
     if (adLoaded && _options?.presentOnLoaded) {
@@ -81,22 +81,20 @@ const useRewardedAd = (unitId: string, options = defaultOptions) => {
   }, [adDismissed, _options, requestAd]);
 
   useEffect(() => {
-    RewardedAd.addEventListener('adDismissed', () => setAdDismissed(true));
-    RewardedAd.addEventListener('rewarded', (r: Reward) => setReward(r));
-    return () => RewardedAd.removeAllListeners();
-  }, []);
+    rewardedAd.addEventListener('adDismissed', () => setAdDismissed(true));
+    rewardedAd.addEventListener('rewarded', (r: Reward) => setReward(r));
+    return () => rewardedAd.removeAllListeners();
+  }, [rewardedAd]);
 
   return {
     adLoaded,
     adPresented,
     adDismissed,
+    adShowing,
     adLoadError,
     adPresentError,
-    adShowing,
     reward,
     requestAd,
     presentAd,
   };
-};
-
-export default useRewardedAd;
+}

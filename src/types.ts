@@ -74,6 +74,8 @@ export interface BannerAdProps extends ViewProps {
   onAdClosed?: () => void;
 }
 
+export type AdType = 'Interstitial' | 'Rewarded';
+
 export type FullScreenAdEvent =
   | 'adPresented'
   | 'adFailedToPresent'
@@ -85,17 +87,13 @@ export type RewardedAdEvent = FullScreenAdEvent | 'rewarded';
 
 export interface FullScreenAdInterface {
   /**
-   * Sets the ad's unitId
-   */
-  setUnitId: (unitId: string) => void;
-  /**
    * Request ad and return Promise.
    */
-  requestAd: () => Promise<void>;
+  requestAd: (requestId: number, unitId: string) => Promise<void>;
   /**
    * Present the loaded ad and return Promise.
    */
-  presentAd: () => Promise<void>;
+  presentAd: (requestId: number) => Promise<void>;
 }
 
 export type Reward = {
@@ -116,4 +114,44 @@ export type AdHookOptions = {
    * Whether your ad to request new ad automatically on dismissed. Defaults to `false`.
    */
   requestOnDismissed?: boolean;
+};
+
+export type AdHookResult = {
+  /**
+   * Whether your ad is loaded and ready to present
+   */
+  adLoaded: boolean;
+  /**
+   * Whether your ad is presented to user
+   */
+  adPresented: boolean;
+  /**
+   * Whether your ad is dismissed by user
+   */
+  adDismissed: boolean;
+  /**
+   * Whether your ad is showing.
+   * Same as `adPresented && !adDismissed`
+   */
+  adShowing: boolean;
+  /**
+   * Error during ad load
+   */
+  adLoadError?: Error;
+  /**
+   * Error during ad present
+   */
+  adPresentError?: Error;
+  /**
+   * Reward earned by Rewarded Ad
+   */
+  reward?: Reward;
+  /**
+   * Request new ad
+   */
+  requestAd: () => void;
+  /**
+   * Present loaded ad
+   */
+  presentAd: () => void;
 };

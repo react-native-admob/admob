@@ -1,8 +1,12 @@
 package com.rnadmob.admob;
 
+import static com.rnadmob.admob.RNAdMobEventModule.AD_DISMISSED;
+import static com.rnadmob.admob.RNAdMobEventModule.AD_FAILED_TO_PRESENT;
+import static com.rnadmob.admob.RNAdMobEventModule.AD_PRESENTED;
+import static com.rnadmob.admob.RNAdMobEventModule.REWARDED;
+
 import android.app.Activity;
-import android.os.Handler;
-import android.os.Looper;
+import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,8 +22,6 @@ import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.OnUserEarnedRewardListener;
-import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 
@@ -27,16 +29,8 @@ public class RNAdMobRewardedAdModule extends ReactContextBaseJavaModule {
 
     public static final String REACT_CLASS = "RNAdMobRewarded";
 
-    public static final String EVENT_AD_FAILED_TO_PRESENT = "rewardedAdFailedToLoad";
-    public static final String EVENT_AD_PRESENTED = "rewardedAdPresented";
-    public static final String EVENT_AD_DISMISSED = "rewardedAdDismissed";
-    public static final String EVENT_REWARDED = "rewardedAdRewarded";
-
-    RewardedAd mRewardedAd;
-    FullScreenContentCallback adCallback;
-    String unitId;
-
-    private Promise mPresentAdPromise;
+    SparseArray<RewardedAd> rewardedAdArray = new SparseArray<>();
+    SparseArray<Promise> presentAdPromiseArray = new SparseArray<>();
 
     @NonNull
     @Override
@@ -46,88 +40,93 @@ public class RNAdMobRewardedAdModule extends ReactContextBaseJavaModule {
 
     public RNAdMobRewardedAdModule(ReactApplicationContext reactContext) {
         super(reactContext);
-        adCallback = new FullScreenContentCallback(){
+    }
+
+    private void sendEvent(String eventName, int requestId, @Nullable WritableMap data) {
+        RNAdMobEventModule.sendEvent(eventName, "Rewarded", requestId, data);
+    }
+
+    private FullScreenContentCallback getFullScreenContentCallback(int requestId) {
+        return new FullScreenContentCallback(){
             @Override
             public void onAdDismissedFullScreenContent() {
-                sendEvent(EVENT_AD_DISMISSED, null);
+                sendEvent(AD_DISMISSED, requestId, null);
             }
 
             @Override
             public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
-                if (mPresentAdPromise != null) {
-                    mPresentAdPromise.reject(String.valueOf(adError.getCode()), adError.getMessage());
+                Promise promise = presentAdPromiseArray.get(requestId);
+                if (promise != null) {
+                    promise.reject(String.valueOf(adError.getCode()), adError.getMessage());
                 }
                 WritableMap error = Arguments.createMap();
                 error.putInt("code", adError.getCode());
                 error.putString("message", adError.getMessage());
-                sendEvent(EVENT_AD_FAILED_TO_PRESENT, error);
+                sendEvent(AD_FAILED_TO_PRESENT, requestId, error);
             }
 
             @Override
             public void onAdShowedFullScreenContent() {
-                mRewardedAd = null;
-                mPresentAdPromise.resolve(null);
-                sendEvent(EVENT_AD_PRESENTED, null);
+                Promise promise = presentAdPromiseArray.get(requestId);
+                if (promise != null) {
+                    promise.resolve(null);
+                }
+                sendEvent(AD_PRESENTED, requestId, null);
+                rewardedAdArray.put(requestId, null);
             }
         };
     }
 
-    private void sendEvent(String eventName, @Nullable WritableMap params) {
-        getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, params);
-    }
-
     @ReactMethod
-    public void setUnitId(String unitId) {
-        this.unitId = unitId;
-    }
+    public void requestAd(int requestId, String unitId, final Promise promise) {
+        rewardedAdArray.put(requestId, null);
+        Activity activity = getCurrentActivity();
+        if (activity == null) {
+            promise.reject("E_NULL_ACTIVITY", "Rewarded ad attempted to load but the current Activity was null.");
+            return;
+        }
+        activity.runOnUiThread(() -> {
+            AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+            AdRequest adRequest = adRequestBuilder.build();
+            RewardedAd.load(getReactApplicationContext(), unitId, adRequest,
+                    new RewardedAdLoadCallback() {
+                        @Override
+                        public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
+                            FullScreenContentCallback callback = getFullScreenContentCallback(requestId);
+                            rewardedAd.setFullScreenContentCallback(callback);
+                            rewardedAdArray.put(requestId, rewardedAd);
+                            promise.resolve(null);
+                        }
 
-    @ReactMethod
-    public void requestAd(final Promise promise) {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
-                AdRequest adRequest = adRequestBuilder.build();
-                RewardedAd.load(getReactApplicationContext(), unitId, adRequest, new RewardedAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
-                        mRewardedAd = rewardedAd;
-                        mRewardedAd.setFullScreenContentCallback(adCallback);
-                        promise.resolve(null);
-                    }
-
-                    @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        mRewardedAd = null;
-                        promise.reject(String.valueOf(loadAdError.getCode()), loadAdError.getMessage());
-                    }
-                });
-            }
+                        @Override
+                        public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                            promise.reject(String.valueOf(loadAdError.getCode()), loadAdError.getMessage());
+                        }
+                    });
         });
     }
 
     @ReactMethod
-    public void presentAd(final Promise promise) {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                mPresentAdPromise = promise;
-                Activity activity = getCurrentActivity();
-                if (mRewardedAd != null && activity != null) {
-                    mRewardedAd.show(activity, new OnUserEarnedRewardListener() {
-                        @Override
-                        public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
-                            WritableMap reward = Arguments.createMap();
+    public void presentAd(int requestId, final Promise promise) {
+        presentAdPromiseArray.put(requestId, promise);
+        Activity activity = getCurrentActivity();
+        if (activity == null) {
+            promise.reject("E_NULL_ACTIVITY", "Interstitial ad attempted to load but the current Activity was null.");
+            return;
+        }
+        activity.runOnUiThread(() -> {
+            RewardedAd rewardedAd = rewardedAdArray.get(requestId);
+            if (rewardedAd != null) {
+                rewardedAd.show(activity, rewardItem -> {
+                    WritableMap reward = Arguments.createMap();
 
-                            reward.putInt("amount", rewardItem.getAmount());
-                            reward.putString("type", rewardItem.getType());
+                    reward.putInt("amount", rewardItem.getAmount());
+                    reward.putString("type", rewardItem.getType());
 
-                            sendEvent(EVENT_REWARDED, reward);
-                        }
-                    });
-                } else {
-                    promise.reject("E_AD_NOT_READY", "Ad is not ready.");
-                }
+                    sendEvent(REWARDED, requestId, reward);
+                });
+            } else {
+                promise.reject("E_AD_NOT_READY", "Ad is not ready.");
             }
         });
     }

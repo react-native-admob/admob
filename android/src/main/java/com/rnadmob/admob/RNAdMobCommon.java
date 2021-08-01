@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 
 public class RNAdMobCommon {
     static AdSize getAdSizeForAdaptiveBanner(ReactViewGroup reactViewGroup) {
-
         try {
             Display display = Objects.requireNonNull(((ReactContext) reactViewGroup.getContext()).getCurrentActivity()).getWindowManager().getDefaultDisplay();
 
@@ -24,14 +23,6 @@ public class RNAdMobCommon {
             return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(reactViewGroup.getContext(), adWidth);
         } catch (Exception e) {
             return AdSize.BANNER;
-        }
-    }
-
-    static AdSize getAdSize(String preDefinedAdSize, ReactViewGroup reactViewGroup) {
-        if ("ADAPTIVE_BANNER".equals(preDefinedAdSize)) {
-            return RNAdMobCommon.getAdSizeForAdaptiveBanner(reactViewGroup);
-        } else {
-            return RNAdMobCommon.stringToAdSize(preDefinedAdSize);
         }
     }
 
@@ -66,4 +57,11 @@ public class RNAdMobCommon {
         }
     }
 
+    static AdSize getAdSize(String preDefinedAdSize, ReactViewGroup reactViewGroup) {
+        if ("ADAPTIVE_BANNER".equals(preDefinedAdSize)) {
+            return RNAdMobCommon.getAdSizeForAdaptiveBanner(reactViewGroup);
+        } else {
+            return RNAdMobCommon.stringToAdSize(preDefinedAdSize);
+        }
+    }
 }

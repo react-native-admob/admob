@@ -19,7 +19,6 @@ import com.google.android.gms.ads.initialization.AdapterStatus;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -64,7 +63,7 @@ public class RNAdMobAdManager extends ReactContextBaseJavaModule {
             configuration.setTagForUnderAgeOfConsent(tagForUnderAgeOfConsent ? 1 : 0);
         }
         if (config.hasKey("testDeviceIds")) {
-            ArrayList<String> devices = new ArrayList<String>();
+            ArrayList<String> devices = new ArrayList<>();
             ArrayList<Object> propDevices = Objects.requireNonNull(config.getArray("testDeviceIds"))
                     .toArrayList();
             for (Object device : propDevices) {

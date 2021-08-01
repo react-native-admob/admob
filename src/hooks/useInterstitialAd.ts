@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import InterstitialAd from '../ads/InterstitialAd';
-import { AdHookOptions } from '../types';
+import { AdHookOptions, AdHookResult } from '../types';
 
 const defaultOptions: AdHookOptions = {
   requestOnMounted: true,
@@ -9,21 +9,32 @@ const defaultOptions: AdHookOptions = {
   requestOnDismissed: false,
 };
 
-const useInterstitialAd = (unitId: string, options?: AdHookOptions) => {
-  const [prevUnitId, setPrevUnitId] = useState('');
+/**
+ * React Hook for AdMob Interstitial ad.
+ * @param unitId Interstitial Ad Unit Id
+ * @param options `AdHookOptions`
+ */
+export default function (
+  unitId: string,
+  options?: AdHookOptions
+): AdHookResult {
+  const interstitialAd = useMemo(
+    () => InterstitialAd.createAd(unitId),
+    [unitId]
+  );
   const [adLoaded, setAdLoaded] = useState(false);
   const [adPresented, setAdPresented] = useState(false);
   const [adDismissed, setAdDismissed] = useState(false);
-  const [adLoadError, setAdLoadError] = useState<Error | null>(null);
-  const [adPresentError, setAdPresentError] = useState<Error | null>(null);
+  const [adLoadError, setAdLoadError] = useState<Error>();
+  const [adPresentError, setAdPresentError] = useState<Error>();
   const _options = Object.assign(defaultOptions, options);
 
   const init = () => {
     setAdLoaded(false);
     setAdPresented(false);
     setAdDismissed(false);
-    setAdLoadError(null);
-    setAdPresentError(null);
+    setAdLoadError(undefined);
+    setAdPresentError(undefined);
   };
 
   const adShowing = useMemo(
@@ -32,39 +43,31 @@ const useInterstitialAd = (unitId: string, options?: AdHookOptions) => {
   );
 
   const requestAd = useCallback(() => {
-    if (adShowing) {
-      console.warn(
-        '[RNAdmob(InterstitialAd)] You can not request ad when the ad is showing.'
-      );
-      return;
-    }
     init();
-    setPrevUnitId(unitId);
-    InterstitialAd.requestAd()
+    interstitialAd
+      .requestAd()
       .catch((e: Error) => setAdLoadError(e))
       .then(() => setAdLoaded(true));
-  }, [unitId, adShowing]);
+  }, [interstitialAd]);
 
   const presentAd = useCallback(() => {
-    if (adLoaded) {
-      InterstitialAd.presentAd()
+    if (adPresented) {
+      console.warn('[RNAdmob(InterstitialAd)] Ad is already presented once.');
+    } else if (adLoaded) {
+      interstitialAd
+        .presentAd()
         .catch((e: Error) => setAdPresentError(e))
         .then(() => setAdPresented(true));
     } else {
-      console.log('[RNAdmob(InterstitialAd)] Ad is not loaded.');
+      console.warn('[RNAdmob(InterstitialAd)] Ad is not loaded.');
     }
-  }, [adLoaded]);
+  }, [interstitialAd, adPresented, adLoaded]);
 
   useEffect(() => {
-    if (unitId === prevUnitId) {
-      return;
-    }
-
-    InterstitialAd.setUnitId(unitId);
-    if (_options?.requestOnMounted) {
+    if (!interstitialAd.requested && _options?.requestOnMounted) {
       requestAd();
     }
-  }, [unitId, prevUnitId, _options, requestAd]);
+  }, [interstitialAd, _options, requestAd]);
 
   useEffect(() => {
     if (adLoaded && _options?.presentOnLoaded) {
@@ -79,20 +82,18 @@ const useInterstitialAd = (unitId: string, options?: AdHookOptions) => {
   }, [adDismissed, _options, requestAd]);
 
   useEffect(() => {
-    InterstitialAd.addEventListener('adDismissed', () => setAdDismissed(true));
-    return () => InterstitialAd.removeAllListeners();
-  }, []);
+    interstitialAd.addEventListener('adDismissed', () => setAdDismissed(true));
+    return () => interstitialAd.removeAllListeners();
+  }, [interstitialAd]);
 
   return {
     adLoaded,
     adPresented,
     adDismissed,
+    adShowing,
     adLoadError,
     adPresentError,
-    adShowing,
     requestAd,
     presentAd,
   };
-};
-
-export default useInterstitialAd;
+}

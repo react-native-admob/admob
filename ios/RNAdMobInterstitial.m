@@ -1,18 +1,13 @@
 #import "RNAdMobInterstitial.h"
+#import "RNAdMobEvent.h"
 #import "RNAdMobUtils.h"
 
-static NSString *const kEventAdPresented = @"interstitialAdPresented";
-static NSString *const kEventAdFailedToPresent = @"interstitialAdFailedToPresent";
-static NSString *const kEventAdDismissed = @"interstitialAdDismissed";
+static __strong NSMutableDictionary *requestIdMap;
+static __strong NSMutableDictionary *interstitialMap;
+static __strong NSMutableDictionary *presentAdResolveMap;
+static __strong NSMutableDictionary *presentAdRejectMap;
 
 @implementation RNAdMobInterstitial
-{
-    GADInterstitialAd  *_interstitial;
-    NSString *_unitId;
-    RCTPromiseResolveBlock _presentAdResolve;
-    RCTPromiseRejectBlock _presentAdReject;
-    BOOL hasListeners;
-}
 
 - (dispatch_queue_t)methodQueue
 {
@@ -24,37 +19,49 @@ static NSString *const kEventAdDismissed = @"interstitialAdDismissed";
     return NO;
 }
 
-RCT_EXPORT_MODULE();
-
-- (NSArray<NSString *> *)supportedEvents
-{
-    return @[
-        kEventAdPresented,
-        kEventAdFailedToPresent,
-        kEventAdDismissed
-    ];
+- (id)init {
+    self = [super init];
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        requestIdMap = [[NSMutableDictionary alloc] init];
+        interstitialMap = [[NSMutableDictionary alloc] init];
+        presentAdResolveMap = [[NSMutableDictionary alloc] init];
+        presentAdRejectMap = [[NSMutableDictionary alloc] init];
+    });
+    return self;
 }
+
+
+- (void)dealloc {
+    [self invalidate];
+}
+
+- (void)invalidate {
+    [requestIdMap removeAllObjects];
+    [interstitialMap removeAllObjects];
+    [presentAdResolveMap removeAllObjects];
+    [presentAdRejectMap removeAllObjects];
+}
+
+RCT_EXPORT_MODULE();
 
 #pragma mark exported methods
 
-RCT_EXPORT_METHOD(setUnitId:(NSString *)unitId)
+RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId unitId:(NSString *_Nonnull)unitId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    _unitId = unitId;
-}
-
-RCT_EXPORT_METHOD(requestAd:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
-{
-    if (![self canPresentAd]) {
+    if (![self canPresentAd:requestId]) {
         GADRequest *request = [GADRequest request];
-        [GADInterstitialAd loadWithAdUnitID:_unitId
+        [GADInterstitialAd loadWithAdUnitID:unitId
                                     request:request
                           completionHandler:^(GADInterstitialAd *ad, NSError *error) {
             if (error) {
                 reject(@"E_AD_LOAD_FAILED", [error localizedDescription], nil);
                 return;
             }
-            self->_interstitial = ad;
-            self->_interstitial.fullScreenContentDelegate = self;
+            ad.fullScreenContentDelegate = self;
+            
+            requestIdMap[ad.responseInfo.responseIdentifier] = requestId;
+            interstitialMap[requestId] = ad;
             
             resolve(nil);
         }];
@@ -63,65 +70,64 @@ RCT_EXPORT_METHOD(requestAd:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromise
     }
 }
 
-RCT_EXPORT_METHOD(presentAd:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    _presentAdResolve = resolve;
-    _presentAdReject = reject;
-    if ([self canPresentAd]) {
-        [_interstitial presentFromRootViewController:[UIApplication sharedApplication].delegate.window.rootViewController];
+    GADInterstitialAd *interstitial = interstitialMap[requestId];
+    presentAdResolveMap[requestId] = resolve;
+    presentAdRejectMap[requestId] = resolve;
+    if ([self canPresentAd:requestId]) {
+        [interstitial presentFromRootViewController:[UIApplication sharedApplication].delegate.window.rootViewController];
     }
     else {
         reject(@"E_AD_NOT_READY", @"Ad is not ready.", nil);
     }
 }
 
-- (BOOL) canPresentAd
+- (BOOL) canPresentAd:(NSNumber *)requestId
 {
-    if (_interstitial)
+    GADInterstitialAd *interstitial = interstitialMap[requestId];
+    if (interstitial)
     {
-        return [_interstitial canPresentFromRootViewController:[UIApplication sharedApplication].delegate.window.rootViewController error:nil];
+        return [interstitial canPresentFromRootViewController:[UIApplication sharedApplication].delegate.window.rootViewController error:nil];
     }
     else {
         return NO;
     }
 }
 
-- (void)startObserving
+- (void)sendEvent:(NSString *)eventName requestId:(NSNumber *)requestId data:(NSDictionary *)data
 {
-    hasListeners = YES;
-}
-
-- (void)stopObserving
-{
-    hasListeners = NO;
+    [RNAdMobEvent sendEvent:eventName type:@"Interstitial" requestId:requestId data:data];
 }
 
 #pragma mark GADFullScreenContentDelegate
 
-- (void)adDidPresentFullScreenContent:(__unused GADInterstitialAd *)ad
+- (void)adDidPresentFullScreenContent:(GADInterstitialAd *)ad
 {
-    if (hasListeners) {
-        [self sendEventWithName:kEventAdPresented body:nil];
-    }
-    _presentAdResolve(nil);
+    NSNumber *requestId = requestIdMap[ad.responseInfo.responseIdentifier];
+    
+    [self sendEvent:kEventAdPresented requestId:requestId data:nil];
+    
+    RCTPromiseResolveBlock resolve = presentAdResolveMap[requestId];
+    resolve(nil);
 }
 
-- (void)ad:(__unused GADInterstitialAd *)ad didFailToPresentFullScreenContentWithError:(NSError *)error
+- (void)ad:(GADInterstitialAd *)ad didFailToPresentFullScreenContentWithError:(NSError *)error
 {
-    if (hasListeners){
-        NSDictionary *jsError = RCTJSErrorFromCodeMessageAndNSError(@"E_AD_PRESENT_FAILED", error.localizedDescription, error);
-        [self sendEventWithName:kEventAdFailedToPresent body:jsError];
-    }
-    _presentAdReject(@"E_AD_PRESENT_FAILED", [error localizedDescription], nil);
+    NSNumber *requestId = requestIdMap[ad.responseInfo.responseIdentifier];
+    
+    NSDictionary *jsError = RCTJSErrorFromCodeMessageAndNSError(@"E_AD_PRESENT_FAILED", error.localizedDescription, error);
+    [self sendEvent:kEventAdFailedToPresent requestId:requestId data:jsError];
+    
+    RCTPromiseRejectBlock reject = presentAdRejectMap[requestId];
+    reject(@"E_AD_PRESENT_FAILED", [error localizedDescription], nil);
 }
 
-- (void)adDidDismissFullScreenContent:(__unused GADInterstitialAd *)ad
+- (void)adDidDismissFullScreenContent:(GADInterstitialAd *)ad
 {
-    if (hasListeners) {
-        [self sendEventWithName:kEventAdDismissed body:nil];
-    }
+    NSNumber *requestId = requestIdMap[ad.responseInfo.responseIdentifier];
+    
+    [self sendEvent:kEventAdDismissed requestId:requestId data:nil];
 }
 
 @end
-
-
