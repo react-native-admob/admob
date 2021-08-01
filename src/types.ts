@@ -4,7 +4,7 @@ import BannerAdSize from './BannerAdSize';
 
 export type MAX_AD_CONTENT_RATING = 'G' | 'MA' | 'PG' | 'T' | 'UNSPECIFIED';
 
-export type AdManagerConfiguration = {
+export type RequestConfiguration = {
   /**
    * Maximum Ad Content Rating. Defaults to `UNSPECIFIED`.
    * The following values are currently supported:
@@ -29,15 +29,10 @@ export type AdManagerConfiguration = {
   testDeviceIds: Array<string>;
 };
 
-export enum AdapterState {
-  NOT_READY,
-  READY,
-}
-
 export type InitializationStatus = {
   name: string;
   description: string;
-  state: AdapterState;
+  isReady: boolean;
 };
 
 export interface BannerAdProps extends ViewProps {

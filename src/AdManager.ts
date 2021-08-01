@@ -1,11 +1,11 @@
 import { NativeModules } from 'react-native';
 
-import { AdManagerConfiguration, InitializationStatus } from './types';
+import { InitializationStatus, RequestConfiguration } from './types';
 
 const RNAdMobAdManager = NativeModules.RNAdMobAdManager;
 
 async function setRequestConfiguration(
-  config?: AdManagerConfiguration
+  config?: RequestConfiguration
 ): Promise<InitializationStatus[]> {
   return RNAdMobAdManager.setRequestConfiguration(config || {});
 }

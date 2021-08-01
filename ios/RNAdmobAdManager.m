@@ -61,7 +61,7 @@ RCT_EXPORT_METHOD(setRequestConfiguration:(NSDictionary *)config resolver:(RCTPr
             GADAdapterStatus *adapterStatus = adapterStatuses[adapter];
             NSDictionary *dict = @{
                 @"name":adapter,
-                @"state":@(adapterStatus.state),
+                @"state":@([@(adapterStatus.state) boolValue]),
                 @"description":adapterStatus.description
             };
             [adapters addObject:dict];

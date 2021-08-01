@@ -78,10 +78,12 @@ public class RNAdMobAdManager extends ReactContextBaseJavaModule {
         MobileAds.initialize(context, (InitializationStatus status) -> {
             WritableArray array = Arguments.createArray();
             for (Map.Entry<String, AdapterStatus> entry: status.getAdapterStatusMap().entrySet()) {
+                AdapterStatus adapterStatus = entry.getValue();
+
                 WritableMap info = Arguments.createMap();
                 info.putString("name", entry.getKey());
-                info.putInt("state", entry.getValue().getInitializationState().ordinal());
-                info.putString("description", entry.getValue().getDescription());
+                info.putBoolean("state", adapterStatus.getInitializationState().equals(AdapterStatus.State.READY));
+                info.putString("description", adapterStatus.getDescription());
                 array.pushMap(info);
             }
             promise.resolve(array);
