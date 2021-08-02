@@ -34,37 +34,48 @@ const hookOptions = {
 };
 
 // Interstitial Ad using Hook(Recommended)
-const interstitalAd = useInterstitialAd(UNIT_ID_INTERSTITIAL, hookOptions);
+const { adLoadError, adLoaded, presentAd } = useInterstitialAd(
+  UNIT_ID_INTERSTITIAL,
+  hookOptions
+);
 
 useEffect(() => {
-  const { adLoadError, adPresentError } = interstitalAd;
   if (adLoadError) {
     console.error(adLoadError);
-  } else if (adPresentError) {
-    console.error(adPresentError);
   }
-}, [interstitalAd]);
-
-// Rewarded Ad using Hook(Recommended)
-const rewardedAd = useRewardedAd(UNIT_ID_REWARDED, hookOptions);
+}, [adLoadError]);
 
 useEffect(() => {
-  if (rewardedAd.reward) {
-    console.log('Reward earned: ');
-    console.log(rewardedAd.reward);
+  if (adLoaded) {
+    presentAd();
   }
-}, [rewardedAd.reward]);
+}, [adLoaded]);
+
+// Rewarded Ad using Hook(Recommended)
+const { reward } = useRewardedAd(UNIT_ID_REWARDED, hookOptions);
+
+useEffect(() => {
+  if (reward) {
+    console.log('Reward earned: ');
+    console.log(reward);
+  }
+}, [reward]);
 
 // Rewarded Ad using class instance
 const rewardedAd = useMemo(() => Rewarded.createAd(unitId), [unitId]);
+const [adLoaded, setAdLoaded] = useState(false);
+const [reward, setReward] = useState();
 
 useEffect(() => {
-  rewardedAd.addEventListener('rewarded', (r: Reward) => setReward(r));
+  rewardedAd.addEventListener('rewarded', (r) => setReward(r));
   if (!adLoaded) {
     rewardedAd
       .requestAd()
       .catch((e: Error) => setAdLoadError(e))
-      .then(() => rewardedAd.presentAd());
+      .then(() => {
+        setAdLoaded(true);
+        rewardedAd.presentAd();
+      });
   }
   return () => rewardedAd.removeAllListeners();
 }, [rewardedAd]);

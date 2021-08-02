@@ -2,7 +2,7 @@ import { ViewProps } from 'react-native';
 
 import BannerAdSize from './BannerAdSize';
 
-export type MAX_AD_CONTENT_RATING = 'G' | 'MA' | 'PG' | 'T' | 'UNSPECIFIED';
+export type MaxAdContentRating = 'G' | 'MA' | 'PG' | 'T';
 
 export type RequestConfiguration = {
   /**
@@ -14,7 +14,7 @@ export type RequestConfiguration = {
    * - "T" - "Teen." Content suitable for teen and older audiences, including topics such as general health, social networks, scary imagery, and fight sports.
    * - "UNSPECIFIED" - Set default value to ""
    */
-  maxAdContentRating: MAX_AD_CONTENT_RATING;
+  maxAdContentRating: MaxAdContentRating;
   /**
    * Whether your ad requests to be treated as child-directed. Defaults to `false`.
    */
@@ -47,7 +47,7 @@ export interface BannerAdProps extends ViewProps {
   size: typeof BannerAdSize | string;
 
   /**
-   * When an ad's size has changed.
+   * A callback that gets called when an ad's size has changed.
    */
   onSizeChange?: (size: { height: number; width: number }) => void;
 
@@ -113,40 +113,40 @@ export type AdHookOptions = {
 
 export type AdHookResult = {
   /**
-   * Whether your ad is loaded and ready to present
+   * Whether your ad is loaded and ready to present.
    */
   adLoaded: boolean;
   /**
-   * Whether your ad is presented to user
+   * Whether your ad is presented to user.
    */
   adPresented: boolean;
   /**
-   * Whether your ad is dismissed by user
+   * Whether your ad is dismissed by user.
    */
   adDismissed: boolean;
   /**
    * Whether your ad is showing.
-   * Same as `adPresented && !adDismissed`
+   * The value is equal with `adPresented && !adDismissed`.
    */
   adShowing: boolean;
   /**
-   * Error during ad load
+   * Error during ad load.
    */
   adLoadError?: Error;
   /**
-   * Error during ad present
+   * Error during ad present.
    */
   adPresentError?: Error;
   /**
-   * Reward earned by Rewarded Ad
+   * Reward earned by Rewarded Ad.
    */
   reward?: Reward;
   /**
-   * Request new ad
+   * Request new ad.
    */
   requestAd: () => void;
   /**
-   * Present loaded ad
+   * Present loaded ad.
    */
   presentAd: () => void;
 };

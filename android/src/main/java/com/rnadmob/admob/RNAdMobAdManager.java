@@ -44,13 +44,9 @@ public class RNAdMobAdManager extends ReactContextBaseJavaModule {
         RequestConfiguration.Builder configuration = new RequestConfiguration.Builder();
 
         if (config.hasKey("maxAdContentRating")) {
-            if (config.getString("maxAdContentRating") != null) {
-                String maxAdContentRating = config.getString("maxAdContentRating");
-                if (maxAdContentRating != null) {
-                    if (maxAdContentRating.equals("UNSPECIFIED"))
-                        maxAdContentRating = "";
-                    configuration.setMaxAdContentRating(maxAdContentRating);
-                }
+            String maxAdContentRating = config.getString("maxAdContentRating");
+            if (maxAdContentRating != null) {
+                configuration.setMaxAdContentRating(maxAdContentRating);
             }
         }
 

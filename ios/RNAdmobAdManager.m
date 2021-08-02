@@ -25,7 +25,7 @@ RCT_EXPORT_METHOD(setRequestConfiguration:(NSDictionary *)config resolver:(RCTPr
             [[[GADMobileAds sharedInstance] requestConfiguration] setMaxAdContentRating:GADMaxAdContentRatingMatureAudience];
         } else  if ([rating isEqualToString:@"T"]) {
             [[[GADMobileAds sharedInstance] requestConfiguration] setMaxAdContentRating:GADMaxAdContentRatingTeen];
-        } else if ([rating isEqualToString:@""] || [rating isEqualToString:@"UNSPECIFIED"]) {
+        } else if ([rating isEqualToString:@""]) {
             [[[GADMobileAds sharedInstance] requestConfiguration] setMaxAdContentRating:NULL];
         }
     };
