@@ -26,7 +26,7 @@ jobs:
             npm i
           fi
           npm run build
-  gh-release:
+  release-docs:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
