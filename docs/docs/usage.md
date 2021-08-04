@@ -31,7 +31,7 @@ For detailed usage of `AdManager.initialize()` function, [head over to API secti
 
 ## Displaying Banner Ad
 
-See [BannerAd](banner).
+See [BannerAd](components/banner).
 
 ## Displaying Interstitial Ad
 
