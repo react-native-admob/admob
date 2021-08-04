@@ -1,6 +1,8 @@
 # React Native Admob
 
-Admob for React Native with powerful hooks and components
+[![npm](https://img.shields.io/npm/v/@react-native-admob/admob.svg)](https://www.npmjs.com/package/@react-native-admob/admob)
+
+> Admob for React Native with powerful hooks and components
 
 ## Installation
 
@@ -8,36 +10,53 @@ See [Installation Guide](https://react-native-admob.github.io/admob/docs/install
 
 ## Documentation
 
-[Docs](https://react-native-admob.github.io/admob/docs/usage)
+Head over [Documentation Page](https://react-native-admob.github.io/admob/docs/usage)
 
 ## Usage
 
 ```js
-import {
-  AdManager,
-  AdMobBanner,
-  useInterstitialAd,
-  useRewardedAd,
-} from '@react-native-admob/admob';
+import { AdManager } from '@react-native-admob/admob';
 
-// Display a banner
+AdManager.initialize();
+```
+
+### Displaying Banner Ad
+
+```js
+import { BannerAd, BannerAdSize } from '@react-native-admob/admob';
+
 <BannerAd
   size={BannerAdSize.BANNER}
   unitId={UNIT_ID_BANNER}
   onAdFailedToLoad={(error) => console.error(error)}
   ref={bannerRef}
 />;
+```
 
-// Options for Hook
-const hookOptions = {
-  requestOnDismissed: true,
-};
+### Displaying InterstitialAd
+
+```js
+import { useInterstitialAd } from '@react-native-admob/admob';
 
 // Interstitial Ad using Hook(Recommended)
-const { adLoadError, adLoaded, presentAd } = useInterstitialAd(
-  UNIT_ID_INTERSTITIAL,
-  hookOptions
-);
+const { adLoadError, adLoaded, presentAd } = useInterstitialAd(UNIT_ID_INTERSTITIAL);
+
+useEffect(() => {
+  if (adLoadError) {
+    console.error(adLoadError);
+  }
+}, [adLoadError]);
+
+useEffect(() => {
+  if (adLoaded) {
+    presentAd();
+  }
+}, [adLoaded]);
+```
+
+### Displaying RewardedAd
+```js
+const { adLoadError, adLoaded, presentAd, reward } = useRewardedAd(UNIT_ID_REWARDED);
 
 useEffect(() => {
   if (adLoadError) {
@@ -51,35 +70,15 @@ useEffect(() => {
   }
 }, [adLoaded]);
 
-// Rewarded Ad using Hook(Recommended)
-const { reward } = useRewardedAd(UNIT_ID_REWARDED, hookOptions);
-
 useEffect(() => {
   if (reward) {
     console.log('Reward earned: ');
     console.log(reward);
   }
 }, [reward]);
-
-// Rewarded Ad using class instance
-const rewardedAd = useMemo(() => Rewarded.createAd(unitId), [unitId]);
-const [adLoaded, setAdLoaded] = useState(false);
-const [reward, setReward] = useState();
-
-useEffect(() => {
-  rewardedAd.addEventListener('rewarded', (r) => setReward(r));
-  if (!adLoaded) {
-    rewardedAd
-      .requestAd()
-      .catch((e: Error) => setAdLoadError(e))
-      .then(() => {
-        setAdLoaded(true);
-        rewardedAd.presentAd();
-      });
-  }
-  return () => rewardedAd.removeAllListeners();
-}, [rewardedAd]);
 ```
+
+For detailed usage, head over [Documentation](https://react-native-admob.github.io/admob/docs/usage).
 
 ## License
 
