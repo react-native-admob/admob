@@ -14,6 +14,8 @@ Head over [Documentation Page](https://react-native-admob.github.io/admob/docs/u
 
 ## Usage
 
+### Initializing Mobile Ads SDK
+
 ```js
 import { AdManager } from '@react-native-admob/admob';
 
@@ -38,7 +40,6 @@ import { BannerAd, BannerAdSize } from '@react-native-admob/admob';
 ```js
 import { useInterstitialAd } from '@react-native-admob/admob';
 
-// Interstitial Ad using Hook(Recommended)
 const { adLoadError, adLoaded, presentAd } = useInterstitialAd(UNIT_ID_INTERSTITIAL);
 
 useEffect(() => {
@@ -56,6 +57,8 @@ useEffect(() => {
 
 ### Displaying RewardedAd
 ```js
+import { useRewardedAd } from '@react-native-admob/admob';
+
 const { adLoadError, adLoaded, presentAd, reward } = useRewardedAd(UNIT_ID_REWARDED);
 
 useEffect(() => {
