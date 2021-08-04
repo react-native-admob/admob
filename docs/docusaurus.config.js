@@ -3,11 +3,12 @@ module.exports = {
   tagline: 'Admob for React Native with powerful hooks',
   url: 'https://react-native-admob.github.io/',
   baseUrl: '/',
+  trailingSlash: false,
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'React Native Admob',
-  projectName: '@react-native-admob/admob',
+  organizationName: 'react-native-admob',
+  projectName: 'admob',
   themeConfig: {
     navbar: {
       title: 'React Native Admob',
