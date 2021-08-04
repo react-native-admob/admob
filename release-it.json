@@ -1,10 +1,7 @@
 {
   "hooks": {},
   "npm": {
-    "publish": true,
-    "publishConfig": {
-      "access": "public"
-    }
+    "publish": true
   },
   "github": {
     "release": true,
