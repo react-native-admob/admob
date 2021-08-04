@@ -8,7 +8,7 @@ See [Installation Guide](https://react-native-admob.github.io/admob/docs/install
 
 ## Documentation
 
-[Docs](https://react-native-admob.github.io/admob/docs)
+[Docs](https://react-native-admob.github.io/admob/docs/introduction)
 
 ## Usage
 
