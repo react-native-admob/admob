@@ -3,7 +3,7 @@ module.exports = {
     {
       type: 'category',
       label: 'Getting Started',
-      items: ['introduction', 'examples', 'installation'],
+      items: ['installation', 'usage', 'examples'],
       collapsed: false,
     },
     {
@@ -17,7 +17,11 @@ module.exports = {
           Ads: ['api/InterstitialAd', 'api/RewardedAd'],
         },
         {
-          AdManager: ['api/setRequestConfiguration', 'api/isTestDevice'],
+          AdManager: [
+            'api/initialize',
+            'api/setRequestConfiguration',
+            'api/isTestDevice',
+          ],
         },
       ],
       collapsed: false,

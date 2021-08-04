@@ -4,7 +4,7 @@ title: setRequestConfiguration
 sidebar_label: setRequestConfiguration
 ---
 
-Use this function to configure Ad requests and initialize Mobile Ads SDK. You need to call this function before you load any Ads. Generally, you call this function when the root component of your app is mounted.
+Use this function to configure Ad requests globally.
 
 ## Usage example
 
@@ -19,16 +19,8 @@ const config = {
 };
 
 export default function App() {
-  const [loading, setLoading] = useState(true);
-
   useEffect(() => {
-    const init = async () => {
-      await AdManager.setRequestConfiguration(config);
-
-      setLoading(false);
-    };
-
-    init();
+    AdManager.setRequestConfiguration(config);
   }, []);
 
   return (/* Your App code */)
@@ -52,22 +44,6 @@ Properties:
 | maxAdContentRating           | [MaxAdContentRating](#maxadcontentrating) |            |
 | tagForChildDirectedTreatment | boolean                                   |            |
 | tagForUnderAgeConsent        | boolean                                   |            |
-
-## Returns
-
-The function returns `Promise<InitializationStatus[]>` which is Promise of each mediation adapter's initialization status.
-
-| Type                                                     |
-| :------------------------------------------------------- |
-| Promise<[InitializationStatus](#requestconfiguration)[]> |
-
-Properties of `InitializationStatus`:
-
-| Name        | Type    | Description                   |
-| :---------- | :------ | :---------------------------- |
-| name        | string  | Name of the adapter.          |
-| description | string  | Description of the status.    |
-| isReady     | boolean | Whether the adapter is ready. |
 
 ## Type Definitions
 

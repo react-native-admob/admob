@@ -14,7 +14,7 @@ module.exports = {
       title: 'React Native Admob',
       items: [
         {
-          to: 'docs/introduction',
+          to: 'docs/installation',
           activeBasePath: 'docs',
           label: 'Docs',
           position: 'left',
