@@ -4,11 +4,11 @@ Admob for React Native with powerful hooks and components
 
 ## Installation
 
-See [Installation Guide](https://react-native-admob.github.io/docs)
+See [Installation Guide](https://react-native-admob.github.io/admob/docs/installation)
 
 ## Documentation
 
-[Docs](https://react-native-admob.github.io/docs)
+[Docs](https://react-native-admob.github.io/admob/docs)
 
 ## Usage
 
