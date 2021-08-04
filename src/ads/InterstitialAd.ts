@@ -12,8 +12,8 @@ type HandlerType = () => void | ((error: Error) => void);
 let _interstitialRequest = 0;
 
 export default class InterstitialAd extends MobileAd<
-  HandlerType,
-  InterstitialAdEvent
+  InterstitialAdEvent,
+  HandlerType
 > {
   static createAd(unitId: string) {
     const requestId = _interstitialRequest++;

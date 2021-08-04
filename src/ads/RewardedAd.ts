@@ -14,7 +14,7 @@ type HandlerType =
 
 let _rewardedRequest = 0;
 
-export default class RewardedAd extends MobileAd<HandlerType, RewardedAdEvent> {
+export default class RewardedAd extends MobileAd<RewardedAdEvent, HandlerType> {
   static createAd(unitId: string) {
     const requestId = _rewardedRequest++;
     return new RewardedAd('Rewarded', requestId, unitId);

@@ -83,7 +83,7 @@ Properties:
 | :------------- | :---------- | :---------------------------------------------------------------------------------------------- |
 | adLoaded       | boolean     | Whether your ad is loaded and ready to present.                                                 |
 | adPresented    | boolean     | Whether your ad is presented to user.                                                           |
-| adDismissed    | boolean     | Whether your ad is dismissed by user.                                                           |
+| adDismissed    | boolean     | Whether your ad is dismissed.                                                                   |
 | adShowing      | boolean     | Whether your ad is showing. The value is equal with `adPresented && !adDismissed`.              |
 | adLoadError    | boolean     | Error during ad load.                                                                           |
 | adPresentError | boolean     | Error during ad present.                                                                        |

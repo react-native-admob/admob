@@ -18,8 +18,8 @@ type Event = {
 type EventHandler = (event: Event) => any;
 
 export default class MobileAd<
-  H extends (event?: any) => any,
-  E extends string
+  E extends string,
+  H extends (event?: any) => any
 > {
   type: AdType;
   requestId: number;

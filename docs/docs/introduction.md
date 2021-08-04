@@ -4,6 +4,8 @@ title: Introduction
 sidebar_label: Introduction
 ---
 
+Admob for React Native with powerful hooks and components
+
 TODO
 
 ## License

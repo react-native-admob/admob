@@ -1,7 +1,7 @@
 {
   "name": "@react-native-admob/admob",
   "version": "0.1.0",
-  "description": "AdMob for React Native",
+  "description": "Admob for React Native with powerful hooks and components",
   "main": "src/index.js",
   "files": [
     "src",

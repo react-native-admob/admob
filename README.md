@@ -1,6 +1,6 @@
 # React Native Admob
 
-Admob for React Native with powerful hooks
+Admob for React Native with powerful hooks and components
 
 ## Installation
 

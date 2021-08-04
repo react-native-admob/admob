@@ -14,7 +14,7 @@ module.exports = {
           Hooks: ['api/useInterstitialAd', 'api/useRewardedAd'],
         },
         {
-          Ads: [],
+          Ads: ['api/InterstitialAd', 'api/RewardedAd'],
         },
         {
           AdManager: ['api/setRequestConfiguration', 'api/isTestDevice'],
