@@ -35,12 +35,30 @@ public class RNAdMobAdManager extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setRequestConfiguration(ReadableMap config, Promise promise) {
+    public void initialize(Promise promise) {
         Context context = getReactApplicationContext().getCurrentActivity();
         if (context == null) {
-            Log.e("E_NULL_ACTIVITY", "setRequestConfiguration() is called outside Activity");
+            Log.e("E_NULL_ACTIVITY", "initialize() is called outside Activity");
             context = getReactApplicationContext();
         }
+
+        MobileAds.initialize(context, (InitializationStatus status) -> {
+            WritableArray array = Arguments.createArray();
+            for (Map.Entry<String, AdapterStatus> entry: status.getAdapterStatusMap().entrySet()) {
+                AdapterStatus adapterStatus = entry.getValue();
+
+                WritableMap info = Arguments.createMap();
+                info.putString("name", entry.getKey());
+                info.putBoolean("state", adapterStatus.getInitializationState().equals(AdapterStatus.State.READY));
+                info.putString("description", adapterStatus.getDescription());
+                array.pushMap(info);
+            }
+            promise.resolve(array);
+        });
+    }
+
+    @ReactMethod
+    public void setRequestConfiguration(ReadableMap config) {
         RequestConfiguration.Builder configuration = new RequestConfiguration.Builder();
 
         if (config.hasKey("maxAdContentRating")) {
@@ -71,19 +89,6 @@ public class RNAdMobAdManager extends ReactContextBaseJavaModule {
         }
 
         MobileAds.setRequestConfiguration(configuration.build());
-        MobileAds.initialize(context, (InitializationStatus status) -> {
-            WritableArray array = Arguments.createArray();
-            for (Map.Entry<String, AdapterStatus> entry: status.getAdapterStatusMap().entrySet()) {
-                AdapterStatus adapterStatus = entry.getValue();
-
-                WritableMap info = Arguments.createMap();
-                info.putString("name", entry.getKey());
-                info.putBoolean("state", adapterStatus.getInitializationState().equals(AdapterStatus.State.READY));
-                info.putString("description", adapterStatus.getDescription());
-                array.pushMap(info);
-            }
-            promise.resolve(array);
-        });
     }
 
     @ReactMethod

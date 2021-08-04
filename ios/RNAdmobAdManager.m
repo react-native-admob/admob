@@ -12,8 +12,34 @@
 
 RCT_EXPORT_MODULE();
 
-RCT_EXPORT_METHOD(setRequestConfiguration:(NSDictionary *)config resolver:(RCTPromiseResolveBlock)resolve
-    rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(initialize:(RCTPromiseResolveBlock) resolve rejecter:(RCTPromiseRejectBlock) reject)
+{
+#if __has_include("<FBAudienceNetwork/FBAdSettings.h>")
+    if (@available(iOS 14, *)) {
+        if ([ATTrackingManager trackingAuthorizationStatus] == ATTrackingManagerAuthorizationStatusAuthorized) {
+            [FBAdSettings setAdvertiserTrackingEnabled:trackingAuthorizationStatus];
+        }
+    }
+#endif
+
+    GADMobileAds *ads = [GADMobileAds sharedInstance];
+    [ads startWithCompletionHandler:^(GADInitializationStatus *status) {
+        NSDictionary *adapterStatuses = [status adapterStatusesByClassName];
+        NSMutableArray *adapters = [NSMutableArray array];
+        for (NSString *adapter in adapterStatuses) {
+            GADAdapterStatus *adapterStatus = adapterStatuses[adapter];
+            NSDictionary *dict = @{
+                @"name":adapter,
+                @"state":@([@(adapterStatus.state) boolValue]),
+                @"description":adapterStatus.description
+            };
+            [adapters addObject:dict];
+        }
+        resolve(adapters);
+    }];
+}
+
+RCT_EXPORT_METHOD(setRequestConfiguration:(NSDictionary *)config)
 {
     if ([[config allKeys] containsObject:@"maxAdContentRating"]) {
         NSString *rating = [config valueForKey:@"maxAdContentRating"];
@@ -44,30 +70,6 @@ RCT_EXPORT_METHOD(setRequestConfiguration:(NSDictionary *)config resolver:(RCTPr
         NSArray *testDevices = RNAdMobProcessTestDevices([config valueForKey:@"testDeviceIds"],kGADSimulatorID);
         [[[GADMobileAds sharedInstance] requestConfiguration] setTestDeviceIdentifiers:testDevices];
     };
-    
-#if __has_include("<FBAudienceNetwork/FBAdSettings.h>")
-    if (@available(iOS 14, *)) {
-        if ([ATTrackingManager trackingAuthorizationStatus] == ATTrackingManagerAuthorizationStatusAuthorized) {
-            [FBAdSettings setAdvertiserTrackingEnabled:trackingAuthorizationStatus];
-        }
-    }
-#endif
-
-    GADMobileAds *ads = [GADMobileAds sharedInstance];
-    [ads startWithCompletionHandler:^(GADInitializationStatus *status) {
-        NSDictionary *adapterStatuses = [status adapterStatusesByClassName];
-        NSMutableArray *adapters = [NSMutableArray array];
-        for (NSString *adapter in adapterStatuses) {
-            GADAdapterStatus *adapterStatus = adapterStatuses[adapter];
-            NSDictionary *dict = @{
-                @"name":adapter,
-                @"state":@([@(adapterStatus.state) boolValue]),
-                @"description":adapterStatus.description
-            };
-            [adapters addObject:dict];
-        }
-        resolve(adapters);
-    }];
 }
 
 RCT_EXPORT_METHOD(isTestDevice:(RCTPromiseResolveBlock)resolve

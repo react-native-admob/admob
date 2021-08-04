@@ -52,7 +52,7 @@ export default function Example() {
 
   useEffect(() => {
     const init = async () => {
-      await AdManager.setRequestConfiguration();
+      await AdManager.initialize();
 
       setLoading(false);
     };

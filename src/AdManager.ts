@@ -4,10 +4,15 @@ import { InitializationStatus, RequestConfiguration } from './types';
 
 const RNAdMobAdManager = NativeModules.RNAdMobAdManager;
 
-async function setRequestConfiguration(
-  config?: RequestConfiguration
-): Promise<InitializationStatus[]> {
-  return RNAdMobAdManager.setRequestConfiguration(config || {});
+/**
+ * Initializes Mobile Ads SDK.
+ */
+async function initialize(): Promise<InitializationStatus[]> {
+  return RNAdMobAdManager.initialize();
+}
+
+function setRequestConfiguration(config?: RequestConfiguration) {
+  RNAdMobAdManager.setRequestConfiguration(config || {});
 }
 
 async function isTestDevice(): Promise<boolean> {
@@ -15,6 +20,7 @@ async function isTestDevice(): Promise<boolean> {
 }
 
 export default {
+  initialize,
   setRequestConfiguration,
   isTestDevice,
 };
