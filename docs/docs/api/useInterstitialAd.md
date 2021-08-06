@@ -84,8 +84,8 @@ Properties:
 | adPresented    | boolean  | Whether your ad is presented to user.                                                           |
 | adDismissed    | boolean  | Whether your ad is dismissed.                                                                   |
 | adShowing      | boolean  | Whether your ad is showing. The value is equal with `adPresented && !adDismissed`.              |
-| adLoadError    | boolean  | Error during ad load.                                                                           |
-| adPresentError | boolean  | Error during ad present.                                                                        |
+| adLoadError    | Error    | Error during ad load.                                                                           |
+| adPresentError | Error    | Error during ad present.                                                                        |
 | requestAd      | Function | Request new ad. Can not call this function if the ad is loaded but not presented and dismissed. |
 | presentAd      | Function | Present loaded ad. Ad must be loaded prior to this call.                                        |
 
