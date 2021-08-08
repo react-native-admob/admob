@@ -65,4 +65,16 @@
     }
 }
 
++ (NSArray *)stringsToValues:(NSArray *)strings {
+    __block NSMutableArray *adSizes = [[NSMutableArray alloc] initWithCapacity:strings.count];
+    [strings enumerateObjectsUsingBlock:^(id jsonValue, NSUInteger idx, __unused BOOL *stop) {
+        GADAdSize adSize = [RNAdMobCommon stringToAdSize:jsonValue];
+        if (GADAdSizeEqualToSize(adSize, kGADAdSizeInvalid)) {
+            RCTLogWarn(@"Invalid adSize %@", jsonValue);
+        } else {
+            [adSizes addObject:NSValueFromGADAdSize(adSize)];
+        }
+    }];
+    return adSizes;
+}
 @end

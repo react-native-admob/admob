@@ -4,7 +4,7 @@ title: BannerAd
 sidebar_label: BannerAd
 ---
 
-Renders a BannerAd.
+Renders a BannerAd. Supports both AdMob and AdManager.
 
 ```jsx
 import { BannerAd } from '@react-native-admob/admob';
@@ -42,6 +42,14 @@ The size of the banner. Can be a predefined size via `BannerAdSize` or custom di
 | Type                                    |
 | :-------------------------------------- |
 | [BannerAdSize](#banneradsize) \| string |
+
+### `sizes`
+
+The available sizes of the banner. Can be a predefined sizes via `BannerAdSize` or custom dimensions, e.g. `300x200`. Available only in Ad Manager ad.
+
+| Type                                        |
+| :------------------------------------------ |
+| [BannerAdSize](#banneradsize)[] \| string[] |
 
 ### `onSizeChange`
 
@@ -82,6 +90,14 @@ A callback that gets called when the user is about to return to the app after ta
 | Type       |
 | :--------- |
 | () => void |
+
+### `onAppEvent`
+
+A callback that gets called when the Ad Manager specific app events occured. Availbale only in Ad Manager Ad.
+
+| Type                                 |
+| :----------------------------------- |
+| (name: string, info: string) => void |
 
 ## Methods
 

@@ -4,31 +4,35 @@ import static com.rnadmob.admob.RNAdMobBannerViewManager.EVENT_AD_CLOSED;
 import static com.rnadmob.admob.RNAdMobBannerViewManager.EVENT_AD_FAILED_TO_LOAD;
 import static com.rnadmob.admob.RNAdMobBannerViewManager.EVENT_AD_LOADED;
 import static com.rnadmob.admob.RNAdMobBannerViewManager.EVENT_AD_OPENED;
+import static com.rnadmob.admob.RNAdMobBannerViewManager.EVENT_APP_EVENT;
 import static com.rnadmob.admob.RNAdMobBannerViewManager.EVENT_SIZE_CHANGE;
 
 import android.content.Context;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
+import com.facebook.react.util.RCTLog;
 import com.facebook.react.views.view.ReactViewGroup;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.admanager.AdManagerAdRequest;
+import com.google.android.gms.ads.admanager.AdManagerAdView;
+import com.google.android.gms.ads.admanager.AppEventListener;
 
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
-public class RNAdmobBannerView extends ReactViewGroup {
+public class RNAdmobBannerView extends ReactViewGroup implements AppEventListener {
 
-    private AdView adView;
+    private AdManagerAdView adView;
 
     private AdSize size;
+    private AdSize[] sizes;
     private String unitId;
 
     public RNAdmobBannerView(Context context) {
@@ -42,42 +46,27 @@ public class RNAdmobBannerView extends ReactViewGroup {
             removeView(adView);
             adView.destroy();
         }
-        adView = new AdView(getContext());
+        adView = new AdManagerAdView(getContext());
         adView.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
-                int top;
-                int left;
-                int width;
-                int height;
-
-                if (size == AdSize.FLUID) {
-                    top = 0;
-                    left = 0;
-                    width = getWidth();
-                    height = getHeight();
-                } else {
-                    top = adView.getTop();
-                    left = adView.getLeft();
-                    width = Objects.requireNonNull(adView.getAdSize())
-                            .getWidthInPixels(getContext());
-                    height = adView.getAdSize().getHeightInPixels(getContext());
-                }
+                AdSize adSize = Objects.requireNonNull(adView.getAdSize());
+                int width = adSize.getWidthInPixels(getContext());
+                int height = adSize.getHeightInPixels(getContext());
+                int left = adView.getLeft();
+                int top = adView.getTop();
 
                 adView.measure(width, height);
                 adView.layout(left, top, left + width, top + height);
 
                 WritableMap payload = Arguments.createMap();
 
-                if (size != AdSize.FLUID) {
-                    payload.putInt("width", (int) PixelUtil.toDIPFromPixel(width) + 1);
-                    payload.putInt("height", (int) PixelUtil.toDIPFromPixel(height) + 1);
-                } else {
-                    payload.putInt("width", (int) PixelUtil.toDIPFromPixel(width));
-                    payload.putInt("height", (int) PixelUtil.toDIPFromPixel(height));
-                }
+                payload.putDouble("width", adSize.getWidth());
+                payload.putDouble("height", adSize.getHeight());
 
-                sendEvent(EVENT_AD_LOADED, payload);
+                sendEvent(EVENT_SIZE_CHANGE, payload);
+
+                sendEvent(EVENT_AD_LOADED, null);
             }
 
             @Override
@@ -99,6 +88,9 @@ public class RNAdmobBannerView extends ReactViewGroup {
             }
 
         });
+        if (RNAdMobCommon.getIsAdManager(unitId))
+            adView.setAppEventListener(this);
+        addView(adView);
     }
 
     public void setUnitId(String unitId) {
@@ -108,26 +100,11 @@ public class RNAdmobBannerView extends ReactViewGroup {
 
     public void setSize(String size) {
         this.size = RNAdMobCommon.getAdSize(size, this);
+        requestAd();
+    }
 
-        int width;
-        int height;
-        WritableMap payload = Arguments.createMap();
-
-        if (size.equals("ADAPTIVE_BANNER")) {
-            width = (int) PixelUtil.toDIPFromPixel(this.size.getWidthInPixels(getContext()));
-            height = (int) PixelUtil.toDIPFromPixel(this.size.getHeightInPixels(getContext()));
-        } else {
-            width = this.size.getWidth();
-            height = this.size.getHeight();
-        }
-
-        payload.putDouble("width", width);
-        payload.putDouble("height", height);
-
-        if (this.size != AdSize.FLUID) {
-            sendEvent(EVENT_SIZE_CHANGE, payload);
-        }
-
+    public void setSizes(AdSize[] sizes) {
+        this.sizes = sizes;
         requestAd();
     }
 
@@ -137,12 +114,19 @@ public class RNAdmobBannerView extends ReactViewGroup {
         }
 
         initAdView();
-        addView(adView);
 
-        AdRequest request = new AdRequest.Builder().build();
+        AdManagerAdRequest request = new AdManagerAdRequest.Builder().build();
 
         adView.setAdUnitId(unitId);
         adView.setAdSize(size);
+        if (sizes != null) {
+            if ((RNAdMobCommon.getIsAdManager(unitId))) {
+                adView.setAdSizes(sizes);
+            }
+            else {
+                throw new Error("Trying to set sizes on non Ad Manager unit Id");
+            }
+        }
         adView.loadAd(request);
     }
 
@@ -150,5 +134,13 @@ public class RNAdmobBannerView extends ReactViewGroup {
         ((ThemedReactContext) getContext())
                 .getJSModule(RCTEventEmitter.class)
                 .receiveEvent(getId(), type, payload);
+    }
+
+    @Override
+    public void onAppEvent(@Nonnull String name, @Nonnull String info) {
+        WritableMap event = Arguments.createMap();
+        event.putString("name", name);
+        event.putString("info", info);
+        sendEvent(EVENT_APP_EVENT, event);
     }
 }

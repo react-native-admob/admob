@@ -7,6 +7,7 @@ import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
+import com.google.android.gms.ads.AdSize;
 
 import java.util.Map;
 
@@ -19,6 +20,7 @@ public class RNAdMobBannerViewManager extends SimpleViewManager<RNAdmobBannerVie
     public static final String EVENT_AD_OPENED = "onAdOpened";
     public static final String EVENT_AD_CLOSED = "onAdClosed";
     public static final String EVENT_SIZE_CHANGE = "onSizeChange";
+    public static final String EVENT_APP_EVENT = "onAppEvent";
 
     private static final int COMMAND_REQUEST_AD = 1;
 
@@ -59,6 +61,17 @@ public class RNAdMobBannerViewManager extends SimpleViewManager<RNAdmobBannerVie
     @ReactProp(name = "size")
     public void setSize(RNAdmobBannerView bannerView, String size) {
         bannerView.setSize(size);
+    }
+
+    @ReactProp(name = "sizes")
+    public void setSizes(final RNAdmobBannerView view, final ReadableArray adSizeStrings) {
+        AdSize[] adSizes = new AdSize[adSizeStrings.size()];
+
+        for (int i = 0; i < adSizeStrings.size(); i++) {
+            String adSizeString = adSizeStrings.getString(i);
+            adSizes[i] = RNAdMobCommon.stringToAdSize(adSizeString);
+        }
+        view.setSizes(adSizes);
     }
 
     @Nullable

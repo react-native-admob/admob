@@ -64,4 +64,9 @@ public class RNAdMobCommon {
             return RNAdMobCommon.stringToAdSize(preDefinedAdSize);
         }
     }
+
+    static boolean getIsAdManager(String unitId) {
+        if (unitId == null) return false;
+        return unitId.startsWith("/");
+    }
 }

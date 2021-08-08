@@ -3,19 +3,21 @@
 
 @class RCTEventDispatcher;
 
-@interface RNAdMobBannerView : UIView <GADBannerViewDelegate>
+@interface RNAdMobBannerView : UIView <GADBannerViewDelegate, GADAppEventDelegate, GADAdSizeDelegate>
 
-@property GADBannerView *bannerView;
-@property (nonatomic, assign) BOOL requested;
+@property GAMBannerView *bannerView;
 
 @property (nonatomic, copy) NSString *unitId;
 @property (nonatomic, copy) NSString *size;
+@property (nonatomic, copy) NSArray *sizes;
 
 @property (nonatomic, copy) RCTBubblingEventBlock onSizeChange;
 @property (nonatomic, copy) RCTDirectEventBlock onAdLoaded;
 @property (nonatomic, copy) RCTDirectEventBlock onAdFailedToLoad;
 @property (nonatomic, copy) RCTDirectEventBlock onAdOpened;
 @property (nonatomic, copy) RCTDirectEventBlock onAdClosed;
+
+@property (nonatomic, copy) RCTDirectEventBlock onAppEvent;
 
 - (void)requestAd;
 

@@ -69,6 +69,17 @@ export interface BannerAdProps extends ViewProps {
   onAdClosed?: () => void;
 }
 
+export interface GAMBannerAdProps extends BannerAdProps {
+  /**
+   * The available sizes of the banner. Can be a predefined sizes via `BannerAdSize` or custom dimensions, e.g. `300x200`. Available only in AdManager ad.
+   */
+  sizes?: string[];
+  /**
+   * A callback that gets called when the Ad Manager specific app events occured. Availbale only in Ad Manager Ad.
+   */
+  onAppEvent?: (name: string, info: string) => void;
+}
+
 export type AdType = 'Interstitial' | 'Rewarded';
 
 export type FullScreenAdEvent =

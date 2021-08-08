@@ -3,17 +3,7 @@
 
 @implementation RNAdMobBannerView
 
-- (void)initBanner:(GADAdSize)adSize {
-    if (_requested) {
-        [_bannerView removeFromSuperview];
-    }
-    _bannerView = [[GADBannerView alloc] initWithAdSize:adSize];
-    _bannerView.delegate = self;
-    _bannerView.rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
-}
-
 - (void)setUnitId:(NSString *)unitId {
-    NSLog(@"%@", unitId);
     _unitId = unitId;
     [self requestAd];
 }
@@ -23,38 +13,57 @@
     [self requestAd];
 }
 
+- (void)setSizes:(NSArray *)sizes
+{
+    _sizes = sizes;
+    [self requestAd];
+}
+
 - (void)requestAd
 {
-    if (_unitId == nil || _size == nil) {
-        [self setRequested:NO];
+    if (_unitId == nil) {
         return;
     }
-    
-    [self initBanner:[RNAdMobCommon stringToAdSize:_size]];
-    [self addSubview:_bannerView];
+    GADAdSize size = [RNAdMobCommon stringToAdSize:_size];
+    if (!_bannerView) {
+        _bannerView = [[GAMBannerView alloc] initWithAdSize:size];
+        _bannerView.delegate = self;
+        _bannerView.appEventDelegate = self;
+        _bannerView.adSizeDelegate = self;
+        _bannerView.rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+        [self addSubview:_bannerView];
+    }
     _bannerView.adUnitID = _unitId;
-    [self setRequested:YES];
-    GADRequest *request = [GADRequest request];
+    _bannerView.adSize = size;
+    if (_sizes) {
+        if ([_unitId hasPrefix:@"/"]) {
+            _bannerView.validAdSizes = [RNAdMobCommon stringsToValues:_sizes];
+        } else {
+            RCTLogError(@"Trying to set sizes in non Ad Manager unit Id");
+        }
+    }
+    
+    GAMRequest *request = [GAMRequest request];
     [_bannerView loadRequest:request];
 }
 
 # pragma mark GADBannerViewDelegate
 
 /// Tells the delegate an ad request loaded an ad.
-- (void)bannerViewDidReceiveAd:(__unused GADBannerView *)bannerView
+- (void)bannerViewDidReceiveAd:(GAMBannerView *)bannerView
 {
-    if (_onAdLoaded) {
-        _onAdLoaded(@{});
-    }
-    
     _onSizeChange(@{
         @"width": @(_bannerView.bounds.size.width),
         @"height": @(_bannerView.bounds.size.height),
                   });
+    
+    if (_onAdLoaded) {
+        _onAdLoaded(@{});
+    }
 }
 
 /// Tells the delegate an ad request failed.
-- (void)bannerView:(__unused GADBannerView *)bannerView
+- (void)bannerView:(__unused GAMBannerView *)bannerView
 didFailToReceiveAdWithError:(NSError *)error
 {
     if (_onAdFailedToLoad) {
@@ -64,7 +73,7 @@ didFailToReceiveAdWithError:(NSError *)error
 
 /// Tells the delegate that a full screen view will be presented in response
 /// to the user clicking on an ad.
-- (void)bannerViewWillPresentScreen:(__unused GADBannerView *)bannerView
+- (void)bannerViewWillPresentScreen:(__unused GAMBannerView *)bannerView
 {
     if (_onAdOpened) {
         _onAdOpened(@{});
@@ -72,11 +81,29 @@ didFailToReceiveAdWithError:(NSError *)error
 }
 
 /// Tells the delegate that the full screen view will be dismissed.
-- (void)bannerViewWillDismissScreen:(__unused GADBannerView *)bannerView
+- (void)bannerViewWillDismissScreen:(__unused GAMBannerView *)bannerView
 {
     if (_onAdClosed) {
         _onAdClosed(@{});
     }
+}
+
+- (void)adView:(__unused GAMBannerView *)bannerView didReceiveAppEvent:(NSString *)name withInfo:(NSString *)info
+{
+    if (_onAppEvent) {
+        _onAppEvent(@{
+            @"name": name,
+            @"info": info
+                    });
+    }
+}
+
+- (void)adView:(GAMBannerView *)bannerView willChangeAdSizeTo:(GADAdSize)size
+{
+    _onSizeChange(@{
+        @"width": @(_bannerView.bounds.size.width),
+        @"height": @(_bannerView.bounds.size.height),
+                  });
 }
 
 @end

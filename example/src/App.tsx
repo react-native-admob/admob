@@ -38,6 +38,8 @@ const BannerExample = ({
 
 const UNIT_ID_REWARDED = 'ca-app-pub-3940256099942544/5224354917';
 const UNIT_ID_INTERSTITIAL = 'ca-app-pub-3940256099942544/1033173712';
+const UNIT_ID_BANNER = 'ca-app-pub-3940256099942544/6300978111';
+const UNIT_ID_GAM_BANNER = '/6499/example/banner';
 
 const hookOptions: AdHookOptions = {
   requestOnDismissed: true,
@@ -46,6 +48,7 @@ const hookOptions: AdHookOptions = {
 export default function Example() {
   const bannerRef = useRef<BannerAd>(null);
   const adaptiveBannerRef = useRef<BannerAd>(null);
+  const gamBannerRef = useRef<BannerAd>(null);
   const [loading, setLoading] = useState(true);
   const rewardedAd = useRewardedAd(UNIT_ID_REWARDED, hookOptions);
   const interstitalAd = useInterstitialAd(UNIT_ID_INTERSTITIAL, hookOptions);
@@ -92,7 +95,7 @@ export default function Example() {
           <BannerExample title="AdMob - Basic">
             <BannerAd
               size={BannerAdSize.BANNER}
-              unitId="ca-app-pub-3940256099942544/6300978111"
+              unitId={UNIT_ID_BANNER}
               onAdLoaded={() => console.log('Banner Ad loaded!')}
               ref={bannerRef}
             />
@@ -104,12 +107,24 @@ export default function Example() {
           <BannerExample title="Adaptive Banner">
             <BannerAd
               size={BannerAdSize.ADAPTIVE_BANNER}
-              unitId="ca-app-pub-3940256099942544/6300978111"
+              unitId={UNIT_ID_BANNER}
               ref={adaptiveBannerRef}
             />
             <Button
               title="Reload"
               onPress={() => adaptiveBannerRef.current?.loadAd()}
+            />
+          </BannerExample>
+          <BannerExample title="Ad Manager Banner">
+            <BannerAd
+              size={BannerAdSize.BANNER}
+              sizes={[BannerAdSize.BANNER, BannerAdSize.MEDIUM_RECTANGLE]}
+              unitId={UNIT_ID_GAM_BANNER}
+              ref={gamBannerRef}
+            />
+            <Button
+              title="Reload"
+              onPress={() => gamBannerRef.current?.loadAd()}
             />
           </BannerExample>
           <BannerExample title="Rewarded">

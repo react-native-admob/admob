@@ -7,13 +7,13 @@ import {
   ViewStyle,
 } from 'react-native';
 
-import { BannerAdProps } from '../types';
+import { BannerAdProps, GAMBannerAdProps } from '../types';
 
 interface BannerAdState {
   style: StyleProp<ViewStyle>;
 }
 
-class BannerAd extends Component<BannerAdProps> {
+class BannerAd extends Component<BannerAdProps | GAMBannerAdProps> {
   state: BannerAdState = {
     style: { width: 0, height: 0 },
   };
