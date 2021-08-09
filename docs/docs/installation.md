@@ -21,7 +21,7 @@ Add your AdMob App ID to `AndroidManifest.xml`, as described in the [Google Mobi
 Open your Podfile and add this line to your app's target:
 
 ```ruby
-pod 'Google-Mobile-Ads-SDK'
+pod 'Google-Mobile-Ads-SDK', '~> 8.0.0'
 ```
 
 Then from the command line run (inside the ios folder):
