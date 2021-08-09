@@ -26,7 +26,7 @@ RCT_EXPORT_VIEW_PROPERTY(size, NSString)
 RCT_EXPORT_VIEW_PROPERTY(unitId, NSString)
 RCT_EXPORT_VIEW_PROPERTY(sizes, NSArray)
 
-RCT_EXPORT_VIEW_PROPERTY(onSizeChange, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onSizeChange, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onAdLoaded, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onAdFailedToLoad, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onAdOpened, RCTDirectEventBlock)
