@@ -2,6 +2,8 @@
 
 [![npm](https://img.shields.io/npm/v/@react-native-admob/admob.svg)](https://www.npmjs.com/package/@react-native-admob/admob)
 
+⚠️ Please note, this package is under active development, which means it may be not stable to apply on production. Please use this package on your own risk. New issues and PRs are always welcome.
+
 > Admob for React Native with powerful hooks and components
 
 ## Installation
