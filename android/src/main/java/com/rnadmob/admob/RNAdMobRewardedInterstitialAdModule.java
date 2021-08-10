@@ -21,14 +21,14 @@ import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.rewarded.RewardedAd;
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd;
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback;
 
-public class RNAdMobRewardedAdModule extends ReactContextBaseJavaModule {
+public class RNAdMobRewardedInterstitialAdModule extends ReactContextBaseJavaModule {
 
     public static final String REACT_CLASS = "RNAdMobRewarded";
 
-    SparseArray<RewardedAd> adArray = new SparseArray<>();
+    SparseArray<RewardedInterstitialAd> adArray = new SparseArray<>();
     SparseArray<Promise> presentAdPromiseArray = new SparseArray<>();
 
     @NonNull
@@ -37,7 +37,7 @@ public class RNAdMobRewardedAdModule extends ReactContextBaseJavaModule {
         return REACT_CLASS;
     }
 
-    public RNAdMobRewardedAdModule(ReactApplicationContext reactContext) {
+    public RNAdMobRewardedInterstitialAdModule(ReactApplicationContext reactContext) {
         super(reactContext);
     }
 
@@ -87,10 +87,10 @@ public class RNAdMobRewardedAdModule extends ReactContextBaseJavaModule {
         activity.runOnUiThread(() -> {
             AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
             AdRequest adRequest = adRequestBuilder.build();
-            RewardedAd.load(getReactApplicationContext(), unitId, adRequest,
-                    new RewardedAdLoadCallback() {
+            RewardedInterstitialAd.load(getReactApplicationContext(), unitId, adRequest,
+                    new RewardedInterstitialAdLoadCallback() {
                         @Override
-                        public void onAdLoaded(@NonNull RewardedAd ad) {
+                        public void onAdLoaded(@NonNull RewardedInterstitialAd ad) {
                             FullScreenContentCallback callback = getFullScreenContentCallback(requestId);
                             ad.setFullScreenContentCallback(callback);
                             adArray.put(requestId, ad);
@@ -114,7 +114,7 @@ public class RNAdMobRewardedAdModule extends ReactContextBaseJavaModule {
             return;
         }
         activity.runOnUiThread(() -> {
-            RewardedAd ad = adArray.get(requestId);
+            RewardedInterstitialAd ad = adArray.get(requestId);
             if (ad != null) {
                 ad.show(activity, rewardItem -> {
                     WritableMap reward = Arguments.createMap();

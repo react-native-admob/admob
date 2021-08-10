@@ -16,7 +16,6 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
@@ -28,7 +27,7 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
 
     public static final String REACT_CLASS = "RNAdMobInterstitial";
 
-    SparseArray<InterstitialAd> interstitialAdArray = new SparseArray<>();
+    SparseArray<InterstitialAd> adArray = new SparseArray<>();
     SparseArray<Promise> presentAdPromiseArray = new SparseArray<>();
 
     @NonNull
@@ -71,14 +70,14 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
                     promise.resolve(null);
                 }
                 sendEvent(AD_PRESENTED, requestId, null);
-                interstitialAdArray.put(requestId, null);
+                adArray.put(requestId, null);
             }
         };
     }
 
     @ReactMethod
     public void requestAd(int requestId, String unitId, final Promise promise) {
-        interstitialAdArray.put(requestId, null);
+        adArray.put(requestId, null);
         Activity activity = getCurrentActivity();
         if (activity == null) {
             promise.reject("E_NULL_ACTIVITY", "Interstitial ad attempted to load but the current Activity was null.");
@@ -90,10 +89,10 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
             InterstitialAd.load(getReactApplicationContext(), unitId, adRequest,
                     new InterstitialAdLoadCallback() {
                         @Override
-                        public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                        public void onAdLoaded(@NonNull InterstitialAd ad) {
                             FullScreenContentCallback callback = getFullScreenContentCallback(requestId);
-                            interstitialAd.setFullScreenContentCallback(callback);
-                            interstitialAdArray.put(requestId, interstitialAd);
+                            ad.setFullScreenContentCallback(callback);
+                            adArray.put(requestId, ad);
                             promise.resolve(null);
                         }
 
@@ -114,9 +113,9 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
             return;
         }
         activity.runOnUiThread(() -> {
-            InterstitialAd interstitialAd = interstitialAdArray.get(requestId);
-            if (interstitialAd != null) {
-                interstitialAd.show(activity);
+            InterstitialAd ad = adArray.get(requestId);
+            if (ad != null) {
+                ad.show(activity);
             } else {
                 promise.reject("E_AD_NOT_READY", "Ad is not ready.");
             }
