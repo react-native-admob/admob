@@ -3,7 +3,7 @@
 #import "RNAdMobUtils.h"
 
 static __strong NSMutableDictionary *requestIdMap;
-static __strong NSMutableDictionary *interstitialMap;
+static __strong NSMutableDictionary *adMap;
 static __strong NSMutableDictionary *presentAdResolveMap;
 static __strong NSMutableDictionary *presentAdRejectMap;
 
@@ -24,7 +24,7 @@ static __strong NSMutableDictionary *presentAdRejectMap;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         requestIdMap = [[NSMutableDictionary alloc] init];
-        interstitialMap = [[NSMutableDictionary alloc] init];
+        adMap = [[NSMutableDictionary alloc] init];
         presentAdResolveMap = [[NSMutableDictionary alloc] init];
         presentAdRejectMap = [[NSMutableDictionary alloc] init];
     });
@@ -38,7 +38,7 @@ static __strong NSMutableDictionary *presentAdRejectMap;
 
 - (void)invalidate {
     [requestIdMap removeAllObjects];
-    [interstitialMap removeAllObjects];
+    [adMap removeAllObjects];
     [presentAdResolveMap removeAllObjects];
     [presentAdRejectMap removeAllObjects];
 }
@@ -61,7 +61,7 @@ RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId unitId:(NSString *_Non
             ad.fullScreenContentDelegate = self;
             
             requestIdMap[ad.responseInfo.responseIdentifier] = requestId;
-            interstitialMap[requestId] = ad;
+            adMap[requestId] = ad;
             
             resolve(nil);
         }];
@@ -72,11 +72,11 @@ RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId unitId:(NSString *_Non
 
 RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    GADInterstitialAd *interstitial = interstitialMap[requestId];
+    GADInterstitialAd *ad = adMap[requestId];
     presentAdResolveMap[requestId] = resolve;
     presentAdRejectMap[requestId] = resolve;
     if ([self canPresentAd:requestId]) {
-        [interstitial presentFromRootViewController:[UIApplication sharedApplication].delegate.window.rootViewController];
+        [ad presentFromRootViewController:[UIApplication sharedApplication].delegate.window.rootViewController];
     }
     else {
         reject(@"E_AD_NOT_READY", @"Ad is not ready.", nil);
@@ -85,10 +85,10 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseRe
 
 - (BOOL) canPresentAd:(NSNumber *)requestId
 {
-    GADInterstitialAd *interstitial = interstitialMap[requestId];
-    if (interstitial)
+    GADInterstitialAd *ad = adMap[requestId];
+    if (ad)
     {
-        return [interstitial canPresentFromRootViewController:[UIApplication sharedApplication].delegate.window.rootViewController error:nil];
+        return [ad canPresentFromRootViewController:[UIApplication sharedApplication].delegate.window.rootViewController error:nil];
     }
     else {
         return NO;

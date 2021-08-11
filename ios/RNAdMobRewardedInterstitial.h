@@ -1,5 +1,5 @@
 @import React;
 @import GoogleMobileAds;
 
-@interface RNAdMobRewarded : NSObject <RCTBridgeModule, GADFullScreenContentDelegate>
+@interface RNAdMobRewardedInterstitial : NSObject <RCTBridgeModule, GADFullScreenContentDelegate>
 @end

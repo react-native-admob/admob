@@ -80,7 +80,7 @@ export interface GAMBannerAdProps extends BannerAdProps {
   onAppEvent?: (name: string, info: string) => void;
 }
 
-export type AdType = 'Interstitial' | 'Rewarded';
+export type AdType = 'Interstitial' | 'Rewarded' | 'RewardedInterstitial';
 
 export type FullScreenAdEvent =
   | 'adPresented'

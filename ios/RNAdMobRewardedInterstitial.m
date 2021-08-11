@@ -1,13 +1,13 @@
-#import "RNAdMobRewarded.h"
+#import "RNAdMobRewardedInterstitial.h"
 #import "RNAdMobEvent.h"
 #import "RNAdMobUtils.h"
 
 static __strong NSMutableDictionary *requestIdMap;
-static __strong NSMutableDictionary *rewardedMap;
+static __strong NSMutableDictionary *adMap;
 static __strong NSMutableDictionary *presentAdResolveMap;
 static __strong NSMutableDictionary *presentAdRejectMap;
 
-@implementation RNAdMobRewarded
+@implementation RNAdMobRewardedInterstitial
 
 - (dispatch_queue_t)methodQueue
 {
@@ -24,7 +24,7 @@ static __strong NSMutableDictionary *presentAdRejectMap;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         requestIdMap = [[NSMutableDictionary alloc] init];
-        rewardedMap = [[NSMutableDictionary alloc] init];
+        adMap = [[NSMutableDictionary alloc] init];
         presentAdResolveMap = [[NSMutableDictionary alloc] init];
         presentAdRejectMap = [[NSMutableDictionary alloc] init];
     });
@@ -38,7 +38,7 @@ static __strong NSMutableDictionary *presentAdRejectMap;
 
 - (void)invalidate {
     [requestIdMap removeAllObjects];
-    [rewardedMap removeAllObjects];
+    [adMap removeAllObjects];
     [presentAdResolveMap removeAllObjects];
     [presentAdRejectMap removeAllObjects];
 }
@@ -51,9 +51,9 @@ RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId unitId:(NSString *_Non
 {
     if (![self canPresentAd:requestId]) {
         GADRequest *request = [GADRequest request];
-        [GADRewardedAd loadWithAdUnitID:unitId
+        [GADRewardedInterstitialAd loadWithAdUnitID:unitId
                                 request:request
-                      completionHandler:^(GADRewardedAd *ad, NSError *error) {
+                      completionHandler:^(GADRewardedInterstitialAd *ad, NSError *error) {
             if (error) {
                 reject(@"E_AD_LOAD_FAILED", [error localizedDescription], nil);
                 return;
@@ -62,7 +62,7 @@ RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId unitId:(NSString *_Non
             ad.fullScreenContentDelegate = self;
             
             requestIdMap[ad.responseInfo.responseIdentifier] = requestId;
-            rewardedMap[requestId] = ad;
+            adMap[requestId] = ad;
             
             resolve(nil);
         }];
@@ -73,16 +73,16 @@ RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId unitId:(NSString *_Non
 
 RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    GADRewardedAd *rewarded = rewardedMap[requestId];
+    GADRewardedInterstitialAd *ad = adMap[requestId];
     presentAdResolveMap[requestId] = resolve;
     presentAdRejectMap[requestId] = resolve;
     if ([self canPresentAd:requestId]) {
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
         UIViewController *rootViewController = [keyWindow rootViewController];
         
-        [rewarded presentFromRootViewController:rootViewController
+        [ad presentFromRootViewController:rootViewController
                        userDidEarnRewardHandler:^ {
-            GADAdReward *reward = rewarded.adReward;
+            GADAdReward *reward = ad.adReward;
             [self sendEvent:kEventRewarded requestId:requestId data:@{@"type": reward.type, @"amount": reward.amount}];
         }];
     }
@@ -93,13 +93,13 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseRe
 
 - (BOOL) canPresentAd:(NSNumber *)requestId
 {
-    GADRewardedAd *rewarded = rewardedMap[requestId];
-    if (rewarded)
+    GADRewardedInterstitialAd *ad = adMap[requestId];
+    if (ad)
     {
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
         UIViewController *rootViewController = [keyWindow rootViewController];
         
-        return [rewarded canPresentFromRootViewController:rootViewController error:nil];
+        return [ad canPresentFromRootViewController:rootViewController error:nil];
     }
     else {
         return NO;
@@ -108,12 +108,12 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseRe
 
 - (void)sendEvent:(NSString *)eventName requestId:(NSNumber *)requestId data:(NSDictionary *)data
 {
-    [RNAdMobEvent sendEvent:eventName type:@"Rewarded" requestId:requestId data:data];
+    [RNAdMobEvent sendEvent:eventName type:@"RewardedInterstitial" requestId:requestId data:data];
 }
 
 #pragma mark GADFullScreenContentDelegate
 
-- (void)adDidPresentFullScreenContent:(GADRewardedAd *)ad
+- (void)adDidPresentFullScreenContent:(GADRewardedInterstitialAd *)ad
 {
     NSNumber *requestId = requestIdMap[ad.responseInfo.responseIdentifier];
     
@@ -123,7 +123,7 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseRe
     resolve(nil);
 }
 
-- (void)ad:(GADRewardedAd *)ad didFailToPresentFullScreenContentWithError:(NSError *)error
+- (void)ad:(GADRewardedInterstitialAd *)ad didFailToPresentFullScreenContentWithError:(NSError *)error
 {
     NSNumber *requestId = requestIdMap[ad.responseInfo.responseIdentifier];
     
@@ -134,7 +134,7 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseRe
     reject(@"E_AD_PRESENT_FAILED", [error localizedDescription], nil);
 }
 
-- (void)adDidDismissFullScreenContent:(GADRewardedAd *)ad
+- (void)adDidDismissFullScreenContent:(GADRewardedInterstitialAd *)ad
 {
     NSNumber *requestId = requestIdMap[ad.responseInfo.responseIdentifier];
     

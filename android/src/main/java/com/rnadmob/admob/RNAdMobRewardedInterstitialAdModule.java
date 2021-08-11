@@ -26,7 +26,7 @@ import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoa
 
 public class RNAdMobRewardedInterstitialAdModule extends ReactContextBaseJavaModule {
 
-    public static final String REACT_CLASS = "RNAdMobRewarded";
+    public static final String REACT_CLASS = "RNAdMobRewardedInterstitial";
 
     SparseArray<RewardedInterstitialAd> adArray = new SparseArray<>();
     SparseArray<Promise> presentAdPromiseArray = new SparseArray<>();
@@ -42,7 +42,7 @@ public class RNAdMobRewardedInterstitialAdModule extends ReactContextBaseJavaMod
     }
 
     private void sendEvent(String eventName, int requestId, @Nullable WritableMap data) {
-        RNAdMobEventModule.sendEvent(eventName, "Rewarded", requestId, data);
+        RNAdMobEventModule.sendEvent(eventName, "RewardedInterstitial", requestId, data);
     }
 
     private FullScreenContentCallback getFullScreenContentCallback(int requestId) {
