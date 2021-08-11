@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Button,
+  Modal,
   Platform,
+  Pressable,
   ScrollView,
   StyleProp,
   StyleSheet,
@@ -16,6 +18,7 @@ import {
   BannerAdSize,
   useInterstitialAd,
   useRewardedAd,
+  useRewardedInterstitialAd,
 } from '@react-native-admob/admob';
 
 interface BannerExampleProps {
@@ -38,6 +41,7 @@ const BannerExample = ({
 
 const UNIT_ID_REWARDED = 'ca-app-pub-3940256099942544/5224354917';
 const UNIT_ID_INTERSTITIAL = 'ca-app-pub-3940256099942544/1033173712';
+const UNIT_ID_REWARDED_INTERSTITIAL = 'ca-app-pub-3940256099942544/6978759866';
 const UNIT_ID_BANNER = 'ca-app-pub-3940256099942544/6300978111';
 const UNIT_ID_GAM_BANNER = '/6499/example/banner';
 
@@ -50,8 +54,14 @@ export default function Example() {
   const adaptiveBannerRef = useRef<BannerAd>(null);
   const gamBannerRef = useRef<BannerAd>(null);
   const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [adTick, setAdTick] = useState(5);
   const rewardedAd = useRewardedAd(UNIT_ID_REWARDED, hookOptions);
   const interstitalAd = useInterstitialAd(UNIT_ID_INTERSTITIAL, hookOptions);
+  const rewardedInterstitialAd = useRewardedInterstitialAd(
+    UNIT_ID_REWARDED_INTERSTITIAL,
+    hookOptions
+  );
 
   useEffect(() => {
     const init = async () => {
@@ -87,6 +97,31 @@ export default function Example() {
       console.error(adPresentError);
     }
   }, [interstitalAd]);
+
+  useEffect(() => {
+    if (adTick > 0 && modalVisible) {
+      const timeout = setTimeout(() => setAdTick((prev) => prev - 1), 1000);
+      return () => clearTimeout(timeout);
+    } else if (adTick === 0) {
+      setModalVisible(false);
+    }
+  }, [adTick, modalVisible, rewardedInterstitialAd]);
+
+  useEffect(() => {
+    const { adLoadError, adPresentError } = rewardedInterstitialAd;
+    if (adLoadError) {
+      console.error(adLoadError);
+    } else if (adPresentError) {
+      console.error(adPresentError);
+    }
+  }, [rewardedInterstitialAd]);
+
+  useEffect(() => {
+    if (rewardedInterstitialAd.reward) {
+      console.log('Reward earned: ');
+      console.log(rewardedInterstitialAd.reward);
+    }
+  }, [rewardedInterstitialAd.reward]);
 
   return (
     <View style={styles.container}>
@@ -141,6 +176,44 @@ export default function Example() {
               onPress={() => interstitalAd.presentAd()}
             />
           </BannerExample>
+          <BannerExample title="RewardedInterstitial">
+            <Button
+              title="Show Rewarded Interstitial Video and preload next"
+              disabled={!rewardedInterstitialAd.adLoaded}
+              onPress={() => setModalVisible(true)}
+            />
+          </BannerExample>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}
+            onDismiss={() => {
+              if (adTick === 0) {
+                rewardedInterstitialAd.presentAd();
+                setAdTick(5);
+              }
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>
+                  Watch this video and earn reward.
+                </Text>
+                <Text style={styles.modalText}>
+                  Ad starts in {adTick} seconds
+                </Text>
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => setModalVisible(!modalVisible)}
+                >
+                  <Text style={styles.textStyle}>No Thanks</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
         </ScrollView>
       )}
     </View>
@@ -157,5 +230,42 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     margin: 10,
+  },
+  centeredView: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  modalView: {
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    elevation: 5,
+    margin: 20,
+    padding: 35,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  button: {
+    borderRadius: 20,
+    elevation: 2,
+    padding: 10,
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
   },
 });
