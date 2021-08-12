@@ -48,7 +48,7 @@ export type RequestOptions = {
    * Attaches `?campaign=abc&user=123` to the ad request:
    *
    * ```js
-   * await Interstitial.request('ca-app-pub-3940256099942544/1033173712', {
+   * await interstitialAd.requestAd({
    *   networkExtras: {
    *     campaign: 'abc',
    *     user: '123',
@@ -65,7 +65,7 @@ export type RequestOptions = {
    * #### Example
    *
    * ```js
-   * await Interstitial.request('ca-app-pub-3940256099942544/1033173712', {
+   * await interstitialAd.requestAd({
    *   keywords: ['fashion', 'clothing'],
    * });
    * ```
@@ -87,7 +87,7 @@ export type RequestOptions = {
    * #### Example
    *
    * ```js
-   * await Interstitial.request('ca-app-pub-3940256099942544/1033173712', {
+   * await interstitialAd.requestAd({
    *   location: [53.481073, -2.237074],
    * });
    * ```
@@ -112,7 +112,7 @@ export type RequestOptions = {
    * #### Example
    *
    * ```js
-   * await Interstitial.request('ca-app-pub-3940256099942544/1033173712', {
+   * await interstitialAd.requestAd({
    *   requestAgent: 'CoolAds',
    * });
    * ```
