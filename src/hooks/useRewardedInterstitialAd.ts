@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import RewardedInterstitialAd from '../ads/RewardedInterstitialAd';
-import { AdHookOptions, AdHookResult, Reward } from '../types';
+import { AdHookOptions, AdHookResult, RequestOptions, Reward } from '../types';
 
 const defaultOptions: AdHookOptions = {
   requestOnMounted: true,
   presentOnLoaded: false,
   requestOnDismissed: false,
+  requestOptions: {},
 };
 
 /**
@@ -28,7 +29,12 @@ export default function useRewardedInterstitialAd(
   const [adLoadError, setAdLoadError] = useState<Error>();
   const [adPresentError, setAdPresentError] = useState<Error>();
   const [reward, setReward] = useState<Reward>();
-  const _options = Object.assign(defaultOptions, options);
+  const {
+    requestOnMounted,
+    presentOnLoaded,
+    requestOnDismissed,
+    requestOptions: adRequestOptions,
+  } = Object.assign(defaultOptions, options);
 
   const init = () => {
     setAdLoaded(false);
@@ -44,13 +50,16 @@ export default function useRewardedInterstitialAd(
     [adPresented, adDismissed]
   );
 
-  const requestAd = useCallback(() => {
-    init();
-    rewardedInterstitialAd
-      .requestAd()
-      .catch((e: Error) => setAdLoadError(e))
-      .then(() => setAdLoaded(true));
-  }, [rewardedInterstitialAd]);
+  const requestAd = useCallback(
+    (requestOptions: RequestOptions = adRequestOptions!) => {
+      init();
+      rewardedInterstitialAd
+        .requestAd(requestOptions)
+        .catch((e: Error) => setAdLoadError(e))
+        .then(() => setAdLoaded(true));
+    },
+    [rewardedInterstitialAd, adRequestOptions]
+  );
 
   const presentAd = useCallback(() => {
     if (adPresented) {
@@ -68,22 +77,22 @@ export default function useRewardedInterstitialAd(
   }, [rewardedInterstitialAd, adPresented, adLoaded]);
 
   useEffect(() => {
-    if (!rewardedInterstitialAd.requested && _options?.requestOnMounted) {
+    if (!rewardedInterstitialAd.requested && requestOnMounted) {
       requestAd();
     }
-  }, [rewardedInterstitialAd, _options, requestAd]);
+  }, [rewardedInterstitialAd, requestOnMounted, requestAd]);
 
   useEffect(() => {
-    if (adLoaded && _options?.presentOnLoaded) {
+    if (adLoaded && presentOnLoaded) {
       presentAd();
     }
-  }, [adLoaded, _options, presentAd]);
+  }, [adLoaded, presentOnLoaded, presentAd]);
 
   useEffect(() => {
-    if (adDismissed && _options.requestOnDismissed) {
+    if (adDismissed && requestOnDismissed) {
       requestAd();
     }
-  }, [adDismissed, _options, requestAd]);
+  }, [adDismissed, requestOnDismissed, requestAd]);
 
   useEffect(() => {
     rewardedInterstitialAd.addEventListener('adDismissed', () =>

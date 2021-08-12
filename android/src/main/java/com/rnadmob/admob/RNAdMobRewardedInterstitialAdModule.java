@@ -16,6 +16,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -77,7 +78,7 @@ public class RNAdMobRewardedInterstitialAdModule extends ReactContextBaseJavaMod
     }
 
     @ReactMethod
-    public void requestAd(int requestId, String unitId, final Promise promise) {
+    public void requestAd(int requestId, String unitId, ReadableMap requestOptions, final Promise promise) {
         adArray.put(requestId, null);
         Activity activity = getCurrentActivity();
         if (activity == null) {
@@ -85,8 +86,7 @@ public class RNAdMobRewardedInterstitialAdModule extends ReactContextBaseJavaMod
             return;
         }
         activity.runOnUiThread(() -> {
-            AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
-            AdRequest adRequest = adRequestBuilder.build();
+            AdRequest adRequest = RNAdMobCommon.buildAdRequest(requestOptions);
             RewardedInterstitialAd.load(getReactApplicationContext(), unitId, adRequest,
                     new RewardedInterstitialAdLoadCallback() {
                         @Override

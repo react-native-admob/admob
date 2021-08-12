@@ -1,6 +1,7 @@
 #import "RNAdMobInterstitial.h"
 #import "RNAdMobEvent.h"
 #import "RNAdMobUtils.h"
+#import "RNAdMobCommon.h"
 
 static __strong NSMutableDictionary *requestIdMap;
 static __strong NSMutableDictionary *adMap;
@@ -47,9 +48,13 @@ RCT_EXPORT_MODULE();
 
 #pragma mark exported methods
 
-RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId unitId:(NSString *_Nonnull)unitId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId
+                  unitId:(NSString *_Nonnull)unitId
+                  requestOptions:(NSDictionary *)requestOptions
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 {
-    GADRequest *request = [GADRequest request];
+    GADRequest *request = [RNAdMobCommon buildAdRequest:requestOptions];
     [GADInterstitialAd loadWithAdUnitID:unitId
                                 request:request
                       completionHandler:^(GADInterstitialAd *ad, NSError *error) {

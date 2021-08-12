@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import InterstitialAd from '../ads/InterstitialAd';
-import { AdHookOptions, AdHookResult } from '../types';
+import { AdHookOptions, AdHookResult, RequestOptions } from '../types';
 
 const defaultOptions: AdHookOptions = {
   requestOnMounted: true,
   presentOnLoaded: false,
   requestOnDismissed: false,
+  requestOptions: {},
 };
 
 /**
@@ -27,7 +28,12 @@ export default function (
   const [adDismissed, setAdDismissed] = useState(false);
   const [adLoadError, setAdLoadError] = useState<Error>();
   const [adPresentError, setAdPresentError] = useState<Error>();
-  const _options = Object.assign(defaultOptions, options);
+  const {
+    requestOnMounted,
+    presentOnLoaded,
+    requestOnDismissed,
+    requestOptions: adRequestOptions,
+  } = Object.assign(defaultOptions, options);
 
   const init = () => {
     setAdLoaded(false);
@@ -42,13 +48,16 @@ export default function (
     [adPresented, adDismissed]
   );
 
-  const requestAd = useCallback(() => {
-    init();
-    interstitialAd
-      .requestAd()
-      .catch((e: Error) => setAdLoadError(e))
-      .then(() => setAdLoaded(true));
-  }, [interstitialAd]);
+  const requestAd = useCallback(
+    (requestOptions: RequestOptions = adRequestOptions!) => {
+      init();
+      interstitialAd
+        .requestAd(requestOptions)
+        .catch((e: Error) => setAdLoadError(e))
+        .then(() => setAdLoaded(true));
+    },
+    [interstitialAd, adRequestOptions]
+  );
 
   const presentAd = useCallback(() => {
     if (adPresented) {
@@ -64,22 +73,22 @@ export default function (
   }, [interstitialAd, adPresented, adLoaded]);
 
   useEffect(() => {
-    if (!interstitialAd.requested && _options?.requestOnMounted) {
+    if (!interstitialAd.requested && requestOnMounted) {
       requestAd();
     }
-  }, [interstitialAd, _options, requestAd]);
+  }, [interstitialAd, requestOnMounted, requestAd]);
 
   useEffect(() => {
-    if (adLoaded && _options?.presentOnLoaded) {
+    if (adLoaded && presentOnLoaded) {
       presentAd();
     }
-  }, [adLoaded, _options, presentAd]);
+  }, [adLoaded, presentOnLoaded, presentAd]);
 
   useEffect(() => {
-    if (adDismissed && _options.requestOnDismissed) {
+    if (adDismissed && requestOnDismissed) {
       requestAd();
     }
-  }, [adDismissed, _options, requestAd]);
+  }, [adDismissed, requestOnDismissed, requestAd]);
 
   useEffect(() => {
     interstitialAd.addEventListener('adDismissed', () => setAdDismissed(true));

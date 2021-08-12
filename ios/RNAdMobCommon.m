@@ -77,4 +77,44 @@
     }];
     return adSizes;
 }
+
++ (GADRequest *)buildAdRequest:(NSDictionary *)requestOptions {
+    GADRequest *request = [GADRequest request];
+    NSMutableDictionary *extras = [@{} mutableCopy];
+
+    if (requestOptions[@"requestNonPersonalizedAdsOnly"] && [requestOptions[@"requestNonPersonalizedAdsOnly"] boolValue]) {
+        extras[@"npa"] = @"1";
+    }
+
+    if (requestOptions[@"networkExtras"]) {
+        for (NSString *key in requestOptions[@"networkExtras"]) {
+            NSString *value = requestOptions[@"networkExtras"][key];
+            extras[key] = value;
+        }
+    }
+
+    GADExtras *networkExtras = [[GADExtras alloc] init];
+    networkExtras.additionalParameters = extras;
+    [request registerAdNetworkExtras:networkExtras];
+
+    if (requestOptions[@"keywords"]) {
+        request.keywords = requestOptions[@"keywords"];
+    }
+
+    if (requestOptions[@"location"]) {
+        NSArray<NSNumber *> *latLong = requestOptions[@"location"];
+        [request setLocationWithLatitude:[latLong[0] doubleValue] longitude:[latLong[1] doubleValue] accuracy:[requestOptions[@"locationAccuracy"] doubleValue]];
+    }
+
+    if (requestOptions[@"contentUrl"]) {
+        request.contentURL = requestOptions[@"contentUrl"];
+    }
+
+    if (requestOptions[@"requestAgent"]) {
+        request.requestAgent = requestOptions[@"requestAgent"];
+    }
+
+    return request;
+}
+
 @end

@@ -4,7 +4,7 @@ import {
   NativeModules,
 } from 'react-native';
 
-import { AdType } from '../types';
+import { AdType, RequestOptions } from '../types';
 
 const RNAdMobEvent = NativeModules.RNAdMobEvent;
 
@@ -24,6 +24,7 @@ export default class MobileAd<
   type: AdType;
   requestId: number;
   unitId: string;
+  requestOptions: RequestOptions;
   subscriptions: Map<EventHandler, EmitterSubscription>;
   requested: boolean;
 
@@ -31,8 +32,17 @@ export default class MobileAd<
     this.type = type;
     this.requestId = requestId;
     this.unitId = unitId;
+    this.requestOptions = {};
     this.subscriptions = new Map<EventHandler, EmitterSubscription>();
     this.requested = false;
+  }
+
+  /**
+   * Sets RequestOptions for this Ad instance.
+   * @param requestOptions RequestOptions used to load the ad.
+   */
+  setRequestOptions(requestOptions: RequestOptions = {}) {
+    this.requestOptions = requestOptions;
   }
 
   addEventListener(event: E, handler: H) {

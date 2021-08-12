@@ -47,6 +47,9 @@ const UNIT_ID_GAM_BANNER = '/6499/example/banner';
 
 const hookOptions: AdHookOptions = {
   requestOnDismissed: true,
+  requestOptions: {
+    requestNonPersonalizedAdsOnly: true,
+  },
 };
 
 export default function Example() {

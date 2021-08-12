@@ -1,12 +1,20 @@
 package com.rnadmob.admob;
 
+import android.location.Location;
+import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Display;
 
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.views.view.ReactViewGroup;
+import com.google.ads.mediation.admob.AdMobAdapter;
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -68,5 +76,54 @@ public class RNAdMobCommon {
     static boolean getIsAdManager(String unitId) {
         if (unitId == null) return false;
         return unitId.startsWith("/");
+    }
+
+    static public AdRequest buildAdRequest(ReadableMap requestOptions) {
+        AdRequest.Builder builder = new AdRequest.Builder();
+        Bundle extras = new Bundle();
+
+        if (requestOptions.hasKey("requestNonPersonalizedAdsOnly") && requestOptions.getBoolean("requestNonPersonalizedAdsOnly")) {
+            extras.putString("npa", "1");
+        }
+
+        if (requestOptions.hasKey("networkExtras")) {
+            Map<String, Object> networkExtras = Objects.requireNonNull(requestOptions.getMap("networkExtras")).toHashMap();
+
+            for (Map.Entry<String, Object> entry : networkExtras.entrySet()) {
+                String key = entry.getKey();
+                String value = (String) entry.getValue();
+                extras.putString(key, value);
+            }
+        }
+
+        builder.addNetworkExtrasBundle(AdMobAdapter.class, extras);
+
+        if (requestOptions.hasKey("keywords")) {
+            ArrayList<Object> keywords = Objects.requireNonNull(requestOptions.getArray("keywords"))
+                    .toArrayList();
+
+            for (Object keyword : keywords) {
+                builder.addKeyword((String) keyword);
+            }
+        }
+
+        if (requestOptions.hasKey("contentUrl")) {
+            builder.setContentUrl(Objects.requireNonNull(requestOptions.getString("contentUrl")));
+        }
+
+        if (requestOptions.hasKey("location")) {
+            ReadableArray locationArray = requestOptions.getArray("location");
+            Location location = new Location("");
+            location.setLatitude(Objects.requireNonNull(locationArray).getDouble(0));
+            location.setLongitude(Objects.requireNonNull(locationArray).getDouble(1));
+
+            builder.setLocation(location);
+        }
+
+        if (requestOptions.hasKey("requestAgent")) {
+            builder.setRequestAgent(Objects.requireNonNull(requestOptions.getString("requestAgent")));
+        }
+
+        return builder.build();
     }
 }
