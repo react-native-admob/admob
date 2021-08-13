@@ -11,10 +11,23 @@ module.exports = {
       label: 'API Reference',
       items: [
         {
-          Hooks: ['api/useInterstitialAd', 'api/useRewardedAd'],
+          Hooks: [
+            'api/useInterstitialAd',
+            'api/useRewardedAd',
+            'api/useRewardedInterstitialAd',
+          ],
         },
         {
-          Ads: ['api/InterstitialAd', 'api/RewardedAd'],
+          Ads: [
+            'api/InterstitialAd',
+            'api/RewardedAd',
+            'api/RewardedInterstitialAd',
+          ],
+        },
+        {
+          type: 'doc',
+          id: 'api/RequestOptions',
+          label: 'RequestOptions',
         },
         {
           AdManager: [

@@ -13,6 +13,9 @@ import { useRewardedInterstitialAd } from '@react-native-admob/admob';
 
 const hookOptions = {
   requestOnDismissed: true,
+  requestOptions: {
+    requestNonPersonalizedAdsOnly: true,
+  },
 };
 
 export default function App() {
@@ -64,11 +67,12 @@ Options for your hook. Available values are listed below:
 
 Properties:
 
-| Name               | Type    | Default | Description                                                   |
-| :----------------- | :------ | :------ | :------------------------------------------------------------ |
-| requestOnMounted   | boolean | `true`  | Whether your ad to request automatically on mounted.          |
-| presentOnLoaded    | boolean | `false` | Whether your ad to present automatically on loaded.           |
-| requestOnDismissed | boolean | `false` | Whether your ad to request new ad automatically on dismissed. |
+| Name               | Type                             | Default | Description                                                   |
+| :----------------- | :------------------------------- | :------ | :------------------------------------------------------------ |
+| requestOnMounted   | boolean                          | `true`  | Whether your ad to request automatically on mounted.          |
+| presentOnLoaded    | boolean                          | `false` | Whether your ad to present automatically on loaded.           |
+| requestOnDismissed | boolean                          | `false` | Whether your ad to request new ad automatically on dismissed. |
+| requestOptions     | [RequestOptions](RequestOptions) | {}      | Optional RequestOptions used to load the ad.                  |
 
 
 ## Returns
