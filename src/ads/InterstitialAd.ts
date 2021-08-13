@@ -2,6 +2,7 @@ import { NativeModules } from 'react-native';
 
 import {
   FullScreenAdInterface,
+  HandlerType,
   InterstitialAdEvent,
   RequestOptions,
 } from '../types';
@@ -10,8 +11,6 @@ import MobileAd from './MobileAd';
 
 const { requestAd, presentAd } =
   NativeModules.RNAdMobInterstitial as FullScreenAdInterface;
-
-type HandlerType = () => void | ((error: Error) => void);
 
 let _interstitialRequest = 0;
 

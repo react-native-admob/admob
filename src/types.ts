@@ -166,6 +166,10 @@ export type InterstitialAdEvent = FullScreenAdEvent;
 
 export type RewardedAdEvent = FullScreenAdEvent | 'rewarded';
 
+export type HandlerType = () => void | ((error: Error) => void);
+
+export type RewardedAdHandlerType = HandlerType | ((reward: Reward) => void);
+
 export interface FullScreenAdInterface {
   /**
    * Request ad and return Promise.

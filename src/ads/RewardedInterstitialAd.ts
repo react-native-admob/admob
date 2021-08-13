@@ -3,8 +3,8 @@ import { NativeModules } from 'react-native';
 import {
   FullScreenAdInterface,
   RequestOptions,
-  Reward,
   RewardedAdEvent,
+  RewardedAdHandlerType,
 } from '../types';
 
 import MobileAd from './MobileAd';
@@ -12,16 +12,11 @@ import MobileAd from './MobileAd';
 const { requestAd, presentAd } =
   NativeModules.RNAdMobRewardedInterstitial as FullScreenAdInterface;
 
-type HandlerType =
-  | (() => void)
-  | ((error: Error) => void)
-  | ((reward: Reward) => void);
-
 let _rewardedInterstitialRequest = 0;
 
 export default class RewardedInterstitialAd extends MobileAd<
   RewardedAdEvent,
-  HandlerType
+  RewardedAdHandlerType
 > {
   /**
    * Creates a new RewardedInterstitialAd instance.

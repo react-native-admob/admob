@@ -3,8 +3,8 @@ import { NativeModules } from 'react-native';
 import {
   FullScreenAdInterface,
   RequestOptions,
-  Reward,
   RewardedAdEvent,
+  RewardedAdHandlerType,
 } from '../types';
 
 import MobileAd from './MobileAd';
@@ -12,14 +12,12 @@ import MobileAd from './MobileAd';
 const { requestAd, presentAd } =
   NativeModules.RNAdMobRewarded as FullScreenAdInterface;
 
-type HandlerType =
-  | (() => void)
-  | ((error: Error) => void)
-  | ((reward: Reward) => void);
-
 let _rewardedRequest = 0;
 
-export default class RewardedAd extends MobileAd<RewardedAdEvent, HandlerType> {
+export default class RewardedAd extends MobileAd<
+  RewardedAdEvent,
+  RewardedAdHandlerType
+> {
   /**
    * Creates a new RewardedAd instance.
    * @param adUnitId The Ad Unit ID for the Rewarded Ad. You can find this on your Google AdMob dashboard.
