@@ -120,10 +120,6 @@ public class RNAdMobCommon {
             builder.setLocation(location);
         }
 
-        if (requestOptions.hasKey("requestAgent")) {
-            builder.setRequestAgent(Objects.requireNonNull(requestOptions.getString("requestAgent")));
-        }
-
         return builder.build();
     }
 }

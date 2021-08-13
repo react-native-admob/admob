@@ -39,7 +39,7 @@ export type RequestOptions = {
   requestNonPersonalizedAdsOnly?: boolean;
 
   /**
-   * Attaches additional properties to an ad request for direct campaign delivery.
+   * Additional properties attatched to an ad request.
    *
    * Takes an array of string key/value pairs.
    *
@@ -73,7 +73,7 @@ export type RequestOptions = {
   keywords?: string[];
 
   /**
-   * Sets a content URL for targeting purposes.
+   * Content URL for targeting purposes.
    *
    * Max length of 512.
    */
@@ -102,22 +102,6 @@ export type RequestOptions = {
    * @ios
    */
   locationAccuracy?: number;
-
-  /**
-   * Sets the request agent string to identify the ad request's origin. Third party libraries that reference the Mobile
-   * Ads SDK should call this method to denote the platform from which the ad request originated. For example, if a
-   * third party ad network called "CoolAds network" mediates requests to the Mobile Ads SDK, it should call this
-   * method with "CoolAds".
-   *
-   * #### Example
-   *
-   * ```js
-   * await interstitialAd.requestAd({
-   *   requestAgent: 'CoolAds',
-   * });
-   * ```
-   */
-  requestAgent?: string;
 };
 
 export type InitializationStatus = {

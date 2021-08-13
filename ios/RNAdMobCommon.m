@@ -109,11 +109,7 @@
     if (requestOptions[@"contentUrl"]) {
         request.contentURL = requestOptions[@"contentUrl"];
     }
-
-    if (requestOptions[@"requestAgent"]) {
-        request.requestAgent = requestOptions[@"requestAgent"];
-    }
-
+    
     return request;
 }
 

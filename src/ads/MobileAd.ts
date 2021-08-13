@@ -45,6 +45,11 @@ export default class MobileAd<
     this.requestOptions = requestOptions;
   }
 
+  /**
+   * Add an event handler for an ad event.
+   * @param event Event name
+   * @param handler Event handler
+   */
   addEventListener(event: E, handler: H) {
     const eventHandler = (e: Event) => {
       if (e.type === this.type && e.requestId === this.requestId) {
@@ -61,6 +66,10 @@ export default class MobileAd<
     };
   }
 
+  /**
+   * Remove an event handler.
+   * @param handler Event handler to remove
+   */
   removeEventListener(handler: H) {
     const listener = this.subscriptions.get(handler);
     if (!listener) {
@@ -70,6 +79,9 @@ export default class MobileAd<
     this.subscriptions.delete(handler);
   }
 
+  /**
+   * Remove all registered event handlers for this ad.
+   */
   removeAllListeners() {
     this.subscriptions.forEach((listener, key, map) => {
       listener.remove();
