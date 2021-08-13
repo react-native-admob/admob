@@ -10,6 +10,8 @@ import static com.rnadmob.admob.RNAdMobBannerViewManager.EVENT_SIZE_CHANGE;
 import android.content.Context;
 
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
@@ -34,6 +36,7 @@ public class RNAdmobBannerView extends ReactViewGroup implements AppEventListene
     private AdSize size;
     private AdSize[] sizes;
     private String unitId;
+    private AdManagerAdRequest request;
 
     public RNAdmobBannerView(Context context) {
         super(context);
@@ -103,19 +106,28 @@ public class RNAdmobBannerView extends ReactViewGroup implements AppEventListene
         requestAd();
     }
 
-    public void setSizes(AdSize[] sizes) {
-        this.sizes = sizes;
+    public void setSizes(ReadableArray adSizeStrings) {
+        AdSize[] adSizes = new AdSize[adSizeStrings.size()];
+
+        for (int i = 0; i < adSizeStrings.size(); i++) {
+            String adSizeString = adSizeStrings.getString(i);
+            adSizes[i] = RNAdMobCommon.stringToAdSize(adSizeString);
+        }
+        this.sizes = adSizes;
+        requestAd();
+    }
+
+    public void setRequestOptions(ReadableMap requestOptions) {
+        request = RNAdMobCommon.buildAdRequest(requestOptions);
         requestAd();
     }
 
     public void requestAd() {
-        if (size == null || unitId == null) {
+        if (size == null || unitId == null || request == null) {
             return;
         }
 
         initAdView();
-
-        AdManagerAdRequest request = new AdManagerAdRequest.Builder().build();
 
         adView.setAdUnitId(unitId);
         adView.setAdSize(size);

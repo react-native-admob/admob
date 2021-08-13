@@ -10,6 +10,7 @@
 @property (nonatomic, copy) NSString *unitId;
 @property (nonatomic, copy) NSString *size;
 @property (nonatomic, copy) NSArray *sizes;
+@property (nonatomic, copy) NSDictionary *requestOptions;
 
 @property (nonatomic, copy) RCTBubblingEventBlock onSizeChange;
 @property (nonatomic, copy) RCTDirectEventBlock onAdLoaded;

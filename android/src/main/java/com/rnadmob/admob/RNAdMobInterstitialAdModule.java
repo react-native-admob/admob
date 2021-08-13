@@ -18,9 +18,9 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.admanager.AdManagerAdRequest;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 
@@ -85,7 +85,7 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
             return;
         }
         activity.runOnUiThread(() -> {
-            AdRequest adRequest = RNAdMobCommon.buildAdRequest(requestOptions);
+            AdManagerAdRequest adRequest = RNAdMobCommon.buildAdRequest(requestOptions);
             InterstitialAd.load(getReactApplicationContext(), unitId, adRequest,
                     new InterstitialAdLoadCallback() {
                         @Override

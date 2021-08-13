@@ -25,6 +25,7 @@ RCT_EXPORT_METHOD(requestAd:(nonnull NSNumber *)reactTag)
 RCT_EXPORT_VIEW_PROPERTY(size, NSString)
 RCT_EXPORT_VIEW_PROPERTY(unitId, NSString)
 RCT_EXPORT_VIEW_PROPERTY(sizes, NSArray)
+RCT_EXPORT_VIEW_PROPERTY(requestOptions, NSDictionary)
 
 RCT_EXPORT_VIEW_PROPERTY(onSizeChange, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onAdLoaded, RCTDirectEventBlock)

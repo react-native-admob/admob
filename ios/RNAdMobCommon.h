@@ -10,6 +10,6 @@
 
 + (NSArray *)stringsToValues:(NSArray *)values;
 
-+ (GADRequest *)buildAdRequest:(NSDictionary *)requestOptions;
++ (GAMRequest *)buildAdRequest:(NSDictionary *)requestOptions;
 
 @end

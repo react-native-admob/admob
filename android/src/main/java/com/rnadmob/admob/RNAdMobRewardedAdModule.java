@@ -19,9 +19,9 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.admanager.AdManagerAdRequest;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 
@@ -86,7 +86,7 @@ public class RNAdMobRewardedAdModule extends ReactContextBaseJavaModule {
             return;
         }
         activity.runOnUiThread(() -> {
-            AdRequest adRequest = RNAdMobCommon.buildAdRequest(requestOptions);
+            AdManagerAdRequest adRequest = RNAdMobCommon.buildAdRequest(requestOptions);
             RewardedAd.load(getReactApplicationContext(), unitId, adRequest,
                     new RewardedAdLoadCallback() {
                         @Override

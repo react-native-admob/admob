@@ -122,6 +122,11 @@ export interface BannerAdProps extends ViewProps {
   size: typeof BannerAdSize | string;
 
   /**
+   * Optional RequestOptions used to load the ad.
+   */
+  requestOptions?: RequestOptions;
+
+  /**
    * A callback that gets called when an ad's size has changed.
    */
   onSizeChange?: (size: { height: number; width: number }) => void;

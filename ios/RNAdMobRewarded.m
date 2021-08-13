@@ -54,7 +54,7 @@ RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
-    GADRequest *request = [RNAdMobCommon buildAdRequest:requestOptions];
+    GAMRequest *request = [RNAdMobCommon buildAdRequest:requestOptions];
     [GADRewardedAd loadWithAdUnitID:unitId
                             request:request
                   completionHandler:^(GADRewardedAd *ad, NSError *error) {

@@ -19,9 +19,15 @@
     [self requestAd];
 }
 
+- (void)setRequestOptions:(NSDictionary *)requestOptions
+{
+    _requestOptions = requestOptions;
+    [self requestAd];
+}
+
 - (void)requestAd
 {
-    if (_unitId == nil) {
+    if (_unitId == nil || _size == nil || _requestOptions == nil) {
         return;
     }
     GADAdSize size = [RNAdMobCommon stringToAdSize:_size];
@@ -43,7 +49,7 @@
         }
     }
     
-    GAMRequest *request = [GAMRequest request];
+    GAMRequest *request = [RNAdMobCommon buildAdRequest:_requestOptions];
     [_bannerView loadRequest:request];
 }
 

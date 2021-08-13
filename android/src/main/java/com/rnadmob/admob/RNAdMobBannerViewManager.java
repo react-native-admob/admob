@@ -3,11 +3,11 @@ package com.rnadmob.admob;
 import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
-import com.google.android.gms.ads.AdSize;
 
 import java.util.Map;
 
@@ -54,24 +54,23 @@ public class RNAdMobBannerViewManager extends SimpleViewManager<RNAdmobBannerVie
     }
 
     @ReactProp(name = "unitId")
-    public void setUnitId(RNAdmobBannerView bannerView, String unitId) {
-        bannerView.setUnitId(unitId);
+    public void setUnitId(RNAdmobBannerView view, String unitId) {
+        view.setUnitId(unitId);
     }
 
     @ReactProp(name = "size")
-    public void setSize(RNAdmobBannerView bannerView, String size) {
-        bannerView.setSize(size);
+    public void setSize(RNAdmobBannerView view, String size) {
+        view.setSize(size);
     }
 
     @ReactProp(name = "sizes")
-    public void setSizes(final RNAdmobBannerView view, final ReadableArray adSizeStrings) {
-        AdSize[] adSizes = new AdSize[adSizeStrings.size()];
+    public void setSizes(RNAdmobBannerView view, ReadableArray adSizeStrings) {
+        view.setSizes(adSizeStrings);
+    }
 
-        for (int i = 0; i < adSizeStrings.size(); i++) {
-            String adSizeString = adSizeStrings.getString(i);
-            adSizes[i] = RNAdMobCommon.stringToAdSize(adSizeString);
-        }
-        view.setSizes(adSizes);
+    @ReactProp(name = "requestOptions")
+    public void setRequestOptions(RNAdmobBannerView view, ReadableMap requestOptions) {
+        view.setRequestOptions(requestOptions);
     }
 
     @Nullable

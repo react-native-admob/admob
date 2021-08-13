@@ -78,8 +78,8 @@
     return adSizes;
 }
 
-+ (GADRequest *)buildAdRequest:(NSDictionary *)requestOptions {
-    GADRequest *request = [GADRequest request];
++ (GAMRequest *)buildAdRequest:(NSDictionary *)requestOptions {
+    GAMRequest *request = [GAMRequest request];
     NSMutableDictionary *extras = [@{} mutableCopy];
 
     if (requestOptions[@"requestNonPersonalizedAdsOnly"] && [requestOptions[@"requestNonPersonalizedAdsOnly"] boolValue]) {

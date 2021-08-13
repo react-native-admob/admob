@@ -12,6 +12,7 @@ import com.facebook.react.views.view.ReactViewGroup;
 import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.admanager.AdManagerAdRequest;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -78,8 +79,8 @@ public class RNAdMobCommon {
         return unitId.startsWith("/");
     }
 
-    static public AdRequest buildAdRequest(ReadableMap requestOptions) {
-        AdRequest.Builder builder = new AdRequest.Builder();
+    static public AdManagerAdRequest buildAdRequest(ReadableMap requestOptions) {
+        AdManagerAdRequest.Builder builder = new AdManagerAdRequest.Builder();
         Bundle extras = new Bundle();
 
         if (requestOptions.hasKey("requestNonPersonalizedAdsOnly") && requestOptions.getBoolean("requestNonPersonalizedAdsOnly")) {
