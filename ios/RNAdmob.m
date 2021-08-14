@@ -6,8 +6,6 @@
 #import <FBAudienceNetwork/FBAdSettings.h>
 #endif
 
-@import GoogleMobileAds;
-
 @implementation RNAdMob
 
 RCT_EXPORT_MODULE();
@@ -21,7 +19,7 @@ RCT_EXPORT_METHOD(initialize:(RCTPromiseResolveBlock) resolve rejecter:(RCTPromi
         }
     }
 #endif
-
+    
     GADMobileAds *ads = [GADMobileAds sharedInstance];
     [ads startWithCompletionHandler:^(GADInitializationStatus *status) {
         NSDictionary *adapterStatuses = [status adapterStatusesByClassName];
@@ -74,7 +72,9 @@ RCT_EXPORT_METHOD(setRequestConfiguration:(NSDictionary *)config)
 
 RCT_EXPORT_METHOD(isTestDevice:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
-    resolve(@TRUE);
+    NSArray *testDeviceIds = GADMobileAds.sharedInstance.requestConfiguration.testDeviceIdentifiers;
+    BOOL value = [testDeviceIds containsObject:[[ASIdentifierManager sharedManager] advertisingIdentifier]];
+    resolve([NSNumber numberWithBool:value]);
 }
 
 @end
