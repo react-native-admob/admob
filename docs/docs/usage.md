@@ -52,3 +52,38 @@ See [useRewardedAd](api/useRewardedAd).
 ### Using Class instance
 
 See [RewardedAd](api/RewardedAd).
+
+## Displaying Rewarded Interstitial Ad
+
+### Using Hook
+
+See [useRewardedInterstitialAd](api/useRewardedInterstitialAd).
+
+### Using Class instance
+
+See [RewardedInterstitialAd](api/RewardedInterstitialAd).
+
+### Request Non Personalized Ads Only
+
+You can set [RequestOptions](api/RequestOptions) for your ads. Using this, you can load non-personalized ads only.
+
+```js
+const requestOptions = {
+  requestNonPersonalizedAdsOnly: true,
+}
+
+// Requesting npa only in hook
+const rewardedAd = useRewardedAd(UNIT_ID_REWARDED, {
+  requestOptions,
+});
+
+// Requesting npa only in class instance (for this request)
+interstitialAd
+        .requestAd(requestOptions)
+        .catch((e: Error) => setAdLoadError(e))
+        .then(() => setAdLoaded(true));
+
+// Requesting npa only in class instance (for all requests in this ad instance)
+rewardedInterstitialAd
+        .setRequestOptions(requestOptions)
+```
