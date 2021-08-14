@@ -22,16 +22,16 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
-public class RNAdMobAdManager extends ReactContextBaseJavaModule {
+public class RNAdMobModule extends ReactContextBaseJavaModule {
 
-    public RNAdMobAdManager(ReactApplicationContext context) {
+    public RNAdMobModule(ReactApplicationContext context) {
         super(context);
     }
 
     @NonNull
     @Override
     public String getName() {
-        return "RNAdMobAdManager";
+        return "RNAdMobModule";
     }
 
     @ReactMethod

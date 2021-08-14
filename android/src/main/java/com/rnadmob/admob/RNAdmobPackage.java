@@ -15,7 +15,7 @@ public class RNAdmobPackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
         return Arrays.asList(
-                new RNAdMobAdManager(reactContext),
+                new RNAdMobModule(reactContext),
                 new RNAdMobInterstitialAdModule(reactContext),
                 new RNAdMobRewardedAdModule(reactContext),
                 new RNAdMobRewardedInterstitialAdModule(reactContext),

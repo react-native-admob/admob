@@ -1,4 +1,4 @@
-#import "RNAdMobAdManager.h"
+#import "RNAdmobAdManager.h"
 #import "RNAdMobUtils.h"
 
 #import <AppTrackingTransparency/AppTrackingTransparency.h>
@@ -8,7 +8,7 @@
 
 @import GoogleMobileAds;
 
-@implementation RNAdMobAdManager
+@implementation RNAdMob
 
 RCT_EXPORT_MODULE();
 

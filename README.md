@@ -19,9 +19,9 @@ Head over [Documentation Page](https://react-native-admob.github.io/admob/docs/u
 ### Initializing Mobile Ads SDK
 
 ```js
-import { AdManager } from '@react-native-admob/admob';
+import AdMob from '@react-native-admob/admob';
 
-AdManager.initialize();
+AdMob.initialize();
 ```
 
 ### Displaying Banner Ad
