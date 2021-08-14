@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import RewardedInterstitialAd from '../ads/RewardedInterstitialAd';
-import { AdHookOptions, AdHookResult, RequestOptions, Reward } from '../types';
+import { AdHookOptions, AdHookReturns, RequestOptions, Reward } from '../types';
 
 const defaultOptions: AdHookOptions = {
-  requestOnMounted: true,
-  presentOnLoaded: false,
-  requestOnDismissed: false,
+  loadOnMounted: true,
+  showOnLoaded: false,
+  loadOnDismissed: false,
   requestOptions: {},
 };
 
@@ -18,7 +18,7 @@ const defaultOptions: AdHookOptions = {
 export default function useRewardedInterstitialAd(
   unitId: string,
   options = defaultOptions
-): AdHookResult {
+): AdHookReturns {
   const rewardedInterstitialAd = useMemo(
     () => RewardedInterstitialAd.createAd(unitId),
     [unitId]
@@ -30,9 +30,9 @@ export default function useRewardedInterstitialAd(
   const [adPresentError, setAdPresentError] = useState<Error>();
   const [reward, setReward] = useState<Reward>();
   const {
-    requestOnMounted,
-    presentOnLoaded,
-    requestOnDismissed,
+    loadOnMounted,
+    showOnLoaded,
+    loadOnDismissed,
     requestOptions: adRequestOptions,
   } = Object.assign(defaultOptions, options);
 
@@ -50,25 +50,25 @@ export default function useRewardedInterstitialAd(
     [adPresented, adDismissed]
   );
 
-  const requestAd = useCallback(
+  const load = useCallback(
     (requestOptions: RequestOptions = adRequestOptions!) => {
       init();
       rewardedInterstitialAd
-        .requestAd(requestOptions)
+        .load(requestOptions)
         .catch((e: Error) => setAdLoadError(e))
         .then(() => setAdLoaded(true));
     },
     [rewardedInterstitialAd, adRequestOptions]
   );
 
-  const presentAd = useCallback(() => {
+  const show = useCallback(() => {
     if (adPresented) {
       console.warn(
         '[RNAdMob(RewardedInterstitialAd)] Ad is already presented once.'
       );
     } else if (adLoaded) {
       rewardedInterstitialAd
-        .presentAd()
+        .show()
         .catch((e: Error) => setAdPresentError(e))
         .then(() => setAdPresented(true));
     } else {
@@ -77,22 +77,22 @@ export default function useRewardedInterstitialAd(
   }, [rewardedInterstitialAd, adPresented, adLoaded]);
 
   useEffect(() => {
-    if (!rewardedInterstitialAd.requested && requestOnMounted) {
-      requestAd();
+    if (!rewardedInterstitialAd.requested && loadOnMounted) {
+      load();
     }
-  }, [rewardedInterstitialAd, requestOnMounted, requestAd]);
+  }, [rewardedInterstitialAd, loadOnMounted, load]);
 
   useEffect(() => {
-    if (adLoaded && presentOnLoaded) {
-      presentAd();
+    if (adLoaded && showOnLoaded) {
+      show();
     }
-  }, [adLoaded, presentOnLoaded, presentAd]);
+  }, [adLoaded, showOnLoaded, show]);
 
   useEffect(() => {
-    if (adDismissed && requestOnDismissed) {
-      requestAd();
+    if (adDismissed && loadOnDismissed) {
+      load();
     }
-  }, [adDismissed, requestOnDismissed, requestAd]);
+  }, [adDismissed, loadOnDismissed, load]);
 
   useEffect(() => {
     rewardedInterstitialAd.addEventListener('adDismissed', () =>
@@ -112,7 +112,7 @@ export default function useRewardedInterstitialAd(
     adLoadError,
     adPresentError,
     reward,
-    requestAd,
-    presentAd,
+    load,
+    show,
   };
 }

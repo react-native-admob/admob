@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import RewardedAd from '../ads/RewardedAd';
-import { AdHookOptions, AdHookResult, RequestOptions, Reward } from '../types';
+import { AdHookOptions, AdHookReturns, RequestOptions, Reward } from '../types';
 
 const defaultOptions: AdHookOptions = {
-  requestOnMounted: true,
-  presentOnLoaded: false,
-  requestOnDismissed: false,
+  loadOnMounted: true,
+  showOnLoaded: false,
+  loadOnDismissed: false,
   requestOptions: {},
 };
 
@@ -18,7 +18,7 @@ const defaultOptions: AdHookOptions = {
 export default function useRewardedAd(
   unitId: string,
   options = defaultOptions
-): AdHookResult {
+): AdHookReturns {
   const rewardedAd = useMemo(() => RewardedAd.createAd(unitId), [unitId]);
   const [adLoaded, setAdLoaded] = useState(false);
   const [adPresented, setAdPresented] = useState(false);
@@ -27,9 +27,9 @@ export default function useRewardedAd(
   const [adPresentError, setAdPresentError] = useState<Error>();
   const [reward, setReward] = useState<Reward>();
   const {
-    requestOnMounted,
-    presentOnLoaded,
-    requestOnDismissed,
+    loadOnMounted,
+    showOnLoaded,
+    loadOnDismissed,
     requestOptions: adRequestOptions,
   } = Object.assign(defaultOptions, options);
 
@@ -47,23 +47,23 @@ export default function useRewardedAd(
     [adPresented, adDismissed]
   );
 
-  const requestAd = useCallback(
+  const load = useCallback(
     (requestOptions: RequestOptions = adRequestOptions!) => {
       init();
       rewardedAd
-        .requestAd(requestOptions)
+        .load(requestOptions)
         .catch((e: Error) => setAdLoadError(e))
         .then(() => setAdLoaded(true));
     },
     [rewardedAd, adRequestOptions]
   );
 
-  const presentAd = useCallback(() => {
+  const show = useCallback(() => {
     if (adPresented) {
       console.warn('[RNAdmob(RewardedAd)] Ad is already presented once.');
     } else if (adLoaded) {
       rewardedAd
-        .presentAd()
+        .show()
         .catch((e: Error) => setAdPresentError(e))
         .then(() => setAdPresented(true));
     } else {
@@ -72,22 +72,22 @@ export default function useRewardedAd(
   }, [rewardedAd, adPresented, adLoaded]);
 
   useEffect(() => {
-    if (!rewardedAd.requested && requestOnMounted) {
-      requestAd();
+    if (!rewardedAd.requested && loadOnMounted) {
+      load();
     }
-  }, [rewardedAd, requestOnMounted, requestAd]);
+  }, [rewardedAd, loadOnMounted, load]);
 
   useEffect(() => {
-    if (adLoaded && presentOnLoaded) {
-      presentAd();
+    if (adLoaded && showOnLoaded) {
+      show();
     }
-  }, [adLoaded, presentOnLoaded, presentAd]);
+  }, [adLoaded, showOnLoaded, show]);
 
   useEffect(() => {
-    if (adDismissed && requestOnDismissed) {
-      requestAd();
+    if (adDismissed && loadOnDismissed) {
+      load();
     }
-  }, [adDismissed, requestOnDismissed, requestAd]);
+  }, [adDismissed, loadOnDismissed, load]);
 
   useEffect(() => {
     rewardedAd.addEventListener('adDismissed', () => setAdDismissed(true));
@@ -103,7 +103,7 @@ export default function useRewardedAd(
     adLoadError,
     adPresentError,
     reward,
-    requestAd,
-    presentAd,
+    load,
+    show,
   };
 }

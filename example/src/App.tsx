@@ -46,7 +46,7 @@ const UNIT_ID_BANNER = 'ca-app-pub-3940256099942544/6300978111';
 const UNIT_ID_GAM_BANNER = '/6499/example/banner';
 
 const hookOptions: AdHookOptions = {
-  requestOnDismissed: true,
+  loadOnDismissed: true,
   requestOptions: {
     requestNonPersonalizedAdsOnly: true,
   },
@@ -169,14 +169,14 @@ export default function Example() {
             <Button
               title="Show Rewarded Video and preload next"
               disabled={!rewardedAd.adLoaded}
-              onPress={() => rewardedAd.presentAd()}
+              onPress={() => rewardedAd.show()}
             />
           </BannerExample>
           <BannerExample title="Interstitial">
             <Button
               title="Show Interstitial and preload next"
               disabled={!interstitalAd.adLoaded}
-              onPress={() => interstitalAd.presentAd()}
+              onPress={() => interstitalAd.show()}
             />
           </BannerExample>
           <BannerExample title="RewardedInterstitial">
@@ -195,7 +195,7 @@ export default function Example() {
             }}
             onDismiss={() => {
               if (adTick === 0) {
-                rewardedInterstitialAd.presentAd();
+                rewardedInterstitialAd.show();
                 setAdTick(5);
               }
             }}

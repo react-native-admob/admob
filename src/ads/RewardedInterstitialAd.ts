@@ -32,10 +32,10 @@ export default class RewardedInterstitialAd extends MobileAd<
   }
 
   /**
-   * Requests a new Rewarded Interstitial Ad.
+   * Loads a new Rewarded Interstitial Ad.
    * @param requestOptions Optional RequestOptions used to load the ad.
    */
-  requestAd(requestOptions?: RequestOptions) {
+  load(requestOptions?: RequestOptions) {
     if (!this.requested) {
       this.requested = true;
       return requestAd(
@@ -49,9 +49,9 @@ export default class RewardedInterstitialAd extends MobileAd<
   }
 
   /**
-   * Presents loaded Rewarded Interstitial Ad.
+   * Shows loaded Rewarded Interstitial Ad.
    */
-  presentAd() {
+  show() {
     return presentAd(this.requestId);
   }
 }

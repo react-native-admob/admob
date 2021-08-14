@@ -30,7 +30,7 @@ Methods listed below except [`createAd()`](#createad) must be called from instan
 static createAd(unitId: string): RewardedInterstitialAd
 ```
 
-Create an ad instance.
+Creates an ad instance.
 
 **Parameters**
 
@@ -40,13 +40,13 @@ Create an ad instance.
 
 `RewardedInterstitialAd` instance
 
-### requestAd()
+### load()
 
 ```js
-requestAd(requestOptions?: RequestOptions): Promise<void>
+load(requestOptions?: RequestOptions): Promise<void>
 ```
 
-Request new Rewarded Interstitial Ad.
+Loads new Rewarded Interstitial Ad.
 
 Can not call this function if the ad is already loaded but not presented and dismissed. 
 
@@ -58,13 +58,13 @@ Can not call this function if the ad is already loaded but not presented and dis
 
 `Promise` that waits for ad load. When error is occured while loading ad, the Promise will reject with `Error` object.
 
-### presentAd()
+### show()
 
 ```js
-presentAd(): Promise<void>
+show(): Promise<void>
 ```
 
-Present loaded Interstitial Ad. 
+Shows loaded Interstitial Ad. 
 
 Ad must be loaded before calling this function. 
 
@@ -78,7 +78,7 @@ Ad must be loaded before calling this function.
 addEventListener(event: string, handler: (event?: any) => any): void
 ```
 
-Add an event handler for an ad event.
+Adds an event handler for an ad event.
 
 **Parameters**
 
@@ -99,7 +99,7 @@ Add an event handler for an ad event.
 removeEventListener(handler: (event?: any) => any): void
 ```
 
-Remove an event handler.
+Removes an event handler.
 
 **Parameters**
 
@@ -111,7 +111,7 @@ Remove an event handler.
 removeAllListeners(): void
 ```
 
-Remove all registered event handlers for this ad.
+Removes all registered event handlers for this ad.
 
 ### setRequestOptions()
 

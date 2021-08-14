@@ -46,7 +46,7 @@ export default class MobileAd<
   }
 
   /**
-   * Add an event handler for an ad event.
+   * Adds an event handler for an ad event.
    * @param event Event name
    * @param handler Event handler
    */
@@ -67,7 +67,7 @@ export default class MobileAd<
   }
 
   /**
-   * Remove an event handler.
+   * Removes an event handler.
    * @param handler Event handler to remove
    */
   removeEventListener(handler: H) {
@@ -80,7 +80,7 @@ export default class MobileAd<
   }
 
   /**
-   * Remove all registered event handlers for this ad.
+   * Removes all registered event handlers for this ad.
    */
   removeAllListeners() {
     this.subscriptions.forEach((listener, key, map) => {

@@ -28,10 +28,10 @@ export default class RewardedAd extends MobileAd<
   }
 
   /**
-   * Requests a new Rewarded Ad.
+   * Loads a new Rewarded Ad.
    * @param requestOptions Optional RequestOptions used to load the ad.
    */
-  requestAd(requestOptions?: RequestOptions) {
+  load(requestOptions?: RequestOptions) {
     if (!this.requested) {
       this.requested = true;
       return requestAd(
@@ -45,9 +45,9 @@ export default class RewardedAd extends MobileAd<
   }
 
   /**
-   * Presents loaded Rewarded Ad.
+   * Shows loaded Rewarded Ad.
    */
-  presentAd() {
+  show() {
     return presentAd(this.requestId);
   }
 }

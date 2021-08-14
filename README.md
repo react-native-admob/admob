@@ -42,7 +42,7 @@ import { BannerAd, BannerAdSize } from '@react-native-admob/admob';
 ```js
 import { useInterstitialAd } from '@react-native-admob/admob';
 
-const { adLoadError, adLoaded, presentAd } = useInterstitialAd(UNIT_ID_INTERSTITIAL);
+const { adLoadError, adLoaded, show } = useInterstitialAd(UNIT_ID_INTERSTITIAL);
 
 useEffect(() => {
   if (adLoadError) {
@@ -52,7 +52,7 @@ useEffect(() => {
 
 useEffect(() => {
   if (adLoaded) {
-    presentAd();
+    show();
   }
 }, [adLoaded]);
 ```
@@ -61,7 +61,7 @@ useEffect(() => {
 ```js
 import { useRewardedAd } from '@react-native-admob/admob';
 
-const { adLoadError, adLoaded, presentAd, reward } = useRewardedAd(UNIT_ID_REWARDED);
+const { adLoadError, adLoaded, show, reward } = useRewardedAd(UNIT_ID_REWARDED);
 
 useEffect(() => {
   if (adLoadError) {
@@ -71,7 +71,7 @@ useEffect(() => {
 
 useEffect(() => {
   if (adLoaded) {
-    presentAd();
+    show();
   }
 }, [adLoaded]);
 

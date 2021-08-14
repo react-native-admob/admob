@@ -23,7 +23,7 @@ export default function App() {
     adLoadError,
     adLoaded,
     reward,
-    presentAd
+    show
   } = useRewardedInterstitialAd(UNIT_ID_REWARDED, hookOptions);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function App() {
 
   useEffect(() => {
     if (adLoaded) {
-      presentAd();
+      show();
     }
   }, [adLoaded]);
 
@@ -67,12 +67,12 @@ Options for your hook. Available values are listed below:
 
 Properties:
 
-| Name               | Type                             | Default | Description                                                   |
-| :----------------- | :------------------------------- | :------ | :------------------------------------------------------------ |
-| requestOnMounted   | boolean                          | `true`  | Whether your ad to request automatically on mounted.          |
-| presentOnLoaded    | boolean                          | `false` | Whether your ad to present automatically on loaded.           |
-| requestOnDismissed | boolean                          | `false` | Whether your ad to request new ad automatically on dismissed. |
-| requestOptions     | [RequestOptions](RequestOptions) | {}      | Optional RequestOptions used to load the ad.                  |
+| Name            | Type                             | Default | Description                                                |
+| :-------------- | :------------------------------- | :------ | :--------------------------------------------------------- |
+| loadOnMounted   | boolean                          | `true`  | Whether your ad to load automatically on mounted.          |
+| showOnLoaded    | boolean                          | `false` | Whether your ad to show automatically on loaded.           |
+| loadOnDismissed | boolean                          | `false` | Whether your ad to load new ad automatically on dismissed. |
+| requestOptions  | [RequestOptions](RequestOptions) | {}      | Optional RequestOptions used to load the ad.               |
 
 
 ## Returns
@@ -83,20 +83,20 @@ Properties:
 
 Properties:
 
-| Name           | Type        | Description                                                                                     |
-| :------------- | :---------- | :---------------------------------------------------------------------------------------------- |
-| adLoaded       | boolean     | Whether your ad is loaded and ready to present.                                                 |
-| adPresented    | boolean     | Whether your ad is presented to user.                                                           |
-| adDismissed    | boolean     | Whether your ad is dismissed.                                                                   |
-| adShowing      | boolean     | Whether your ad is showing. The value is equal with `adPresented && !adDismissed`.              |
-| adLoadError    | Error       | Error during ad load.                                                                           |
-| adPresentError | Error       | Error during ad present.                                                                        |
-| reward         | [Reward](#) | Reward earned by user. The value is `undefined` until user earns reward.                        |
-| requestAd      | Function    | Request new ad. Can not call this function if the ad is loaded but not presented and dismissed. |
-| presentAd      | Function    | Present loaded ad. Ad must be loaded prior to this call.                                        |
+| Name           | Type        | Description                                                                                   |
+| :------------- | :---------- | :-------------------------------------------------------------------------------------------- |
+| adLoaded       | boolean     | Whether your ad is loaded and ready to present.                                               |
+| adPresented    | boolean     | Whether your ad is presented to user.                                                         |
+| adDismissed    | boolean     | Whether your ad is dismissed.                                                                 |
+| adShowing      | boolean     | Whether your ad is showing. The value is equal with `adPresented && !adDismissed`.            |
+| adLoadError    | Error       | Error during ad load.                                                                         |
+| adPresentError | Error       | Error during ad present.                                                                      |
+| reward         | [Reward](#) | Reward earned by user. The value is `undefined` until user earns reward.                      |
+| load           | Function    | Loads new ad. Can not call this function if the ad is loaded but not presented and dismissed. |
+| show           | Function    | Shows loaded ad. Ad must be loaded prior to this call.                                        |
 
 :::tip
 
-Note that `adPresented` value remains `true` after the ad is dismissed. The value changes to `false` when ad is initialized via `requestAd`. To determine whether the ad is showing, use `adShowing` value.
+Note that `adPresented` value remains `true` after the ad is dismissed. The value changes to `false` when ad is initialized via `load()`. To determine whether the ad is showing, use `adShowing` value.
 
 :::

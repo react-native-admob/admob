@@ -95,7 +95,7 @@ export type RequestOptions = {
   location?: [number, number];
 
   /**
-   * Sets the location accuracy if the location is set, in meters.
+   * Location accuracy if the location is set, in meters.
    *
    * This option is only applied to iOS devices. On Android, this option has no effect.
    *
@@ -176,17 +176,11 @@ export type HandlerType = () => void | ((error: Error) => void);
 export type RewardedAdHandlerType = HandlerType | ((reward: Reward) => void);
 
 export interface FullScreenAdInterface {
-  /**
-   * Request ad and return Promise.
-   */
   requestAd: (
     requestId: number,
     unitId: string,
     requestOptions: RequestOptions
   ) => Promise<void>;
-  /**
-   * Present the loaded ad and return Promise.
-   */
   presentAd: (requestId: number) => Promise<void>;
 }
 
@@ -197,24 +191,24 @@ export type Reward = {
 
 export type AdHookOptions = {
   /**
-   * Whether your ad to request automatically on mounted. Defaults to `true`.
+   * Whether your ad to load automatically on mounted. Defaults to `true`.
    */
-  requestOnMounted?: boolean;
+  loadOnMounted?: boolean;
   /**
-   * Whether your ad to present automatically on loaded. Defaults to `false`.
+   * Whether your ad to show automatically on loaded. Defaults to `false`.
    */
-  presentOnLoaded?: boolean;
+  showOnLoaded?: boolean;
   /**
-   * Whether your ad to request new ad automatically on dismissed. Defaults to `false`.
+   * Whether your ad to load new ad automatically on dismissed. Defaults to `false`.
    */
-  requestOnDismissed?: boolean;
+  loadOnDismissed?: boolean;
   /**
    * Optional RequestOptions used to load the ad.
    */
   requestOptions?: RequestOptions;
 };
 
-export type AdHookResult = {
+export type AdHookReturns = {
   /**
    * Whether your ad is loaded and ready to present.
    */
@@ -245,12 +239,12 @@ export type AdHookResult = {
    */
   reward?: Reward;
   /**
-   * Request new ad.
+   * Loads new ad.
    * @param requestOptions Optional RequestOptions used to load the ad.
    */
-  requestAd: (requestOptions?: RequestOptions) => void;
+  load: (requestOptions?: RequestOptions) => void;
   /**
-   * Present loaded ad.
+   * Shows loaded ad.
    */
-  presentAd: () => void;
+  show: () => void;
 };
