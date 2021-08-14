@@ -63,7 +63,7 @@ See [useRewardedInterstitialAd](api/useRewardedInterstitialAd).
 
 See [RewardedInterstitialAd](api/RewardedInterstitialAd).
 
-### Request Non Personalized Ads Only
+## Request Non Personalized Ads Only
 
 You can set [RequestOptions](api/RequestOptions) for your ads. Using this, you can load non-personalized ads only.
 
