@@ -1,4 +1,4 @@
-#import "RNAdmobAdManager.h"
+#import "RNAdmob.h"
 #import "RNAdMobUtils.h"
 
 #import <AppTrackingTransparency/AppTrackingTransparency.h>

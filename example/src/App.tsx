@@ -105,7 +105,13 @@ export default function Example() {
       const timeout = setTimeout(() => setAdTick((prev) => prev - 1), 1000);
       return () => clearTimeout(timeout);
     } else if (adTick === 0) {
+      if (Platform.OS === 'android') {
+        rewardedInterstitialAd.show();
+        setAdTick(5);
+      }
       setModalVisible(false);
+    } else if (!modalVisible) {
+      setAdTick(5);
     }
   }, [adTick, modalVisible, rewardedInterstitialAd]);
 
