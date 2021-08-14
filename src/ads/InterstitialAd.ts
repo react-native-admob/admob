@@ -18,13 +18,20 @@ export default class InterstitialAd extends MobileAd<
   InterstitialAdEvent,
   HandlerType
 > {
+  private constructor(requestId: number, unitId: string) {
+    super('Interstitial', requestId, unitId);
+  }
+
   /**
    * Creates a new InterstitialAd instance.
-   * @param adUnitId The Ad Unit ID for the Interstitial Ad. You can find this on your Google AdMob dashboard.
+   * @param unitId The Ad Unit ID for the Interstitial Ad. You can find this on your Google AdMob dashboard.
+   * @param requestOptions Optional RequestOptions used to load the ad.
    */
-  static createAd(unitId: string) {
+  static createAd(unitId: string, requestOptions?: RequestOptions) {
     const requestId = _interstitialRequest++;
-    return new InterstitialAd('Interstitial', requestId, unitId);
+    const ad = new InterstitialAd(requestId, unitId);
+    ad.setRequestOptions(requestOptions);
+    return ad;
   }
 
   /**

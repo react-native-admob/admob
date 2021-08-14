@@ -18,13 +18,20 @@ export default class RewardedAd extends MobileAd<
   RewardedAdEvent,
   RewardedAdHandlerType
 > {
+  private constructor(requestId: number, unitId: string) {
+    super('Rewarded', requestId, unitId);
+  }
+
   /**
    * Creates a new RewardedAd instance.
-   * @param adUnitId The Ad Unit ID for the Rewarded Ad. You can find this on your Google AdMob dashboard.
+   * @param unitId The Ad Unit ID for the Rewarded Ad. You can find this on your Google AdMob dashboard.
+   * @param requestOptions Optional RequestOptions used to load the ad.
    */
-  static createAd(unitId: string) {
+  static createAd(unitId: string, requestOptions?: RequestOptions) {
     const requestId = _rewardedRequest++;
-    return new RewardedAd('Rewarded', requestId, unitId);
+    const ad = new RewardedAd(requestId, unitId);
+    ad.setRequestOptions(requestOptions);
+    return ad;
   }
 
   /**
