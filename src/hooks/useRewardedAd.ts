@@ -11,7 +11,7 @@ const defaultOptions: AdHookOptions = {
 };
 
 /**
- * React Hook for AdMob Rewarded ad.
+ * React Hook for AdMob Rewarded Ad.
  * @param unitId Rewarded Ad Unit Id
  * @param options `AdHookOptions`
  */

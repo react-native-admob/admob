@@ -11,7 +11,7 @@ const defaultOptions: AdHookOptions = {
 };
 
 /**
- * React Hook for AdMob Rewarded Interstitial ad.
+ * React Hook for AdMob Rewarded Interstitial Ad.
  * @param unitId Rewarded Interstitial Ad Unit Id
  * @param options `AdHookOptions`
  */
