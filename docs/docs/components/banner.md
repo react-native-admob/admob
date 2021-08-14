@@ -51,6 +51,14 @@ The available sizes of the banner. Can be a predefined sizes via `BannerAdSize` 
 | :------------------------------------------ |
 | [BannerAdSize](#banneradsize)[] \| string[] |
 
+### `requestOptions`
+
+Optional RequestOptions used to load the ad. 
+
+| Type                                       |
+| :----------------------------------------- |
+| [RequestOptions](/docs/api/RequestOptions) |
+
 ### `onSizeChange`
 
 A callback that gets called when an ad's size has changed.

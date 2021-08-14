@@ -86,4 +86,11 @@ interstitialAd
 // Requesting npa only in class instance (for all requests in this ad instance)
 rewardedInterstitialAd
         .setRequestOptions(requestOptions)
+
+// Requesting npa only in BannerAd
+<BannerAd
+  size={BannerAdSize.BANNER}
+  unitId={UNIT_ID_BANNER}
+  reqeustOptions={requestOptions}
+/>
 ```
