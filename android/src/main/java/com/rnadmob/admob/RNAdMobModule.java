@@ -31,7 +31,7 @@ public class RNAdMobModule extends ReactContextBaseJavaModule {
     @NonNull
     @Override
     public String getName() {
-        return "RNAdMobModule";
+        return "RNAdMob";
     }
 
     @ReactMethod

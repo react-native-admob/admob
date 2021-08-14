@@ -2,7 +2,7 @@ import { NativeModules } from 'react-native';
 
 import { InitializationStatus, RequestConfiguration } from './types';
 
-const RNAdMobAdManager = NativeModules.RNAdMobAdManager;
+const RNAdMobAdManager = NativeModules.RNAdMob;
 
 /**
  * Initializes Mobile Ads SDK.
