@@ -9,9 +9,9 @@ Use this function to check if the current device is registered as a test device 
 ## Usage Example
 
 ```js
-import { AdManager } from '@react-native-admob/admob';
+import AdMob from '@react-native-admob/admob';
 
-AdManager.isTestDevice().then((result) => console.log(result));
+AdMob.isTestDevice().then((result) => console.log(result));
 ```
 
 ## Returns

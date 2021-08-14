@@ -9,14 +9,14 @@ sidebar_label: Usage
 Before you loading any ads, you must initialize Mobile Ads SDK by calling `AdManager.initialize()`.
 
 ```js
-import { AdManager } from '@react-native-admob/admob';
+import AdMob from '@react-native-admob/admob';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const init = async () => {
-      await AdManager.initialize();
+      await AdMob.initialize();
 
       setLoading(false);
     };
@@ -27,7 +27,7 @@ export default function App() {
   return (/* Your App code */)
 ```
 
-For detailed usage of `AdManager.initialize()` function, [head over to API section](api/initialize).
+For detailed usage of `AdMob.initialize()` function, [head over to API section](api/initialize).
 
 ## Displaying Banner Ad
 

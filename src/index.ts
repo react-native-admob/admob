@@ -1,4 +1,6 @@
-export { default as AdManager } from './AdManager';
+import AdMob from './AdMob';
+
+export default AdMob;
 export { default as BannerAd } from './ads/BannerAd';
 export { default as BannerAdSize } from './BannerAdSize';
 export { default as InterstitialAd } from './ads/InterstitialAd';

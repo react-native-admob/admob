@@ -9,14 +9,14 @@ Use this function to initialize Mobile Ads SDK. You need to call this function b
 ## Usage example
 
 ```js
-import { AdManager } from '@react-native-admob/admob';
+import AdMob from '@react-native-admob/admob';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const init = async () => {
-      await AdManager.initialize();
+      await AdMob.initialize();
 
       setLoading(false);
     };

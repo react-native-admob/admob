@@ -11,9 +11,8 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {
+import AdMob, {
   AdHookOptions,
-  AdManager,
   BannerAd,
   BannerAdSize,
   useInterstitialAd,
@@ -68,7 +67,7 @@ export default function Example() {
 
   useEffect(() => {
     const init = async () => {
-      await AdManager.initialize();
+      await AdMob.initialize();
 
       setLoading(false);
     };

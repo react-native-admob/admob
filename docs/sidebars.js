@@ -30,7 +30,7 @@ module.exports = {
           label: 'RequestOptions',
         },
         {
-          AdManager: [
+          AdMob: [
             'api/initialize',
             'api/setRequestConfiguration',
             'api/isTestDevice',

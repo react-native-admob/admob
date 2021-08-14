@@ -9,7 +9,7 @@ Use this function to configure Ad requests globally.
 ## Usage example
 
 ```js
-import { AdManager } from '@react-native-admob/admob';
+import AdMob from '@react-native-admob/admob';
 
 const config = {
   testDeviceIds: ["YOUR_TEST_DEVICE_ID"],
@@ -20,7 +20,7 @@ const config = {
 
 export default function App() {
   useEffect(() => {
-    AdManager.setRequestConfiguration(config);
+    AdMob.setRequestConfiguration(config);
   }, []);
 
   return (/* Your App code */)
