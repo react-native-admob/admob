@@ -13,7 +13,7 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-public class RNAdMobBannerViewManager extends SimpleViewManager<RNAdmobBannerView> {
+public class RNAdMobBannerViewManager extends SimpleViewManager<RNAdMobBannerView> {
     public static final String REACT_CLASS = "RNAdMobBannerView";
     public static final String EVENT_AD_LOADED = "onAdLoaded";
     public static final String EVENT_AD_FAILED_TO_LOAD = "onAdFailedToLoad";
@@ -32,8 +32,8 @@ public class RNAdMobBannerViewManager extends SimpleViewManager<RNAdmobBannerVie
 
     @Nonnull
     @Override
-    public RNAdmobBannerView createViewInstance(@Nonnull ThemedReactContext themedReactContext) {
-        return new RNAdmobBannerView(themedReactContext);
+    public RNAdMobBannerView createViewInstance(@Nonnull ThemedReactContext themedReactContext) {
+        return new RNAdMobBannerView(themedReactContext);
     }
 
     @Override
@@ -54,22 +54,22 @@ public class RNAdMobBannerViewManager extends SimpleViewManager<RNAdmobBannerVie
     }
 
     @ReactProp(name = "unitId")
-    public void setUnitId(RNAdmobBannerView view, String unitId) {
+    public void setUnitId(RNAdMobBannerView view, String unitId) {
         view.setUnitId(unitId);
     }
 
     @ReactProp(name = "size")
-    public void setSize(RNAdmobBannerView view, String size) {
+    public void setSize(RNAdMobBannerView view, String size) {
         view.setSize(size);
     }
 
     @ReactProp(name = "sizes")
-    public void setSizes(RNAdmobBannerView view, ReadableArray adSizeStrings) {
+    public void setSizes(RNAdMobBannerView view, ReadableArray adSizeStrings) {
         view.setSizes(adSizeStrings);
     }
 
     @ReactProp(name = "requestOptions")
-    public void setRequestOptions(RNAdmobBannerView view, ReadableMap requestOptions) {
+    public void setRequestOptions(RNAdMobBannerView view, ReadableMap requestOptions) {
         view.setRequestOptions(requestOptions);
     }
 
@@ -81,7 +81,7 @@ public class RNAdMobBannerViewManager extends SimpleViewManager<RNAdmobBannerVie
 
 
     @Override
-    public void receiveCommand(@Nonnull RNAdmobBannerView bannerView, int commandId, @Nullable ReadableArray args) {
+    public void receiveCommand(@Nonnull RNAdMobBannerView bannerView, int commandId, @Nullable ReadableArray args) {
         if (COMMAND_REQUEST_AD == commandId) {
             bannerView.requestAd();
         }

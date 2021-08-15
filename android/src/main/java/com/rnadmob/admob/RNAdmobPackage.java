@@ -10,7 +10,7 @@ import com.facebook.react.uimanager.ViewManager;
 import java.util.Arrays;
 import java.util.List;
 
-public class RNAdmobPackage implements ReactPackage {
+public class RNAdMobPackage implements ReactPackage {
     @NonNull
     @Override
     public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {

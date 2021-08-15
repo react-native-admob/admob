@@ -29,7 +29,7 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
-public class RNAdmobBannerView extends ReactViewGroup implements AppEventListener {
+public class RNAdMobBannerView extends ReactViewGroup implements AppEventListener {
 
     private AdManagerAdView adView;
 
@@ -38,7 +38,7 @@ public class RNAdmobBannerView extends ReactViewGroup implements AppEventListene
     private String unitId;
     private AdManagerAdRequest request;
 
-    public RNAdmobBannerView(Context context) {
+    public RNAdMobBannerView(Context context) {
         super(context);
 
         initAdView();
