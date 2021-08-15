@@ -6,7 +6,7 @@ sidebar_label: Usage
 
 ## Initializing Mobile Ads SDK
 
-Before you loading any ads, you must initialize Mobile Ads SDK by calling `AdManager.initialize()`.
+Before you loading any ads, you must initialize Mobile Ads SDK by calling `AdMob.initialize()`.
 
 ```js
 import AdMob from '@react-native-admob/admob';
@@ -32,6 +32,16 @@ For detailed usage of `AdMob.initialize()` function, [head over to API section](
 ## Displaying Banner Ad
 
 See [BannerAd](components/banner).
+
+## Displaying App Open Ad(beta)
+
+### Using Hook
+
+See [useAppOpenAd](api/useAppOpenAd).
+
+### Using Class instance
+
+See [AppOpenAd](api/AppOpenAd).
 
 ## Displaying Interstitial Ad
 

@@ -1,20 +1,36 @@
-# React Native Admob
-
-[![npm](https://img.shields.io/npm/v/@react-native-admob/admob.svg)](https://www.npmjs.com/package/@react-native-admob/admob)
-
-⚠️ Please note, this package is under active development, which means it may be not stable to apply on production. Please use this package on your own risk. New issues and PRs are always welcome.
+<p align="center">
+  <img alt="cover with mockup" src="./docs/static/img/logo_admob.png" width="192px">
+  <h1 align="center">
+    React Native Admob
+  </h1>
+</p>
+<p align="center">
+  <a href="https://www.npmjs.org/package/@react-native-admob/admob">
+    <img alt="npm version" src="https://img.shields.io/npm/v/@react-native-admob/admob.svg?style=for-the-badge" />
+  </a>
+  <a href="https://www.npmjs.org/package/@react-native-admob/admob">
+    <img alt="weekly downloads" src="https://img.shields.io/npm/dw/@react-native-admob/admob.svg?style=for-the-badge" />
+  </a>
+  <a href="https://www.npmjs.org/package/@react-native-admob/admob">
+    <img alt="npm bundle size" src="https://img.shields.io/bundlephobia/minzip/@react-native-admob/admob.svg?style=for-the-badge" />
+  </a>
+  <a href="./LICENSE">
+    <img alt="license" src="https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge" />
+  </a>
+  <br />
+</p>
 
 > Admob for React Native with powerful hooks and components
 
-## Installation
+## 📦 Installation
 
 See [Installation Guide](https://react-native-admob.github.io/admob/docs/installation)
 
-## Documentation
+## 📃 Documentation
 
 Head over [Documentation Page](https://react-native-admob.github.io/admob/docs/usage)
 
-## Usage
+## 🚀 Usage
 
 ### Initializing Mobile Ads SDK
 
@@ -33,7 +49,9 @@ import { BannerAd, BannerAdSize } from '@react-native-admob/admob';
   size={BannerAdSize.BANNER}
   unitId={UNIT_ID_BANNER}
   onAdFailedToLoad={(error) => console.error(error)}
-  ref={bannerRef}
+  requestOptions={{
+    requestNonPersonalizedAdsOnly: true,
+  }}
 />;
 ```
 
@@ -81,6 +99,39 @@ useEffect(() => {
     console.log(reward);
   }
 }, [reward]);
+```
+
+### Displaying App Open Ad
+```js
+export default function App() {
+  const [initialized, setInitialized] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const { adDismissed } = useAppOpenAd(initialized ? UNIT_ID_APP_OPEN : null, {
+    showOnColdStart: true,
+  });
+
+  useEffect(() => {
+    const initAdmob = async () => {
+      await AdMob.initialize();
+      setInitialized(true);
+    };
+    const load = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      setLoaded(true);
+    };
+
+    initAdmob();
+    load();
+  }, []);
+
+  useEffect(() => {
+    if (initialized && loaded && adDismissed) {
+      RNBootSplash.hide({ fade: true });
+    }
+  }, [initialized, loaded, adDismissed]);
+
+  return initialized && loaded && adDismissed ? <Example /> : <View />;
+}
 ```
 
 For detailed usage, head over [Documentation](https://react-native-admob.github.io/admob/docs/usage).
