@@ -1,5 +1,7 @@
-#import "RNAdMobBannerViewManager.h"
 #import "RNAdMobBannerView.h"
+
+@interface RNAdMobBannerViewManager : RCTViewManager
+@end
 
 @implementation RNAdMobBannerViewManager
 

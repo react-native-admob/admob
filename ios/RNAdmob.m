@@ -1,10 +1,14 @@
-#import "RNAdmob.h"
-#import "RNAdMobUtils.h"
-
 #import <AppTrackingTransparency/AppTrackingTransparency.h>
 #if __has_include("<FBAudienceNetwork/FBAdSettings.h>")
 #import <FBAudienceNetwork/FBAdSettings.h>
 #endif
+
+@import React;
+@import GoogleMobileAds;
+@import AdSupport;
+
+@interface RNAdMob : NSObject <RCTBridgeModule>
+@end
 
 @implementation RNAdMob
 
@@ -65,7 +69,7 @@ RCT_EXPORT_METHOD(setRequestConfiguration:(NSDictionary *)config)
     };
     
     if ([[config allKeys] containsObject:@"testDeviceIds"]) {
-        NSArray *testDevices = RNAdMobProcessTestDevices([config valueForKey:@"testDeviceIds"],kGADSimulatorID);
+        NSArray *testDevices = [config valueForKey:@"testDeviceIds"];
         [[[GADMobileAds sharedInstance] requestConfiguration] setTestDeviceIdentifiers:testDevices];
     };
 }

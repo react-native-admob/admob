@@ -1,7 +1,8 @@
-#import "RNAdMobInterstitial.h"
 #import "RNAdMobEvent.h"
-#import "RNAdMobUtils.h"
 #import "RNAdMobCommon.h"
+
+@interface RNAdMobInterstitial : NSObject <RCTBridgeModule, GADFullScreenContentDelegate>
+@end
 
 static __strong NSMutableDictionary *requestIdMap;
 static __strong NSMutableDictionary *adMap;

@@ -1,6 +1,14 @@
-#import "RNAdMobAppOpen.h"
 #import "RNAdMobCommon.h"
 #import "RNAdMobEvent.h"
+
+@interface RNAdMobAppOpen : NSObject <RCTBridgeModule, GADFullScreenContentDelegate>
+
+@property (strong, nonatomic) GADAppOpenAd *appOpenAd;
+@property (weak, nonatomic) NSDate *loadTime;
+@property (nonatomic, copy) RCTPromiseResolveBlock presentResolve;
+@property (nonatomic, copy) RCTPromiseRejectBlock presentReject;
+
+@end
 
 @implementation RNAdMobAppOpen
 
