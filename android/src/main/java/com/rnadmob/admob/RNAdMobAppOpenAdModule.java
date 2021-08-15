@@ -22,12 +22,15 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.admanager.AdManagerAdRequest;
 import com.google.android.gms.ads.appopen.AppOpenAd;
 
+import java.util.Date;
+
 public class RNAdMobAppOpenAdModule extends ReactContextBaseJavaModule {
 
     public static final String REACT_CLASS = "RNAdMobAppOpen";
 
     private Promise presentPromise = null;
     private AppOpenAd appOpenAd = null;
+    private long loadTime = 0;
 
     @NonNull
     @Override
@@ -43,7 +46,7 @@ public class RNAdMobAppOpenAdModule extends ReactContextBaseJavaModule {
         RNAdMobEventModule.sendEvent(eventName, "AppOpen", 0, data);
     }
 
-    private FullScreenContentCallback fullScreenContentCallback = new FullScreenContentCallback(){
+    private final FullScreenContentCallback fullScreenContentCallback = new FullScreenContentCallback(){
         @Override
         public void onAdDismissedFullScreenContent() {
             sendEvent(AD_DISMISSED, null);
@@ -82,9 +85,9 @@ public class RNAdMobAppOpenAdModule extends ReactContextBaseJavaModule {
                     new AppOpenAd.AppOpenAdLoadCallback() {
                         @Override
                         public void onAdLoaded(@NonNull AppOpenAd ad) {
-                            FullScreenContentCallback callback = fullScreenContentCallback;
-                            ad.setFullScreenContentCallback(callback);
+                            ad.setFullScreenContentCallback(fullScreenContentCallback);
                             appOpenAd = ad;
+                            loadTime = (new Date()).getTime();
                             promise.resolve(null);
                         }
 
@@ -101,16 +104,22 @@ public class RNAdMobAppOpenAdModule extends ReactContextBaseJavaModule {
         presentPromise = promise;
         Activity activity = getCurrentActivity();
         if (activity == null) {
-            promise.reject("E_NULL_ACTIVITY", "Interstitial ad attempted to load but the current Activity was null.");
+            promise.reject("E_NULL_ACTIVITY", "App Open Ad attempted to load but the current Activity was null.");
             return;
         }
         activity.runOnUiThread(() -> {
-            if (appOpenAd != null) {
+            if (appOpenAd != null && wasLoadTimeLessThanNHoursAgo(4)) {
                 appOpenAd.show(activity);
             } else {
                 promise.reject("E_AD_NOT_READY", "Ad is not ready.");
             }
         });
+    }
+
+    private boolean wasLoadTimeLessThanNHoursAgo(long numHours) {
+        long dateDifference = (new Date()).getTime() - this.loadTime;
+        long numMilliSecondsPerHour = 3600000;
+        return (dateDifference < (numMilliSecondsPerHour * numHours));
     }
 
 }
