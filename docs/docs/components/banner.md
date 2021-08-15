@@ -4,7 +4,7 @@ title: BannerAd
 sidebar_label: BannerAd
 ---
 
-Renders a BannerAd. Supports both AdMob and AdManager.
+Renders a [Banner Ad](https://support.google.com/admob/answer/9993556). Supports both AdMob and AdManager.
 
 ```jsx
 import { BannerAd } from '@react-native-admob/admob';

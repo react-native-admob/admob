@@ -12,6 +12,7 @@ module.exports = {
       items: [
         {
           Hooks: [
+            'api/useAppOpenAd',
             'api/useInterstitialAd',
             'api/useRewardedAd',
             'api/useRewardedInterstitialAd',
@@ -19,6 +20,7 @@ module.exports = {
         },
         {
           Ads: [
+            'api/AppOpenAd',
             'api/InterstitialAd',
             'api/RewardedAd',
             'api/RewardedInterstitialAd',

@@ -4,7 +4,7 @@ title: useRewardedInterstitialAd
 sidebar_label: useRewardedInterstitialAd
 ---
 
-Use this hook to use Rewarded Interstitial Ad with its various states.
+Use this hook to use [Rewarded Interstitial Ad](https://developers.google.com/admob/android/rewarded-interstitial) with its various states.
 
 ## Usage example
 
@@ -86,8 +86,8 @@ Properties:
 | Name           | Type        | Description                                                                                   |
 | :------------- | :---------- | :-------------------------------------------------------------------------------------------- |
 | adLoaded       | boolean     | Whether your ad is loaded and ready to present.                                               |
-| adPresented    | boolean     | Whether your ad is presented to user.                                                         |
-| adDismissed    | boolean     | Whether your ad is dismissed.                                                                 |
+| adPresented    | boolean     | Whether your ad is presented to user. Value is remained `true` until new ad is **loaded**.    |
+| adDismissed    | boolean     | Whether your ad is dismissed. Value is remained `true` until new ad is **presented**.         |
 | adShowing      | boolean     | Whether your ad is showing. The value is equal with `adPresented && !adDismissed`.            |
 | adLoadError    | Error       | Error during ad load.                                                                         |
 | adPresentError | Error       | Error during ad present.                                                                      |
@@ -97,6 +97,6 @@ Properties:
 
 :::tip
 
-Note that `adPresented` value remains `true` after the ad is dismissed. The value changes to `false` when ad is initialized via `load()`. To determine whether the ad is showing, use `adShowing` value.
+Note that `adPresented` value remains `true` after the ad is dismissed. The value changes to `false` when ad is initialized via `load()`. Also, `adDismissed` value remains `true` until new ad is presented even if after a new ad is loaded. To determine whether the ad is showing, use `adShowing` value.
 
 :::

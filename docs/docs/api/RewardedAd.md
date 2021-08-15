@@ -4,7 +4,7 @@ title: RewardedAd
 sidebar_label: RewardedAd
 ---
 
-Creates Rewarded Ad and register event listeners to various events.
+Creates [Rewarded Ad](https://developers.google.com/admob/android/rewarded) and register event listeners to various events.
 
 :::tip
 
@@ -27,7 +27,7 @@ Methods listed below except [`createAd()`](#createad) must be called from instan
 ### createAd()
 
 ```js
-static createAd(unitId: string): RewardedAd
+static createAd(unitId: string, requestOptions?: RequestOptions): RewardedAd
 ```
 
 Creates an ad instance.
@@ -35,6 +35,8 @@ Creates an ad instance.
 **Parameters**
 
 `unitId` : Rewarded Ad [unitId](https://support.google.com/admob/answer/7356431).
+
+`requestOptions` (Optional) : [RequestOptions](RequestOptions) used to load the ad. 
 
 **Returns**
 

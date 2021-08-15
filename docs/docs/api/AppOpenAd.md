@@ -1,14 +1,14 @@
 ---
-id: InterstitialAd
-title: InterstitialAd
-sidebar_label: InterstitialAd
+id: AppOpenAd
+title: AppOpenAd
+sidebar_label: AppOpenAd
 ---
 
-Creates [Interstitial Ad](https://developers.google.com/admob/android/interstitial) and register event listeners to various events.
+Creates [App Open Ad](https://developers.google.com/admob/android/app-open-ads) and register event listeners to various events.
 
 :::tip
 
-If you are going to use Interstitial Ad inside _functional component_, consider using [`useInterstitialAd`](useInterstitialAd).
+If you are going to use App Open Ad inside _functional component_, consider using [`useAppOpenAd`](useAppOpenAd).
 
 :::
 
@@ -18,39 +18,33 @@ TODO
 
 ## Methods
 
-:::info
-
-Methods listed below except [`createAd()`](#createad) must be called from instance created by [`createAd()`](#createad) static method.
-
-:::
-
 ### createAd()
 
 ```js
-static createAd(unitId: string, requestOptions?: RequestOptions): InterstitialAd
+static createAd(unitId: string, showOnColdStart?: boolean, requestOptions?: RequestOptions): AppOpenAd
 ```
 
-Creates an ad instance.
+Creates an ad instance. You can create AppOpenAd only once in your app. Ad is loaded automatically after created and dismissed.
 
 **Parameters**
 
-`unitId` : Interstitial Ad [unitId](https://support.google.com/admob/answer/7356431).
+`unitId` : App Open Ad [unitId](https://support.google.com/admob/answer/7356431).
 
-`requestOptions` (Optional) : [RequestOptions](RequestOptions) used to load the ad. 
+`showOnColdStart` : Whether to show ad on app [coldstart](https://developers.google.com/admob/android/app-open-ads#coldstart). Defaults to `false`.
 
-**Returns**
+`showOnAppForeground` : Whether to show ad on app becomes foreground. Defaults to `true`.
 
-`InterstitialAd` instance
+`requestOptions` (Optional) : [RequestOptions](RequestOptions) used to load the ad.
 
 ### load()
 
 ```js
-load(requestOptions?: RequestOptions): Promise<void>
+static load(requestOptions?: RequestOptions): Promise<void>
 ```
 
-Loads new Interstitial Ad.
+Loads new App Open Ad.
 
-Can not call this function if the ad is already loaded but not presented and dismissed. 
+Generally you don't need to call this function because ad is loaded automatically on ad created and ad dismissed.
 
 **Parameters**
 
@@ -63,12 +57,14 @@ Can not call this function if the ad is already loaded but not presented and dis
 ### show()
 
 ```js
-show(): Promise<void>
+static show(): Promise<void>
 ```
 
-Shows loaded Interstitial Ad. 
+Shows loaded App Open Ad.
 
-Ad must be loaded before calling this function. 
+Ad must be loaded before calling this function.
+
+You don't need to call this function if you set `showOnAppForeground` option to true.
 
 **Returns**
 
@@ -77,7 +73,7 @@ Ad must be loaded before calling this function.
 ### addEventListener()
 
 ```js
-addEventListener(event: string, handler: (event?: any) => any): void
+static addEventListener(event: string, handler: (event?: any) => any): void
 ```
 
 Adds an event handler for an ad event.
@@ -97,7 +93,7 @@ Adds an event handler for an ad event.
 ### removeEventListener()
 
 ```js
-removeEventListener(handler: (event?: any) => any): void
+static removeEventListener(handler: (event?: any) => any): void
 ```
 
 Removes an event handler.
@@ -109,7 +105,7 @@ Removes an event handler.
 ### removeAllListeners()
 
 ```js
-removeAllListeners(): void
+static removeAllListeners(): void
 ```
 
 Removes all registered event handlers for this ad.
@@ -117,7 +113,7 @@ Removes all registered event handlers for this ad.
 ### setRequestOptions()
 
 ```js
-setRequestOptions(requestOptions?: RequestOptions): void
+static setRequestOptions(requestOptions?: RequestOptions): void
 ```
 
 Sets RequestOptions for this Ad instance.

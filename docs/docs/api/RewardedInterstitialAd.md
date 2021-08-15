@@ -4,7 +4,7 @@ title: RewardedInterstitialAd
 sidebar_label: RewardedInterstitialAd
 ---
 
-Creates Rewarded Interstitial Ad and register event listeners to various events.
+Creates [Rewarded Interstitial Ad](https://developers.google.com/admob/android/rewarded-interstitial) and register event listeners to various events.
 
 :::tip
 
@@ -27,7 +27,7 @@ Methods listed below except [`createAd()`](#createad) must be called from instan
 ### createAd()
 
 ```js
-static createAd(unitId: string): RewardedInterstitialAd
+static createAd(unitId: string, requestOptions?: RequestOptions): RewardedInterstitialAd
 ```
 
 Creates an ad instance.
@@ -35,6 +35,8 @@ Creates an ad instance.
 **Parameters**
 
 `unitId` : Rewarded Interstitial Ad [unitId](https://support.google.com/admob/answer/7356431).
+
+`requestOptions` (Optional) : [RequestOptions](RequestOptions) used to load the ad. 
 
 **Returns**
 
