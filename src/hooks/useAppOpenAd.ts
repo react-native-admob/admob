@@ -13,7 +13,7 @@ const defaultOptions: AppOpenAdOptions = {
  * React Hook for AdMob App Open Ad.
  */
 export default function (
-  unitId: string,
+  unitId: string | null,
   options?: AppOpenAdOptions
 ): AdHookReturns {
   const [adLoaded, setAdLoaded] = useState(false);
@@ -60,6 +60,9 @@ export default function (
   }, [adLoaded]);
 
   useEffect(() => {
+    if (!unitId) {
+      return;
+    }
     // Surround with try catch to prevent Ad created more than once.
     try {
       AppOpenAd.createAd(unitId, options!);

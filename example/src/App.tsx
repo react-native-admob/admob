@@ -202,26 +202,32 @@ function Example() {
 
 export default function App() {
   const [initialized, setInitialized] = useState(false);
-  const { adDismissed } = useAppOpenAd(UNIT_ID_APP_OPEN, {
+  const [loaded, setLoaded] = useState(false);
+  const { adDismissed } = useAppOpenAd(initialized ? UNIT_ID_APP_OPEN : null, {
     showOnColdStart: true,
   });
 
   useEffect(() => {
-    const init = async () => {
+    const initAdmob = async () => {
       await AdMob.initialize();
       setInitialized(true);
     };
+    const load = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      setLoaded(true);
+    };
 
-    init();
+    initAdmob();
+    load();
   }, []);
 
   useEffect(() => {
-    if (initialized && adDismissed) {
+    if (initialized && loaded && adDismissed) {
       RNBootSplash.hide({ fade: true });
     }
-  }, [initialized, adDismissed]);
+  }, [initialized, loaded, adDismissed]);
 
-  return initialized && adDismissed ? <Example /> : <View />;
+  return initialized && loaded && adDismissed ? <Example /> : <View />;
 }
 
 const styles = StyleSheet.create({
