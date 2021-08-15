@@ -11,27 +11,29 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
+import RNBootSplash from 'react-native-bootsplash';
 import AdMob, {
   AdHookOptions,
   BannerAd,
   BannerAdSize,
+  useAppOpenAd,
   useInterstitialAd,
   useRewardedAd,
   useRewardedInterstitialAd,
 } from '@react-native-admob/admob';
 
-interface BannerExampleProps {
+interface ExampleGroupProps {
   style?: StyleProp<ViewStyle>;
   title: string;
   children: React.ReactNode;
 }
 
-const BannerExample = ({
+const ExampleGroup = ({
   style,
   title,
   children,
   ...props
-}: BannerExampleProps) => (
+}: ExampleGroupProps) => (
   <View {...props} style={[styles.example, style]}>
     <Text style={styles.title}>{title}</Text>
     <View>{children}</View>
@@ -43,6 +45,7 @@ const UNIT_ID_INTERSTITIAL = 'ca-app-pub-3940256099942544/1033173712';
 const UNIT_ID_REWARDED_INTERSTITIAL = 'ca-app-pub-3940256099942544/6978759866';
 const UNIT_ID_BANNER = 'ca-app-pub-3940256099942544/6300978111';
 const UNIT_ID_GAM_BANNER = '/6499/example/banner';
+const UNIT_ID_APP_OPEN = 'ca-app-pub-3940256099942544/5662855259';
 
 const hookOptions: AdHookOptions = {
   loadOnDismissed: true,
@@ -51,11 +54,10 @@ const hookOptions: AdHookOptions = {
   },
 };
 
-export default function Example() {
+function Example() {
   const bannerRef = useRef<BannerAd>(null);
   const adaptiveBannerRef = useRef<BannerAd>(null);
   const gamBannerRef = useRef<BannerAd>(null);
-  const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [adTick, setAdTick] = useState(5);
   const rewardedAd = useRewardedAd(UNIT_ID_REWARDED, hookOptions);
@@ -64,32 +66,6 @@ export default function Example() {
     UNIT_ID_REWARDED_INTERSTITIAL,
     hookOptions
   );
-
-  useEffect(() => {
-    const init = async () => {
-      await AdMob.initialize();
-
-      setLoading(false);
-    };
-
-    init();
-  }, []);
-
-  useEffect(() => {
-    const { adLoadError, adPresentError } = rewardedAd;
-    if (adLoadError) {
-      console.error(adLoadError);
-    } else if (adPresentError) {
-      console.error(adPresentError);
-    }
-  }, [rewardedAd]);
-
-  useEffect(() => {
-    if (rewardedAd.reward) {
-      console.log('Reward earned: ');
-      console.log(rewardedAd.reward);
-    }
-  }, [rewardedAd.reward]);
 
   useEffect(() => {
     const { adLoadError, adPresentError } = interstitalAd;
@@ -101,28 +77,29 @@ export default function Example() {
   }, [interstitalAd]);
 
   useEffect(() => {
+    if (rewardedAd.reward) {
+      console.log('Reward earned: ');
+      console.log(rewardedAd.reward);
+    }
+  }, [rewardedAd.reward]);
+
+  useEffect(() => {
     if (adTick > 0 && modalVisible) {
       const timeout = setTimeout(() => setAdTick((prev) => prev - 1), 1000);
       return () => clearTimeout(timeout);
     } else if (adTick === 0) {
-      if (Platform.OS === 'android') {
-        rewardedInterstitialAd.show();
-        setAdTick(5);
-      }
-      setModalVisible(false);
+      rewardedInterstitialAd.show();
+      setAdTick(5);
     } else if (!modalVisible) {
       setAdTick(5);
     }
   }, [adTick, modalVisible, rewardedInterstitialAd]);
 
   useEffect(() => {
-    const { adLoadError, adPresentError } = rewardedInterstitialAd;
-    if (adLoadError) {
-      console.error(adLoadError);
-    } else if (adPresentError) {
-      console.error(adPresentError);
+    if (rewardedInterstitialAd.adDismissed) {
+      setModalVisible(false);
     }
-  }, [rewardedInterstitialAd]);
+  }, [rewardedInterstitialAd.adDismissed]);
 
   useEffect(() => {
     if (rewardedInterstitialAd.reward) {
@@ -133,99 +110,118 @@ export default function Example() {
 
   return (
     <View style={styles.container}>
-      {!loading && (
-        <ScrollView>
-          <BannerExample title="AdMob - Basic">
-            <BannerAd
-              size={BannerAdSize.BANNER}
-              unitId={UNIT_ID_BANNER}
-              onAdLoaded={() => console.log('Banner Ad loaded!')}
-              ref={bannerRef}
-            />
-            <Button
-              title="Reload"
-              onPress={() => bannerRef.current?.loadAd()}
-            />
-          </BannerExample>
-          <BannerExample title="Adaptive Banner">
-            <BannerAd
-              size={BannerAdSize.ADAPTIVE_BANNER}
-              unitId={UNIT_ID_BANNER}
-              ref={adaptiveBannerRef}
-            />
-            <Button
-              title="Reload"
-              onPress={() => adaptiveBannerRef.current?.loadAd()}
-            />
-          </BannerExample>
-          <BannerExample title="Ad Manager Banner">
-            <BannerAd
-              size={BannerAdSize.BANNER}
-              sizes={[BannerAdSize.BANNER, BannerAdSize.MEDIUM_RECTANGLE]}
-              unitId={UNIT_ID_GAM_BANNER}
-              ref={gamBannerRef}
-            />
-            <Button
-              title="Reload"
-              onPress={() => gamBannerRef.current?.loadAd()}
-            />
-          </BannerExample>
-          <BannerExample title="Rewarded">
-            <Button
-              title="Show Rewarded Video and preload next"
-              disabled={!rewardedAd.adLoaded}
-              onPress={() => rewardedAd.show()}
-            />
-          </BannerExample>
-          <BannerExample title="Interstitial">
-            <Button
-              title="Show Interstitial and preload next"
-              disabled={!interstitalAd.adLoaded}
-              onPress={() => interstitalAd.show()}
-            />
-          </BannerExample>
-          <BannerExample title="RewardedInterstitial">
-            <Button
-              title="Show Rewarded Interstitial Video and preload next"
-              disabled={!rewardedInterstitialAd.adLoaded}
-              onPress={() => setModalVisible(true)}
-            />
-          </BannerExample>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              setModalVisible(!modalVisible);
+      <ScrollView>
+        <ExampleGroup title="AdMob - Basic">
+          <BannerAd
+            size={BannerAdSize.BANNER}
+            unitId={UNIT_ID_BANNER}
+            onAdLoaded={() => console.log('Banner Ad loaded!')}
+            ref={bannerRef}
+          />
+          <Button title="Reload" onPress={() => bannerRef.current?.loadAd()} />
+        </ExampleGroup>
+        <ExampleGroup title="Adaptive Banner">
+          <BannerAd
+            size={BannerAdSize.ADAPTIVE_BANNER}
+            unitId={UNIT_ID_BANNER}
+            ref={adaptiveBannerRef}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: true,
             }}
-            onDismiss={() => {
-              if (adTick === 0) {
-                rewardedInterstitialAd.show();
-                setAdTick(5);
-              }
+          />
+          <Button
+            title="Reload"
+            onPress={() => adaptiveBannerRef.current?.loadAd()}
+          />
+        </ExampleGroup>
+        <ExampleGroup title="Ad Manager Banner">
+          <BannerAd
+            size={BannerAdSize.BANNER}
+            sizes={[BannerAdSize.BANNER, BannerAdSize.MEDIUM_RECTANGLE]}
+            onSizeChange={(size) => {
+              console.log(size);
             }}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>
-                  Watch this video and earn reward.
-                </Text>
-                <Text style={styles.modalText}>
-                  Ad starts in {adTick} seconds
-                </Text>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => setModalVisible(!modalVisible)}
-                >
-                  <Text style={styles.textStyle}>No Thanks</Text>
-                </Pressable>
-              </View>
+            unitId={UNIT_ID_GAM_BANNER}
+            ref={gamBannerRef}
+          />
+          <Button
+            title="Reload"
+            onPress={() => gamBannerRef.current?.loadAd()}
+          />
+        </ExampleGroup>
+        <ExampleGroup title="Rewarded">
+          <Button
+            title="Show Rewarded Video and preload next"
+            disabled={!rewardedAd.adLoaded}
+            onPress={() => rewardedAd.show()}
+          />
+        </ExampleGroup>
+        <ExampleGroup title="Interstitial">
+          <Button
+            title="Show Interstitial and preload next"
+            disabled={!interstitalAd.adLoaded}
+            onPress={() => interstitalAd.show()}
+          />
+        </ExampleGroup>
+        <ExampleGroup title="RewardedInterstitial">
+          <Button
+            title="Show Rewarded Interstitial Video and preload next"
+            disabled={!rewardedInterstitialAd.adLoaded}
+            onPress={() => setModalVisible(true)}
+          />
+        </ExampleGroup>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>
+                Watch this video and earn reward.
+              </Text>
+              <Text style={styles.modalText}>
+                Ad starts in {adTick} seconds
+              </Text>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.textStyle}>No Thanks</Text>
+              </Pressable>
             </View>
-          </Modal>
-        </ScrollView>
-      )}
+          </View>
+        </Modal>
+      </ScrollView>
     </View>
   );
+}
+
+export default function App() {
+  const [initialized, setInitialized] = useState(false);
+  const { adDismissed } = useAppOpenAd(UNIT_ID_APP_OPEN, {
+    showOnColdStart: true,
+  });
+
+  useEffect(() => {
+    const init = async () => {
+      await AdMob.initialize();
+      setInitialized(true);
+    };
+
+    init();
+  }, []);
+
+  useEffect(() => {
+    if (initialized && adDismissed) {
+      RNBootSplash.hide({ fade: true });
+    }
+  }, [initialized, adDismissed]);
+
+  return initialized && adDismissed ? <Example /> : <View />;
 }
 
 const styles = StyleSheet.create({

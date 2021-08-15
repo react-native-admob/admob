@@ -19,6 +19,7 @@ public class RNAdMobPackage implements ReactPackage {
                 new RNAdMobInterstitialAdModule(reactContext),
                 new RNAdMobRewardedAdModule(reactContext),
                 new RNAdMobRewardedInterstitialAdModule(reactContext),
+                new RNAdMobAppOpenAdModule(reactContext),
                 new RNAdMobEventModule(reactContext)
         );
     }

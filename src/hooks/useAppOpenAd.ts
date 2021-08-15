@@ -1,0 +1,80 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import AppOpenAd from '../ads/AppOpenAd';
+import { AdHookReturns, AppOpenAdHookOptions, RequestOptions } from '../types';
+
+const defaultOptions: AppOpenAdHookOptions = {
+  showOnColdStart: false,
+  requestOptions: {},
+};
+
+/**
+ * React Hook for AdMob App Open Ad.
+ */
+export default function (
+  unitId: string,
+  options?: AppOpenAdHookOptions
+): AdHookReturns {
+  const [adLoaded, setAdLoaded] = useState(false);
+  const [adPresented, setAdPresented] = useState(false);
+  const [adDismissed, setAdDismissed] = useState(false);
+  const [adLoadError, setAdLoadError] = useState<Error>();
+  const [adPresentError, setAdPresentError] = useState<Error>();
+  const { showOnColdStart, requestOptions: adRequestOptions } = Object.assign(
+    defaultOptions,
+    options
+  );
+
+  const init = () => {
+    setAdLoaded(false);
+    setAdPresented(false);
+    setAdDismissed(false);
+    setAdLoadError(undefined);
+    setAdPresentError(undefined);
+  };
+
+  const adShowing = useMemo(
+    () => adPresented && !adDismissed,
+    [adPresented, adDismissed]
+  );
+
+  const load = useCallback(
+    (requestOptions: RequestOptions = adRequestOptions!) => {
+      init();
+      AppOpenAd.load(requestOptions)
+        .catch((e: Error) => setAdLoadError(e))
+        .then(() => setAdLoaded(true));
+    },
+    [adRequestOptions]
+  );
+
+  const show = useCallback(() => {
+    if (adLoaded) {
+      AppOpenAd.show()
+        .catch((e: Error) => setAdPresentError(e))
+        .then(() => setAdPresented(true));
+    } else {
+      console.warn('[RNAdmob(AppOpenAd)] Ad is not loaded.');
+    }
+  }, [adLoaded]);
+
+  useEffect(() => {
+    // Surround with try catch to prevent Ad created more than once.
+    try {
+      AppOpenAd.createAd(unitId, showOnColdStart);
+    } catch {}
+    AppOpenAd.addEventListener('adDismissed', () => setAdDismissed(true));
+    return () => AppOpenAd.removeAllListeners();
+  }, [unitId, showOnColdStart]);
+
+  return {
+    adLoaded,
+    adPresented,
+    adDismissed,
+    adShowing,
+    adLoadError,
+    adPresentError,
+    load,
+    show,
+  };
+}

@@ -160,7 +160,11 @@ export interface GAMBannerAdProps extends BannerAdProps {
   onAppEvent?: (name: string, info: string) => void;
 }
 
-export type AdType = 'Interstitial' | 'Rewarded' | 'RewardedInterstitial';
+export type AdType =
+  | 'Interstitial'
+  | 'Rewarded'
+  | 'RewardedInterstitial'
+  | 'AppOpen';
 
 export type FullScreenAdEvent =
   | 'adPresented'
@@ -170,6 +174,8 @@ export type FullScreenAdEvent =
 export type InterstitialAdEvent = FullScreenAdEvent;
 
 export type RewardedAdEvent = FullScreenAdEvent | 'rewarded';
+
+export type AppOpenAdEvent = FullScreenAdEvent;
 
 export type HandlerType = () => void | ((error: Error) => void);
 
@@ -202,6 +208,18 @@ export type AdHookOptions = {
    * Whether your ad to load new ad automatically on dismissed. Defaults to `false`.
    */
   loadOnDismissed?: boolean;
+  /**
+   * Optional RequestOptions used to load the ad.
+   */
+  requestOptions?: RequestOptions;
+};
+
+export type AppOpenAdHookOptions = {
+  /**
+   * Whether to show App Open Ad on app cold start. Defaults to `false`.
+   * @see {@link https://developers.google.com/admob/android/app-open-ads#coldstart}
+   */
+  showOnColdStart?: boolean;
   /**
    * Optional RequestOptions used to load the ad.
    */

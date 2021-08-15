@@ -1,5 +1,7 @@
 @import React;
 
+static NSString * _Nonnull const kEventAdLoaded = @"adLoaded";
+static NSString * _Nonnull const kEventAdFailedToLoad = @"adFailedToLoad";
 static NSString * _Nonnull const kEventAdPresented = @"adPresented";
 static NSString * _Nonnull const kEventAdFailedToPresent = @"adFailedToPresent";
 static NSString * _Nonnull const kEventAdDismissed = @"adDismissed";

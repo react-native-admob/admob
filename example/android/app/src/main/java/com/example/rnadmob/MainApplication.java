@@ -10,7 +10,7 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import com.rnadmob.admob.RNAdmobPackage;
+import com.rnadmob.admob.RNAdMobPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -24,7 +24,7 @@ public class MainApplication extends Application implements ReactApplication {
         @Override
         protected List<ReactPackage> getPackages() {
           List<ReactPackage> packages = new PackageList(this).getPackages();
-          packages.add(new RNAdmobPackage());
+          packages.add(new RNAdMobPackage());
           return packages;
         }
 
