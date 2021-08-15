@@ -12,6 +12,12 @@ import MobileAd from './MobileAd';
 const { requestAd, presentAd } =
   NativeModules.RNAdMobAppOpen as FullScreenAdInterface;
 
+const defaultOptions: AppOpenAdOptions = {
+  showOnColdStart: false,
+  showOnAppForeground: true,
+  requestOptions: {},
+};
+
 export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
   private constructor(unitId: string) {
     super('AppOpen', 0, unitId);
@@ -21,7 +27,11 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
 
   private handleAppStateChange = (state: AppStateStatus) => {
     if (this.currentAppState === 'background' && state === 'active') {
-      presentAd(this.requestId);
+      AppOpenAd.show().catch((err) => {
+        if (err.code === 'E_AD_NOT_READY') {
+          AppOpenAd.load();
+        }
+      });
     }
     this.currentAppState = state;
   };
@@ -44,19 +54,22 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
       throw new Error('You already created AppOpenAd once.');
     }
 
+    const { showOnColdStart, showOnAppForeground, requestOptions } =
+      Object.assign(defaultOptions, options);
+
     this.sharedInstance = new AppOpenAd(unitId);
-    this.sharedInstance.setRequestOptions(options.requestOptions);
+    this.sharedInstance.setRequestOptions(requestOptions);
     this.sharedInstance.addEventListener('adDismissed', () => {
       this.load();
     });
 
     this.load().then(() => {
-      if (options.showOnColdStart) {
+      if (showOnColdStart) {
         this.show();
       }
     });
 
-    if (options.showOnAppForeground) {
+    if (showOnAppForeground) {
       AppState.addEventListener(
         'change',
         this.sharedInstance.handleAppStateChange
