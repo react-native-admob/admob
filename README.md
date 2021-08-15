@@ -1,7 +1,7 @@
 <p align="center">
   <img alt="cover with mockup" src="./docs/static/img/logo_admob.png" width="192px">
   <h1 align="center">
-    React Native Admob
+    React Native AdMob
   </h1>
 </p>
 <p align="center">
