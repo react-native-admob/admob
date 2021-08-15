@@ -103,6 +103,9 @@ useEffect(() => {
 
 ### Displaying App Open Ad
 ```js
+import { useAppOpenAd } from '@react-native-admob/admob';
+import RNBootSplash from 'react-native-bootsplash';
+
 export default function App() {
   const [initialized, setInitialized] = useState(false);
   const [loaded, setLoaded] = useState(false);
