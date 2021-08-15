@@ -38,7 +38,6 @@ export default function (
   const init = () => {
     setAdLoaded(false);
     setAdPresented(false);
-    setAdDismissed(false);
     setAdLoadError(undefined);
     setAdPresentError(undefined);
   };
@@ -91,6 +90,7 @@ export default function (
   }, [adDismissed, loadOnDismissed, load]);
 
   useEffect(() => {
+    interstitialAd.addEventListener('adPresented', () => setAdDismissed(false));
     interstitialAd.addEventListener('adDismissed', () => setAdDismissed(true));
     return () => interstitialAd.removeAllListeners();
   }, [interstitialAd]);

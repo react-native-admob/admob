@@ -39,7 +39,6 @@ export default function useRewardedInterstitialAd(
   const init = () => {
     setAdLoaded(false);
     setAdPresented(false);
-    setAdDismissed(false);
     setAdLoadError(undefined);
     setAdPresentError(undefined);
     setReward(undefined);
@@ -95,6 +94,9 @@ export default function useRewardedInterstitialAd(
   }, [adDismissed, loadOnDismissed, load]);
 
   useEffect(() => {
+    rewardedInterstitialAd.addEventListener('adPresented', () =>
+      setAdDismissed(false)
+    );
     rewardedInterstitialAd.addEventListener('adDismissed', () =>
       setAdDismissed(true)
     );

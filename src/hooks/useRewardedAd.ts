@@ -36,7 +36,6 @@ export default function useRewardedAd(
   const init = () => {
     setAdLoaded(false);
     setAdPresented(false);
-    setAdDismissed(false);
     setAdLoadError(undefined);
     setAdPresentError(undefined);
     setReward(undefined);
@@ -90,6 +89,7 @@ export default function useRewardedAd(
   }, [adDismissed, loadOnDismissed, load]);
 
   useEffect(() => {
+    rewardedAd.addEventListener('adPresented', () => setAdDismissed(false));
     rewardedAd.addEventListener('adDismissed', () => setAdDismissed(true));
     rewardedAd.addEventListener('rewarded', (r: Reward) => setReward(r));
     return () => rewardedAd.removeAllListeners();

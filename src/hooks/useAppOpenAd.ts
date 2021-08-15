@@ -29,7 +29,6 @@ export default function (
   const init = () => {
     setAdLoaded(false);
     setAdPresented(false);
-    setAdDismissed(false);
     setAdLoadError(undefined);
     setAdPresentError(undefined);
   };
@@ -67,8 +66,19 @@ export default function (
     try {
       AppOpenAd.createAd(unitId, options!);
     } catch {}
-    AppOpenAd.addEventListener('adDismissed', () => setAdDismissed(true));
-    return () => AppOpenAd.removeAllListeners();
+    const presentHandler = () => {
+      setAdDismissed(false);
+    };
+    const dismissHandler = () => {
+      setAdDismissed(true);
+      init();
+    };
+    AppOpenAd.addEventListener('adPresented', presentHandler);
+    AppOpenAd.addEventListener('adDismissed', dismissHandler);
+    return () => {
+      AppOpenAd.removeEventListener(presentHandler);
+      AppOpenAd.removeEventListener(dismissHandler);
+    };
   }, [unitId, options]);
 
   return {
