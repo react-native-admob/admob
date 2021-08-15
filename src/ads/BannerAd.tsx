@@ -39,6 +39,7 @@ class BannerAd extends Component<BannerAdProps | GAMBannerAdProps> {
   render() {
     return (
       <RNAdMobBannerView
+        {...this.props}
         style={[this.props.style, this.state.style]}
         onSizeChange={this.handleSizeChange.bind(this)}
         requestOptions={this.props.requestOptions || {}}
@@ -46,7 +47,6 @@ class BannerAd extends Component<BannerAdProps | GAMBannerAdProps> {
           //@ts-expect-error
           this.bannerRef = el;
         }}
-        {...this.props}
       />
     );
   }

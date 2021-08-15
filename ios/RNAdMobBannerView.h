@@ -12,7 +12,7 @@
 @property (nonatomic, copy) NSArray *sizes;
 @property (nonatomic, copy) NSDictionary *requestOptions;
 
-@property (nonatomic, copy) RCTBubblingEventBlock onSizeChange;
+@property (nonatomic, copy) RCTDirectEventBlock onSizeChange;
 @property (nonatomic, copy) RCTDirectEventBlock onAdLoaded;
 @property (nonatomic, copy) RCTDirectEventBlock onAdFailedToLoad;
 @property (nonatomic, copy) RCTDirectEventBlock onAdOpened;
