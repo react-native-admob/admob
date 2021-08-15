@@ -15,11 +15,6 @@ static __strong NSMutableDictionary *presentAdRejectMap;
     return dispatch_get_main_queue();
 }
 
-+ (BOOL)requiresMainQueueSetup
-{
-    return NO;
-}
-
 - (id)init {
     self = [super init];
     static dispatch_once_t onceToken;
@@ -77,7 +72,7 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseRe
     presentAdResolveMap[requestId] = resolve;
     presentAdRejectMap[requestId] = reject;
     if (ad) {
-        [ad presentFromRootViewController:[UIApplication sharedApplication].delegate.window.rootViewController];
+        [ad presentFromRootViewController:RCTPresentedViewController()];
     }
     else {
         reject(@"E_AD_NOT_READY", @"Ad is not ready.", nil);
