@@ -214,18 +214,6 @@ export type AdHookOptions = {
   requestOptions?: RequestOptions;
 };
 
-export type AppOpenAdHookOptions = {
-  /**
-   * Whether to show App Open Ad on app cold start. Defaults to `false`.
-   * @see {@link https://developers.google.com/admob/android/app-open-ads#coldstart}
-   */
-  showOnColdStart?: boolean;
-  /**
-   * Optional RequestOptions used to load the ad.
-   */
-  requestOptions?: RequestOptions;
-};
-
 export type AdHookReturns = {
   /**
    * Whether your ad is loaded and ready to present.
@@ -265,4 +253,20 @@ export type AdHookReturns = {
    * Shows loaded ad.
    */
   show: () => void;
+};
+
+export type AppOpenAdOptions = {
+  /**
+   * Whether to show App Open Ad on app cold start. Defaults to `false`.
+   * @see {@link https://developers.google.com/admob/android/app-open-ads#coldstart}
+   */
+  showOnColdStart?: boolean;
+  /**
+   * Whether to show App Open Ad on app becomes foreground. Defaults to `true`.
+   */
+  showOnAppForeground?: boolean;
+  /**
+   * Optional RequestOptions used to load the ad.
+   */
+  requestOptions?: RequestOptions;
 };

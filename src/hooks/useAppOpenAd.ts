@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import AppOpenAd from '../ads/AppOpenAd';
-import { AdHookReturns, AppOpenAdHookOptions, RequestOptions } from '../types';
+import { AdHookReturns, AppOpenAdOptions, RequestOptions } from '../types';
 
-const defaultOptions: AppOpenAdHookOptions = {
+const defaultOptions: AppOpenAdOptions = {
   showOnColdStart: false,
+  showOnAppForeground: true,
   requestOptions: {},
 };
 
@@ -13,14 +14,14 @@ const defaultOptions: AppOpenAdHookOptions = {
  */
 export default function (
   unitId: string,
-  options?: AppOpenAdHookOptions
+  options?: AppOpenAdOptions
 ): AdHookReturns {
   const [adLoaded, setAdLoaded] = useState(false);
   const [adPresented, setAdPresented] = useState(false);
   const [adDismissed, setAdDismissed] = useState(false);
   const [adLoadError, setAdLoadError] = useState<Error>();
   const [adPresentError, setAdPresentError] = useState<Error>();
-  const { showOnColdStart, requestOptions: adRequestOptions } = Object.assign(
+  const { requestOptions: adRequestOptions } = Object.assign(
     defaultOptions,
     options
   );
@@ -61,11 +62,11 @@ export default function (
   useEffect(() => {
     // Surround with try catch to prevent Ad created more than once.
     try {
-      AppOpenAd.createAd(unitId, showOnColdStart);
+      AppOpenAd.createAd(unitId, options!);
     } catch {}
     AppOpenAd.addEventListener('adDismissed', () => setAdDismissed(true));
     return () => AppOpenAd.removeAllListeners();
-  }, [unitId, showOnColdStart]);
+  }, [unitId, options]);
 
   return {
     adLoaded,

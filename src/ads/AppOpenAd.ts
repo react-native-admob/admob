@@ -1,6 +1,7 @@
 import { AppState, AppStateStatus, NativeModules } from 'react-native';
 import {
   AppOpenAdEvent,
+  AppOpenAdOptions,
   FullScreenAdInterface,
   HandlerType,
   RequestOptions,
@@ -36,34 +37,31 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
   /**
    * Creates a AppOpenAd instance. You can create AppOpenAd only once in your app. Ad is loaded automatically after created and dismissed.
    * @param unitId The Ad Unit ID for the App Open Ad. You can find this on your Google AdMob dashboard.
-   * @param showOnColdStart Whether to show App Open Ad on app cold start. Defaults to `false`. See {@link https://developers.google.com/admob/android/app-open-ads#coldstart}
-   * @param requestOptions Optional RequestOptions used to load the ad.
+   * @param options Optional AppOpenAdOptions object.
    */
-  static createAd(
-    unitId: string,
-    showOnColdStart = false,
-    requestOptions?: RequestOptions
-  ) {
+  static createAd(unitId: string, options: AppOpenAdOptions) {
     if (this.sharedInstance) {
       throw new Error('You already created AppOpenAd once.');
     }
 
     this.sharedInstance = new AppOpenAd(unitId);
-    this.sharedInstance.setRequestOptions(requestOptions);
+    this.sharedInstance.setRequestOptions(options.requestOptions);
     this.sharedInstance.addEventListener('adDismissed', () => {
       this.load();
     });
 
     this.load().then(() => {
-      if (showOnColdStart) {
+      if (options.showOnColdStart) {
         this.show();
       }
     });
 
-    AppState.addEventListener(
-      'change',
-      this.sharedInstance.handleAppStateChange
-    );
+    if (options.showOnAppForeground) {
+      AppState.addEventListener(
+        'change',
+        this.sharedInstance.handleAppStateChange
+      );
+    }
   }
 
   /**
