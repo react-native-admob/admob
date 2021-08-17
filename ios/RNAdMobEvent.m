@@ -30,16 +30,6 @@
     
 }
 
-- (dispatch_queue_t)methodQueue
-{
-    return dispatch_get_main_queue();
-}
-
-+ (BOOL)requiresMainQueueSetup
-{
-    return NO;
-}
-
 RCT_EXPORT_MODULE();
 
 - (NSArray<NSString *> *)supportedEvents
@@ -48,7 +38,9 @@ RCT_EXPORT_MODULE();
         kEventAdPresented,
         kEventAdFailedToPresent,
         kEventAdDismissed,
-        kEventRewarded
+        kEventRewarded,
+        kEventAdLoaded,
+        kEventAdFailedToLoad
     ];
 }
 

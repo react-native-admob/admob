@@ -89,10 +89,22 @@ export default function useRewardedAd(
   }, [adDismissed, loadOnDismissed, load]);
 
   useEffect(() => {
-    rewardedAd.addEventListener('adPresented', () => setAdDismissed(false));
-    rewardedAd.addEventListener('adDismissed', () => setAdDismissed(true));
-    rewardedAd.addEventListener('rewarded', (r: Reward) => setReward(r));
-    return () => rewardedAd.removeAllListeners();
+    const presentListener = rewardedAd.addEventListener('adPresented', () =>
+      setAdDismissed(false)
+    );
+    const dismissListener = rewardedAd.addEventListener('adDismissed', () => {
+      setAdDismissed(true);
+      init();
+    });
+    const rewardListener = rewardedAd.addEventListener(
+      'rewarded',
+      (r: Reward) => setReward(r)
+    );
+    return () => {
+      presentListener.remove();
+      dismissListener.remove();
+      rewardListener.remove();
+    };
   }, [rewardedAd]);
 
   return {

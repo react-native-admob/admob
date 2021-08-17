@@ -25,22 +25,32 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
 
   private currentAppState: AppStateStatus = 'unknown';
 
+  private handleLoadError = (error: Error) => {
+    if (error.message.startsWith('Frequency')) {
+      console.info(
+        '[RNAdmob(AppOpenAd)] Ad not loaded because frequency cap reached.'
+      );
+    } else {
+      console.error(error);
+    }
+  };
+
   private handleAppStateChange = (state: AppStateStatus) => {
     if (this.currentAppState === 'background' && state === 'active') {
       AppOpenAd.show().catch((err) => {
         if (err.code === 'E_AD_NOT_READY') {
-          AppOpenAd.load();
+          AppOpenAd.load().catch(this.handleLoadError);
         }
       });
     }
     this.currentAppState = state;
   };
 
-  private static sharedInstance: AppOpenAd;
+  static sharedInstance: AppOpenAd;
 
   private static checkInstance() {
     if (!this.sharedInstance) {
-      throw new Error('AppOpenAd is not created.');
+      throw new Error('[RNAdmob(AppOpenAd)] AppOpenAd is not created.');
     }
   }
 
@@ -51,7 +61,9 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
    */
   static createAd(unitId: string, options: AppOpenAdOptions) {
     if (this.sharedInstance) {
-      throw new Error('You already created AppOpenAd once.');
+      throw new Error(
+        '[RNAdmob(AppOpenAd)] You already created AppOpenAd once.'
+      );
     }
 
     const { showOnColdStart, showOnAppForeground, requestOptions } =
@@ -60,14 +72,16 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
     this.sharedInstance = new AppOpenAd(unitId);
     this.sharedInstance.setRequestOptions(requestOptions);
     this.sharedInstance.addEventListener('adDismissed', () => {
-      this.load();
+      this.load().catch(this.sharedInstance.handleLoadError);
     });
 
-    this.load().then(() => {
-      if (showOnColdStart) {
-        this.show();
-      }
-    });
+    this.load()
+      .then(() => {
+        if (showOnColdStart) {
+          this.show();
+        }
+      })
+      .catch(this.sharedInstance.handleLoadError);
 
     if (showOnAppForeground) {
       AppState.addEventListener(
@@ -115,15 +129,6 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
   static addEventListener(event: AppOpenAdEvent, handler: HandlerType) {
     this.checkInstance();
     return this.sharedInstance.addEventListener(event, handler);
-  }
-
-  /**
-   * Removes an event handler.
-   * @param handler Event handler to remove
-   */
-  static removeEventListener(handler: HandlerType) {
-    this.checkInstance();
-    return this.sharedInstance.removeEventListener(handler);
   }
 
   /**

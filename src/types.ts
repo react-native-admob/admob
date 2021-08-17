@@ -175,9 +175,9 @@ export type InterstitialAdEvent = FullScreenAdEvent;
 
 export type RewardedAdEvent = FullScreenAdEvent | 'rewarded';
 
-export type AppOpenAdEvent = FullScreenAdEvent;
+export type AppOpenAdEvent = FullScreenAdEvent | 'adLoaded' | 'adFailedToLoad';
 
-export type HandlerType = () => void | ((error: Error) => void);
+export type HandlerType = (() => void) | ((error: Error) => void);
 
 export type RewardedAdHandlerType = HandlerType | ((reward: Reward) => void);
 

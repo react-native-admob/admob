@@ -90,9 +90,20 @@ export default function (
   }, [adDismissed, loadOnDismissed, load]);
 
   useEffect(() => {
-    interstitialAd.addEventListener('adPresented', () => setAdDismissed(false));
-    interstitialAd.addEventListener('adDismissed', () => setAdDismissed(true));
-    return () => interstitialAd.removeAllListeners();
+    const presentListener = interstitialAd.addEventListener('adPresented', () =>
+      setAdDismissed(false)
+    );
+    const dismissListener = interstitialAd.addEventListener(
+      'adDismissed',
+      () => {
+        setAdDismissed(true);
+        init();
+      }
+    );
+    return () => {
+      presentListener.remove();
+      dismissListener.remove();
+    };
   }, [interstitialAd]);
 
   return {

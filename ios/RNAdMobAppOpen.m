@@ -30,7 +30,9 @@ RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId
                        orientation:UIInterfaceOrientationPortrait
                  completionHandler:^(GADAppOpenAd *_Nullable ad, NSError *_Nullable error) {
         if (error) {
-            reject(@"E_AD_LOAD_FAILED", [error localizedDescription], nil);
+            NSDictionary *jsError = RCTJSErrorFromCodeMessageAndNSError(@"E_AD_LOAD_FAILED", error.localizedDescription, error);
+            [self sendEvent:kEventAdFailedToLoad data:jsError];
+            reject(@"E_AD_LOAD_FAILED", [error localizedDescription], error);
             return;
         }
         ad.fullScreenContentDelegate = self;
@@ -38,6 +40,7 @@ RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId
         self.appOpenAd = ad;
         self.loadTime = [NSDate date];
         
+        [self sendEvent:kEventAdLoaded data:nil];
         resolve(nil);
     }];
 }
@@ -48,7 +51,7 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId
     _presentResolve = resolve;
     _presentReject = reject;
     if (_appOpenAd && [self wasLoadTimeLessThanNHoursAgo:4]) {
-        [_appOpenAd presentFromRootViewController:RCTPresentedViewController()];
+        [_appOpenAd presentFromRootViewController:[RNAdMobCommon topMostController]];
     } else {
         reject(@"E_AD_NOT_READY", @"Ad is not ready.", nil);
     }
@@ -81,7 +84,7 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId
     NSDictionary *jsError = RCTJSErrorFromCodeMessageAndNSError(@"E_AD_PRESENT_FAILED", error.localizedDescription, error);
     [self sendEvent:kEventAdFailedToPresent data:jsError];
     
-    _presentReject(@"E_AD_PRESENT_FAILED", [error localizedDescription], nil);
+    _presentReject(@"E_AD_PRESENT_FAILED", [error localizedDescription], error);
 }
 
 - (void)adDidDismissFullScreenContent:(GADAppOpenAd *)ad

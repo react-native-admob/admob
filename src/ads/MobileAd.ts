@@ -15,7 +15,6 @@ type Event = {
   requestId: number;
   data?: any;
 };
-type EventHandler = (event: Event) => any;
 
 export default class MobileAd<
   E extends string,
@@ -25,16 +24,16 @@ export default class MobileAd<
   requestId: number;
   unitId: string;
   requestOptions: RequestOptions;
-  subscriptions: Map<EventHandler, EmitterSubscription>;
   requested: boolean;
+  listeners: EmitterSubscription[];
 
   constructor(type: AdType, requestId: number, unitId: string) {
     this.type = type;
     this.requestId = requestId;
     this.unitId = unitId;
     this.requestOptions = {};
-    this.subscriptions = new Map<EventHandler, EmitterSubscription>();
     this.requested = false;
+    this.listeners = [];
   }
 
   /**
@@ -60,32 +59,23 @@ export default class MobileAd<
       }
     };
     const listener = eventEmitter.addListener(event, eventHandler);
-    this.subscriptions.set(eventHandler, listener);
+    this.listeners.push(listener);
     return {
-      remove: () => this.removeEventListener(handler),
+      remove: () => {
+        listener.remove();
+        const index = this.listeners.indexOf(listener);
+        if (index > -1) {
+          this.listeners.splice(index, 1);
+        }
+      },
     };
-  }
-
-  /**
-   * Removes an event handler.
-   * @param handler Event handler to remove
-   */
-  removeEventListener(handler: H) {
-    const listener = this.subscriptions.get(handler);
-    if (!listener) {
-      return;
-    }
-    listener.remove();
-    this.subscriptions.delete(handler);
   }
 
   /**
    * Removes all registered event handlers for this ad.
    */
   removeAllListeners() {
-    this.subscriptions.forEach((listener, key, map) => {
-      listener.remove();
-      map.delete(key);
-    });
+    this.listeners.forEach((listener) => listener.remove());
+    this.listeners = [];
   }
 }

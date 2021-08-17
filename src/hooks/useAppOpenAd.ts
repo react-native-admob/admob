@@ -62,22 +62,36 @@ export default function (
     if (!unitId) {
       return;
     }
-    // Surround with try catch to prevent Ad created more than once.
-    try {
+    if (!AppOpenAd.sharedInstance) {
       AppOpenAd.createAd(unitId, options!);
-    } catch {}
-    const presentHandler = () => {
-      setAdDismissed(false);
-    };
-    const dismissHandler = () => {
+    } else if (AppOpenAd.sharedInstance.unitId !== unitId) {
+      console.error(
+        '[RNAdmob(AppOpenAd)] You cannnot update unitId of AppOpenAd'
+      );
+      return;
+    }
+
+    AppOpenAd.setRequestOptions(options?.requestOptions);
+
+    const loadListener = AppOpenAd.addEventListener('adLoaded', () =>
+      setAdLoaded(true)
+    );
+    const failListener = AppOpenAd.addEventListener(
+      'adFailedToLoad',
+      (error: Error) => setAdLoadError(error)
+    );
+    const presentListener = AppOpenAd.addEventListener('adPresented', () =>
+      setAdDismissed(false)
+    );
+    const dismissListener = AppOpenAd.addEventListener('adDismissed', () => {
       setAdDismissed(true);
       init();
-    };
-    AppOpenAd.addEventListener('adPresented', presentHandler);
-    AppOpenAd.addEventListener('adDismissed', dismissHandler);
+    });
     return () => {
-      AppOpenAd.removeEventListener(presentHandler);
-      AppOpenAd.removeEventListener(dismissHandler);
+      loadListener.remove();
+      failListener.remove();
+      presentListener.remove();
+      dismissListener.remove();
     };
   }, [unitId, options]);
 

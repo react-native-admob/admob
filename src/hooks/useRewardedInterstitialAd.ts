@@ -94,16 +94,26 @@ export default function useRewardedInterstitialAd(
   }, [adDismissed, loadOnDismissed, load]);
 
   useEffect(() => {
-    rewardedInterstitialAd.addEventListener('adPresented', () =>
-      setAdDismissed(false)
+    const presentListener = rewardedInterstitialAd.addEventListener(
+      'adPresented',
+      () => setAdDismissed(false)
     );
-    rewardedInterstitialAd.addEventListener('adDismissed', () =>
-      setAdDismissed(true)
+    const dismissListener = rewardedInterstitialAd.addEventListener(
+      'adDismissed',
+      () => {
+        setAdDismissed(true);
+        init();
+      }
     );
-    rewardedInterstitialAd.addEventListener('rewarded', (r: Reward) =>
-      setReward(r)
+    const rewardListener = rewardedInterstitialAd.addEventListener(
+      'rewarded',
+      (r: Reward) => setReward(r)
     );
-    return () => rewardedInterstitialAd.removeAllListeners();
+    return () => {
+      presentListener.remove();
+      dismissListener.remove();
+      rewardListener.remove();
+    };
   }, [rewardedInterstitialAd]);
 
   return {
