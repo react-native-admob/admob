@@ -16,6 +16,11 @@ static __strong NSMutableDictionary *presentAdRejectMap;
     return dispatch_get_main_queue();
 }
 
++ (BOOL) requiresMainQueueSetup
+{
+    return true;
+}
+
 - (id)init {
     self = [super init];
     static dispatch_once_t onceToken;
@@ -55,7 +60,7 @@ RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId
                             request:request
                   completionHandler:^(GADRewardedAd *ad, NSError *error) {
         if (error) {
-            reject(@"E_AD_LOAD_FAILED", [error localizedDescription], nil);
+            reject(@"E_AD_LOAD_FAILED", [error localizedDescription], error);
             return;
         }
         
@@ -110,7 +115,7 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseRe
     [self sendEvent:kEventAdFailedToPresent requestId:requestId data:jsError];
     
     RCTPromiseRejectBlock reject = presentAdRejectMap[requestId];
-    reject(@"E_AD_PRESENT_FAILED", [error localizedDescription], nil);
+    reject(@"E_AD_PRESENT_FAILED", [error localizedDescription], error);
 }
 
 - (void)adDidDismissFullScreenContent:(GADRewardedAd *)ad
