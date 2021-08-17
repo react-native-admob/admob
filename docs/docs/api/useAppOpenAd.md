@@ -17,9 +17,13 @@ import RNBootSplash from 'react-native-bootsplash';
 export default function App() {
   const [initialized, setInitialized] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  const { adDismissed } = useAppOpenAd(initialized ? UNIT_ID_APP_OPEN : null, {
-    showOnColdStart: true,
-  });
+  const [splashDismissed, setSplashDismissed] = useState(false);
+  const { adDismissed, adLoadError } = useAppOpenAd(
+    initialized ? UNIT_ID_APP_OPEN : null,
+    {
+      showOnColdStart: true,
+    }
+  );
 
   useEffect(() => {
     const initAdmob = async () => {
@@ -36,12 +40,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (initialized && loaded && adDismissed) {
+    if (initialized && loaded && (adDismissed || adLoadError)) {
       RNBootSplash.hide({ fade: true });
+      setSplashDismissed(true);
     }
-  }, [initialized, loaded, adDismissed]);
+  }, [initialized, loaded, adDismissed, adLoadError]);
 
-  return initialized && loaded && adDismissed ? <Example /> : <View />;
+  return splashDismissed ? <Example /> : <View />;
 }
 ```
 

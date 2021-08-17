@@ -95,18 +95,6 @@ Adds an event handler for an ad event.
 
 `handler` : An event handler.
 
-### removeEventListener()
-
-```js
-removeEventListener(handler: (event?: any) => any): void
-```
-
-Removes an event handler.
-
-**Parameters**
-
-`handler` : An event handler to remove.
-
 ### removeAllListeners()
 
 ```js
