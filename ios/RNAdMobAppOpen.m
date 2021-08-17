@@ -51,7 +51,7 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId
     _presentResolve = resolve;
     _presentReject = reject;
     if (_appOpenAd && [self wasLoadTimeLessThanNHoursAgo:4]) {
-        [_appOpenAd presentFromRootViewController:[RNAdMobCommon topMostController]];
+        [_appOpenAd presentFromRootViewController:RCTPresentedViewController()];
     } else {
         reject(@"E_AD_NOT_READY", @"Ad is not ready.", nil);
     }
