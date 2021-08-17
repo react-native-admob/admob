@@ -7,13 +7,13 @@ import {
   ViewStyle,
 } from 'react-native';
 
-import { BannerAdProps, GAMBannerAdProps } from '../types';
+import { GAMBannerAdProps } from '../types';
 
 interface BannerAdState {
   style: StyleProp<ViewStyle>;
 }
 
-class BannerAd extends Component<BannerAdProps | GAMBannerAdProps> {
+class BannerAd extends Component<GAMBannerAdProps> {
   state: BannerAdState = {
     style: { width: 0, height: 0 },
   };
@@ -36,11 +36,47 @@ class BannerAd extends Component<BannerAdProps | GAMBannerAdProps> {
     }
   }
 
+  handleOnAdLoaded() {
+    if (this.props.onAdLoaded) {
+      this.props.onAdLoaded();
+    }
+  }
+
+  handleOnAdFailedToLoad(event: any) {
+    if (this.props.onAdFailedToLoad) {
+      this.props.onAdFailedToLoad(event.nativeEvent);
+    }
+  }
+
+  handleOnAdOpened() {
+    if (this.props.onAdOpened) {
+      this.props.onAdOpened();
+    }
+  }
+
+  handleOnAdClosed() {
+    if (this.props.onAdClosed) {
+      this.props.onAdClosed();
+    }
+  }
+
+  handleOnAppEvent(event: any) {
+    const { name, info } = event.nativeEvent;
+    if (this.props.onAppEvent) {
+      this.props.onAppEvent(name, info);
+    }
+  }
+
   render() {
     return (
       <RNAdMobBannerView
         {...this.props}
         style={[this.props.style, this.state.style]}
+        onAdLoaded={this.handleOnAdLoaded.bind(this)}
+        onAdFailedToLoad={this.handleOnAdFailedToLoad.bind(this)}
+        onAdOpened={this.handleOnAdOpened.bind(this)}
+        onAdClosed={this.handleOnAdClosed.bind(this)}
+        onAppEvent={this.handleOnAppEvent.bind(this)}
         onSizeChange={this.handleSizeChange.bind(this)}
         requestOptions={this.props.requestOptions || {}}
         ref={(el) => {
@@ -53,6 +89,6 @@ class BannerAd extends Component<BannerAdProps | GAMBannerAdProps> {
 }
 
 const RNAdMobBannerView =
-  requireNativeComponent<BannerAdProps>('RNAdMobBannerView');
+  requireNativeComponent<GAMBannerAdProps>('RNAdMobBannerView');
 
 export default BannerAd;

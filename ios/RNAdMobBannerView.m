@@ -36,7 +36,7 @@
         _bannerView.delegate = self;
         _bannerView.appEventDelegate = self;
         _bannerView.adSizeDelegate = self;
-        _bannerView.rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+        _bannerView.rootViewController = RCTPresentedViewController();
         [self addSubview:_bannerView];
     }
     _bannerView.adUnitID = _unitId;
@@ -64,7 +64,7 @@
                   });
     
     if (_onAdLoaded) {
-        _onAdLoaded(@{});
+        _onAdLoaded(nil);
     }
 }
 
@@ -73,7 +73,8 @@
 didFailToReceiveAdWithError:(NSError *)error
 {
     if (_onAdFailedToLoad) {
-        _onAdFailedToLoad(@{ @"error": @{ @"message": [error localizedDescription] } });
+        NSDictionary *jsError = RCTJSErrorFromCodeMessageAndNSError(@"E_AD_LOAD_FAILED", error.localizedDescription, error);
+        _onAdFailedToLoad(jsError);
     }
 }
 
@@ -82,15 +83,15 @@ didFailToReceiveAdWithError:(NSError *)error
 - (void)bannerViewWillPresentScreen:(__unused GAMBannerView *)bannerView
 {
     if (_onAdOpened) {
-        _onAdOpened(@{});
+        _onAdOpened(nil);
     }
 }
 
 /// Tells the delegate that the full screen view will be dismissed.
-- (void)bannerViewWillDismissScreen:(__unused GAMBannerView *)bannerView
+- (void)bannerViewDidDismissScreen:(__unused GAMBannerView *)bannerView
 {
     if (_onAdClosed) {
-        _onAdClosed(@{});
+        _onAdClosed(nil);
     }
 }
 
