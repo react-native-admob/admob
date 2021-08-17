@@ -25,6 +25,7 @@ RCT_EXPORT_METHOD(initialize:(RCTPromiseResolveBlock) resolve rejecter:(RCTPromi
 #endif
     
     GADMobileAds *ads = [GADMobileAds sharedInstance];
+    ads.requestConfiguration.testDeviceIdentifiers = @[kGAMSimulatorID];
     [ads startWithCompletionHandler:^(GADInitializationStatus *status) {
         NSDictionary *adapterStatuses = [status adapterStatusesByClassName];
         NSMutableArray *adapters = [NSMutableArray array];
@@ -69,7 +70,8 @@ RCT_EXPORT_METHOD(setRequestConfiguration:(NSDictionary *)config)
     };
     
     if ([[config allKeys] containsObject:@"testDeviceIds"]) {
-        NSArray *testDevices = [config valueForKey:@"testDeviceIds"];
+        NSMutableArray *testDevices = [config valueForKey:@"testDeviceIds"];
+        [testDevices addObject:kGAMSimulatorID];
         [[[GADMobileAds sharedInstance] requestConfiguration] setTestDeviceIdentifiers:testDevices];
     };
 }
