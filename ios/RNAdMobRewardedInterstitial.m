@@ -98,7 +98,7 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseRe
     [RNAdMobEvent sendEvent:eventName type:@"RewardedInterstitial" requestId:requestId data:data];
 }
 
-- (void)removeAdMap:(NSNumber *)requestId requestIdMapKey:(NSNumber *)requestIdMapKey;
+- (void)removeAdMap:(NSNumber *)requestId requestIdMapKey:(NSString *)requestIdMapKey
 {
     [requestIdMap removeObjectForKey:requestIdMapKey];
     [adMap removeObjectForKey:requestId];
