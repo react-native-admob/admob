@@ -6,7 +6,6 @@ import static com.rnadmob.admob.RNAdMobEventModule.AD_PRESENTED;
 import static com.rnadmob.admob.RNAdMobEventModule.REWARDED;
 
 import android.app.Activity;
-import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,13 +28,20 @@ public class RNAdMobRewardedAdModule extends ReactContextBaseJavaModule {
 
     public static final String REACT_CLASS = "RNAdMobRewarded";
 
-    SparseArray<RewardedAd> adArray = new SparseArray<>();
-    SparseArray<Promise> presentAdPromiseArray = new SparseArray<>();
+    RNAdMobAdHolder<RewardedAd> adHolder = new RNAdMobAdHolder<>();
+    RNAdMobPromiseHolder presentPromiseHolder = new RNAdMobPromiseHolder();
 
     @NonNull
     @Override
     public String getName() {
         return REACT_CLASS;
+    }
+
+    @Override
+    public void onCatalystInstanceDestroy() {
+        super.onCatalystInstanceDestroy();
+        adHolder.clear();
+        presentPromiseHolder.clear();
     }
 
     public RNAdMobRewardedAdModule(ReactApplicationContext reactContext) {
@@ -51,40 +57,40 @@ public class RNAdMobRewardedAdModule extends ReactContextBaseJavaModule {
             @Override
             public void onAdDismissedFullScreenContent() {
                 sendEvent(AD_DISMISSED, requestId, null);
+
+                adHolder.remove(requestId);
             }
 
             @Override
             public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
-                Promise promise = presentAdPromiseArray.get(requestId);
-                if (promise != null) {
-                    promise.reject(String.valueOf(adError.getCode()), adError.getMessage());
-                }
+                presentPromiseHolder.reject(requestId, adError);
+
                 WritableMap error = Arguments.createMap();
                 error.putInt("code", adError.getCode());
                 error.putString("message", adError.getMessage());
                 sendEvent(AD_FAILED_TO_PRESENT, requestId, error);
+                
+                adHolder.remove(requestId);
             }
 
             @Override
             public void onAdShowedFullScreenContent() {
-                Promise promise = presentAdPromiseArray.get(requestId);
-                if (promise != null) {
-                    promise.resolve(null);
-                }
+                presentPromiseHolder.resolve(requestId);
+
                 sendEvent(AD_PRESENTED, requestId, null);
-                adArray.put(requestId, null);
             }
         };
     }
 
     @ReactMethod
     public void requestAd(int requestId, String unitId, ReadableMap requestOptions, final Promise promise) {
-        adArray.put(requestId, null);
         Activity activity = getCurrentActivity();
         if (activity == null) {
             promise.reject("E_NULL_ACTIVITY", "Rewarded ad attempted to load but the current Activity was null.");
             return;
         }
+
+        adHolder.remove(requestId);
         activity.runOnUiThread(() -> {
             AdManagerAdRequest adRequest = RNAdMobCommon.buildAdRequest(requestOptions);
             RewardedAd.load(getReactApplicationContext(), unitId, adRequest,
@@ -93,7 +99,8 @@ public class RNAdMobRewardedAdModule extends ReactContextBaseJavaModule {
                         public void onAdLoaded(@NonNull RewardedAd ad) {
                             FullScreenContentCallback callback = getFullScreenContentCallback(requestId);
                             ad.setFullScreenContentCallback(callback);
-                            adArray.put(requestId, ad);
+                            adHolder.add(requestId, ad);
+
                             promise.resolve(null);
                         }
 
@@ -107,21 +114,21 @@ public class RNAdMobRewardedAdModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void presentAd(int requestId, final Promise promise) {
-        presentAdPromiseArray.put(requestId, promise);
         Activity activity = getCurrentActivity();
         if (activity == null) {
             promise.reject("E_NULL_ACTIVITY", "Interstitial ad attempted to load but the current Activity was null.");
             return;
         }
+
         activity.runOnUiThread(() -> {
-            RewardedAd ad = adArray.get(requestId);
+            RewardedAd ad = adHolder.get(requestId);
             if (ad != null) {
+                presentPromiseHolder.add(requestId, promise);
+
                 ad.show(activity, rewardItem -> {
                     WritableMap reward = Arguments.createMap();
-
                     reward.putInt("amount", rewardItem.getAmount());
                     reward.putString("type", rewardItem.getType());
-
                     sendEvent(REWARDED, requestId, reward);
                 });
             } else {

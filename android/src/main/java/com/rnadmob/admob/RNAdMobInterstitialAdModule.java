@@ -5,7 +5,6 @@ import static com.rnadmob.admob.RNAdMobEventModule.AD_FAILED_TO_PRESENT;
 import static com.rnadmob.admob.RNAdMobEventModule.AD_PRESENTED;
 
 import android.app.Activity;
-import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,13 +27,20 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
 
     public static final String REACT_CLASS = "RNAdMobInterstitial";
 
-    SparseArray<InterstitialAd> adArray = new SparseArray<>();
-    SparseArray<Promise> presentAdPromiseArray = new SparseArray<>();
+    RNAdMobAdHolder<InterstitialAd> adHolder = new RNAdMobAdHolder<>();
+    RNAdMobPromiseHolder presentPromiseHolder = new RNAdMobPromiseHolder();
 
     @NonNull
     @Override
     public String getName() {
         return REACT_CLASS;
+    }
+
+    @Override
+    public void onCatalystInstanceDestroy() {
+        super.onCatalystInstanceDestroy();
+        adHolder.clear();
+        presentPromiseHolder.clear();
     }
 
     public RNAdMobInterstitialAdModule(ReactApplicationContext reactContext) {
@@ -50,40 +56,39 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
             @Override
             public void onAdDismissedFullScreenContent() {
                 sendEvent(AD_DISMISSED, requestId, null);
+                adHolder.remove(requestId);
             }
 
             @Override
             public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
-                Promise promise = presentAdPromiseArray.get(requestId);
-                if (promise != null) {
-                    promise.reject(String.valueOf(adError.getCode()), adError.getMessage());
-                }
+                presentPromiseHolder.reject(requestId, adError);
+
                 WritableMap error = Arguments.createMap();
                 error.putInt("code", adError.getCode());
                 error.putString("message", adError.getMessage());
                 sendEvent(AD_FAILED_TO_PRESENT, requestId, error);
+
+                adHolder.remove(requestId);
             }
 
             @Override
             public void onAdShowedFullScreenContent() {
-                Promise promise = presentAdPromiseArray.get(requestId);
-                if (promise != null) {
-                    promise.resolve(null);
-                }
+                presentPromiseHolder.resolve(requestId);
+
                 sendEvent(AD_PRESENTED, requestId, null);
-                adArray.put(requestId, null);
             }
         };
     }
 
     @ReactMethod
     public void requestAd(int requestId, String unitId, ReadableMap requestOptions, final Promise promise) {
-        adArray.put(requestId, null);
         Activity activity = getCurrentActivity();
         if (activity == null) {
             promise.reject("E_NULL_ACTIVITY", "Interstitial ad attempted to load but the current Activity was null.");
             return;
         }
+
+        adHolder.remove(requestId);
         activity.runOnUiThread(() -> {
             AdManagerAdRequest adRequest = RNAdMobCommon.buildAdRequest(requestOptions);
             InterstitialAd.load(getReactApplicationContext(), unitId, adRequest,
@@ -92,7 +97,8 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
                         public void onAdLoaded(@NonNull InterstitialAd ad) {
                             FullScreenContentCallback callback = getFullScreenContentCallback(requestId);
                             ad.setFullScreenContentCallback(callback);
-                            adArray.put(requestId, ad);
+                            adHolder.add(requestId, ad);
+
                             promise.resolve(null);
                         }
 
@@ -106,15 +112,16 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void presentAd(int requestId, final Promise promise) {
-        presentAdPromiseArray.put(requestId, promise);
         Activity activity = getCurrentActivity();
         if (activity == null) {
             promise.reject("E_NULL_ACTIVITY", "Interstitial ad attempted to load but the current Activity was null.");
             return;
         }
+
         activity.runOnUiThread(() -> {
-            InterstitialAd ad = adArray.get(requestId);
+            InterstitialAd ad = adHolder.get(requestId);
             if (ad != null) {
+                presentPromiseHolder.add(requestId, promise);
                 ad.show(activity);
             } else {
                 promise.reject("E_AD_NOT_READY", "Ad is not ready.");
