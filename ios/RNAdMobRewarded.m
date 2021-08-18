@@ -55,6 +55,8 @@ RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
+    [adMap removeObjectForKey:requestId];
+
     GAMRequest *request = [RNAdMobCommon buildAdRequest:requestOptions];
     [GADRewardedAd loadWithAdUnitID:unitId
                             request:request
@@ -76,9 +78,10 @@ RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId
 RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
     GADRewardedAd *ad = adMap[requestId];
-    presentAdResolveMap[requestId] = resolve;
-    presentAdRejectMap[requestId] = reject;
-    if (ad) {        
+    if (ad) {
+        presentAdResolveMap[requestId] = resolve;
+        presentAdRejectMap[requestId] = reject;
+
         [ad presentFromRootViewController:RCTPresentedViewController()
                  userDidEarnRewardHandler:^ {
             GADAdReward *reward = ad.adReward;
@@ -95,34 +98,65 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseRe
     [RNAdMobEvent sendEvent:eventName type:@"Rewarded" requestId:requestId data:data];
 }
 
+- (void)removeAdMap:(NSNumber *)requestId requestIdMapKey:(NSNumber *)requestIdMapKey;
+{
+    [requestIdMap removeObjectForKey:requestIdMapKey];
+    [adMap removeObjectForKey:requestId];
+}
+
+- (void)removePresentPromiseMaps:(NSNumber *)requestId
+{
+    [presentAdResolveMap removeObjectForKey:requestId];
+    [presentAdRejectMap removeObjectForKey:requestId];
+}
+
 #pragma mark GADFullScreenContentDelegate
 
 - (void)adDidPresentFullScreenContent:(GADRewardedAd *)ad
 {
     NSNumber *requestId = requestIdMap[ad.responseInfo.responseIdentifier];
-    
+    if (requestId == nil) {
+        return;
+    }
+
     [self sendEvent:kEventAdPresented requestId:requestId data:nil];
     
     RCTPromiseResolveBlock resolve = presentAdResolveMap[requestId];
-    resolve(nil);
+    if (resolve != nil) {
+        resolve(nil);
+        [self removePresentPromiseMaps:requestId];
+    }
 }
 
 - (void)ad:(GADRewardedAd *)ad didFailToPresentFullScreenContentWithError:(NSError *)error
 {
     NSNumber *requestId = requestIdMap[ad.responseInfo.responseIdentifier];
+    if (requestId == nil) {
+        return;
+    }
     
     NSDictionary *jsError = RCTJSErrorFromCodeMessageAndNSError(@"E_AD_PRESENT_FAILED", error.localizedDescription, error);
     [self sendEvent:kEventAdFailedToPresent requestId:requestId data:jsError];
     
     RCTPromiseRejectBlock reject = presentAdRejectMap[requestId];
-    reject(@"E_AD_PRESENT_FAILED", [error localizedDescription], error);
+    if (reject != nil) {
+        reject(@"E_AD_PRESENT_FAILED", [error localizedDescription], error);
+        [self removePresentPromiseMaps:requestId];
+    }
+
+    [self removeAdMap:requestId requestIdMapKey:ad.responseInfo.responseIdentifier];
 }
 
 - (void)adDidDismissFullScreenContent:(GADRewardedAd *)ad
 {
     NSNumber *requestId = requestIdMap[ad.responseInfo.responseIdentifier];
-    
+    if (requestId == nil) {
+        return;
+    }
+
     [self sendEvent:kEventAdDismissed requestId:requestId data:nil];
+
+    [self removeAdMap:requestId requestIdMapKey:ad.responseInfo.responseIdentifier];
 }
 
 @end
