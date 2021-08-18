@@ -58,7 +58,7 @@ Can not call this function if the ad is already loaded but not presented and dis
 
 **Returns**
 
-`Promise` that waits for ad load. When error is occured while loading ad, the Promise will reject with `Error` object.
+`Promise` that waits for ad load. When error is occurred while loading ad, the Promise will reject with `Error` object.
 
 ### show()
 
@@ -72,7 +72,7 @@ Ad must be loaded before calling this function.
 
 **Returns**
 
-`Promise` that waits for ad present. When error is occured while presenting ad, the Promise will reject with `Error` object.
+`Promise` that waits for ad present. When error is occurred while presenting ad, the Promise will reject with `Error` object.
 
 ### addEventListener()
 
@@ -86,12 +86,14 @@ Adds an event handler for an ad event.
 
 `event` : Event name. Supported events:
 
-| Event Name        | Description                                                                                           |
-| ----------------- | ----------------------------------------------------------------------------------------------------- |
-| adPresented       | Fires when the ad is presented to user.                                                               |
-| adFailedToPresent | Fires when an error occured while presenting ad. The argument to the event handler is `Error` object. |
-| adDismissed       | Fires when the ad is dismissed.                                                                       |
-| rewarded          | Fires when user earned reward. The argument to the event handler is Reward object.                    |
+| Event Name        | Description                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------------ |
+| adLoaded          | Fires when the ad has finished loading.                                                                |
+| adFailedToLoad    | Fires when the ad has failed to load. The argument to the event handler is `Error` object.             |
+| adPresented       | Fires when the ad is presented to user.                                                                |
+| adFailedToPresent | Fires when an error occurred while presenting ad. The argument to the event handler is `Error` object. |
+| adDismissed       | Fires when the ad is dismissed.                                                                        |
+| rewarded          | Fires when user earned reward. The argument to the event handler is Reward object.                     |
 
 `handler` : An event handler.
 

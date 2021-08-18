@@ -68,7 +68,7 @@ You don't need to call this function if you set `showOnAppForeground` option to 
 
 **Returns**
 
-`Promise` that waits for ad present. When error is occured while presenting ad, the Promise will reject with `Error` object.
+`Promise` that waits for ad present. When error is occurred while presenting ad, the Promise will reject with `Error` object.
 
 ### addEventListener()
 
@@ -82,11 +82,13 @@ Adds an event handler for an ad event.
 
 `event` : Event name. Supported events:
 
-| Event Name        | Description                                                                                           |
-| ----------------- | ----------------------------------------------------------------------------------------------------- |
-| adPresented       | Fires when the ad is presented to user.                                                               |
-| adFailedToPresent | Fires when an error occured while presenting ad. The argument to the event handler is `Error` object. |
-| adDismissed       | Fires when the ad is dismissed.                                                                       |
+| Event Name        | Description                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------------ |
+| adLoaded          | Fires when the ad has finished loading.                                                                |
+| adFailedToLoad    | Fires when the ad has failed to load. The argument to the event handler is `Error` object.             |
+| adPresented       | Fires when the ad is presented to user.                                                                |
+| adFailedToPresent | Fires when an error occurred while presenting ad. The argument to the event handler is `Error` object. |
+| adDismissed       | Fires when the ad is dismissed.                                                                        |
 
 `handler` : An event handler.
 

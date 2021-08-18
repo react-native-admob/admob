@@ -39,7 +39,7 @@ export type RequestOptions = {
   requestNonPersonalizedAdsOnly?: boolean;
 
   /**
-   * Additional properties attatched to an ad request.
+   * Additional properties attached to an ad request.
    *
    * Takes an array of string key/value pairs.
    *
@@ -155,7 +155,7 @@ export interface GAMBannerAdProps extends BannerAdProps {
    */
   sizes?: string[];
   /**
-   * A callback that gets called when the Ad Manager specific app events occured. Availbale only in Ad Manager Ad.
+   * A callback that gets called when the Ad Manager specific app events occurred. Available only in Ad Manager Ad.
    */
   onAppEvent?: (name: string, info: string) => void;
 }
@@ -169,13 +169,15 @@ export type AdType =
 export type FullScreenAdEvent =
   | 'adPresented'
   | 'adFailedToPresent'
-  | 'adDismissed';
+  | 'adDismissed'
+  | 'adLoaded'
+  | 'adFailedToLoad';
 
 export type InterstitialAdEvent = FullScreenAdEvent;
 
 export type RewardedAdEvent = FullScreenAdEvent | 'rewarded';
 
-export type AppOpenAdEvent = FullScreenAdEvent | 'adLoaded' | 'adFailedToLoad';
+export type AppOpenAdEvent = FullScreenAdEvent;
 
 export type HandlerType = (() => void) | ((error: Error) => void);
 
