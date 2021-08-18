@@ -144,6 +144,10 @@ export default function App() {
 
 For detailed usage, head over [Documentation](https://react-native-admob.github.io/admob/docs/usage).
 
+### Change Log
+
+See [Change Log](CHANGELOG.md)
+
 ## License
 
 MIT
