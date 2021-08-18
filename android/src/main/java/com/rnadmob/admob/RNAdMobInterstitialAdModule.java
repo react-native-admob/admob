@@ -1,7 +1,9 @@
 package com.rnadmob.admob;
 
 import static com.rnadmob.admob.RNAdMobEventModule.AD_DISMISSED;
+import static com.rnadmob.admob.RNAdMobEventModule.AD_FAILED_TO_LOAD;
 import static com.rnadmob.admob.RNAdMobEventModule.AD_FAILED_TO_PRESENT;
+import static com.rnadmob.admob.RNAdMobEventModule.AD_LOADED;
 import static com.rnadmob.admob.RNAdMobEventModule.AD_PRESENTED;
 
 import android.app.Activity;
@@ -100,11 +102,18 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
                             adHolder.add(requestId, ad);
 
                             promise.resolve(null);
+
+                            sendEvent(AD_LOADED, requestId, null);
                         }
 
                         @Override
                         public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                             promise.reject(String.valueOf(loadAdError.getCode()), loadAdError.getMessage());
+
+                            WritableMap error = Arguments.createMap();
+                            error.putInt("code", loadAdError.getCode());
+                            error.putString("message", loadAdError.getMessage());
+                            sendEvent(AD_FAILED_TO_LOAD, requestId, error);
                         }
                     });
         });

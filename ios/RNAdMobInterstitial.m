@@ -63,14 +63,19 @@ RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId
                       completionHandler:^(GADInterstitialAd *ad, NSError *error) {
         if (error) {
             reject(@"E_AD_LOAD_FAILED", [error localizedDescription], error);
+            
+            NSDictionary *jsError = RCTJSErrorFromCodeMessageAndNSError(@"E_AD_LOAD_FAILED", error.localizedDescription, error);
+            [self sendEvent:kEventAdFailedToLoad requestId:requestId data:jsError];
             return;
         }
+
         ad.fullScreenContentDelegate = self;
         
         requestIdMap[ad.responseInfo.responseIdentifier] = requestId;
         adMap[requestId] = ad;
         
         resolve(nil);
+        [self sendEvent:kEventAdLoaded requestId:requestId data:nil];
     }];
 }
 

@@ -14,6 +14,8 @@ public class RNAdMobEventModule extends ReactContextBaseJavaModule {
     public static final String AD_FAILED_TO_PRESENT = "adFailedToPresent";
     public static final String AD_PRESENTED = "adPresented";
     public static final String AD_DISMISSED = "adDismissed";
+    public static final String AD_LOADED = "adLoaded";
+    public static final String AD_FAILED_TO_LOAD = "adFailedToLoad";
     public static final String REWARDED = "rewarded";
 
     private static ReactContext mContext;
