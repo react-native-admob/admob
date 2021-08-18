@@ -1,4 +1,6 @@
-@import React;
+#import <React/RCTBridgeModule.h>
+#import <React/RCTLog.h>
+#import <React/RCTUtils.h>
 
 @import GoogleMobileAds;
 

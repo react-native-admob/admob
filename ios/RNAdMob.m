@@ -1,9 +1,9 @@
+#import <React/RCTBridgeModule.h>
 #import <AppTrackingTransparency/AppTrackingTransparency.h>
 #if __has_include("<FBAudienceNetwork/FBAdSettings.h>")
 #import <FBAudienceNetwork/FBAdSettings.h>
 #endif
 
-@import React;
 @import GoogleMobileAds;
 @import AdSupport;
 

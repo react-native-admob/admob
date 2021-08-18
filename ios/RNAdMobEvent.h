@@ -1,4 +1,5 @@
-@import React;
+#import <React/RCTBridgeModule.h>
+#import <React/RCTEventEmitter.h>
 
 static NSString * _Nonnull const kEventAdLoaded = @"adLoaded";
 static NSString * _Nonnull const kEventAdFailedToLoad = @"adFailedToLoad";

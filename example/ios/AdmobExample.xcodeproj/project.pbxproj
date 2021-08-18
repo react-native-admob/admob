@@ -16,8 +16,8 @@
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* AdmobExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* AdmobExampleTests.m */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		928DF3BA625CFC62AE01947D /* libPods-AdmobExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30B8CD8886DC0F964D75EF7F /* libPods-AdmobExample.a */; };
 		F481155E26C80D7A005C473B /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F481155D26C80D7A005C473B /* BootSplash.storyboard */; };
+		FE580F3EFF8C8E9C0979D52F /* libPods-AdmobExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 77D5CAD4C8FA43BC5DD891C9 /* libPods-AdmobExample.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,13 +50,13 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = AdmobExample/main.m; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* AdmobExample-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AdmobExample-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* AdmobExample-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "AdmobExample-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		30B8CD8886DC0F964D75EF7F /* libPods-AdmobExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AdmobExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		77D5CAD4C8FA43BC5DD891C9 /* libPods-AdmobExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AdmobExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = AdmobExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		CB9C3D706B3CAC84608ECF3A /* Pods-AdmobExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AdmobExample.debug.xcconfig"; path = "Target Support Files/Pods-AdmobExample/Pods-AdmobExample.debug.xcconfig"; sourceTree = "<group>"; };
-		D9221C8C15223094E0D434D6 /* Pods-AdmobExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AdmobExample.release.xcconfig"; path = "Target Support Files/Pods-AdmobExample/Pods-AdmobExample.release.xcconfig"; sourceTree = "<group>"; };
+		D334F0D765AC9F74F76972EA /* Pods-AdmobExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AdmobExample.debug.xcconfig"; path = "Target Support Files/Pods-AdmobExample/Pods-AdmobExample.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		F481155D26C80D7A005C473B /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = AdmobExample/BootSplash.storyboard; sourceTree = "<group>"; };
+		FFCE47666D1561AACE3084FA /* Pods-AdmobExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AdmobExample.release.xcconfig"; path = "Target Support Files/Pods-AdmobExample/Pods-AdmobExample.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,7 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				928DF3BA625CFC62AE01947D /* libPods-AdmobExample.a in Frameworks */,
+				FE580F3EFF8C8E9C0979D52F /* libPods-AdmobExample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -129,7 +129,7 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				30B8CD8886DC0F964D75EF7F /* libPods-AdmobExample.a */,
+				77D5CAD4C8FA43BC5DD891C9 /* libPods-AdmobExample.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -137,8 +137,8 @@
 		5008596B8771C3B3823B2AC4 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				CB9C3D706B3CAC84608ECF3A /* Pods-AdmobExample.debug.xcconfig */,
-				D9221C8C15223094E0D434D6 /* Pods-AdmobExample.release.xcconfig */,
+				D334F0D765AC9F74F76972EA /* Pods-AdmobExample.debug.xcconfig */,
+				FFCE47666D1561AACE3084FA /* Pods-AdmobExample.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -201,14 +201,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "AdmobExample" */;
 			buildPhases = (
-				348A8B07A105D7F28DA41CB9 /* [CP] Check Pods Manifest.lock */,
+				7E375BE8A89745EC5A2971D1 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				B244E1CB6A4C645D1379EFDD /* [CP] Embed Pods Frameworks */,
-				CB199BCB6CE8B9DFF7D994C4 /* [CP] Copy Pods Resources */,
+				A678439FCBDCD193E75A85CD /* [CP] Embed Pods Frameworks */,
+				567125AEC7E8EC9B64CEF837 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -367,7 +367,25 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		348A8B07A105D7F28DA41CB9 /* [CP] Check Pods Manifest.lock */ = {
+		567125AEC7E8EC9B64CEF837 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AdmobExample/Pods-AdmobExample-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AdmobExample/Pods-AdmobExample-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7E375BE8A89745EC5A2971D1 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -389,40 +407,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B244E1CB6A4C645D1379EFDD /* [CP] Embed Pods Frameworks */ = {
+		A678439FCBDCD193E75A85CD /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AdmobExample/Pods-AdmobExample-frameworks.sh",
+				"${PODS_ROOT}/hermes-engine/destroot/Library/Frameworks/iphoneos/hermes.framework",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL/OpenSSL.framework/OpenSSL",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AdmobExample/Pods-AdmobExample-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		CB199BCB6CE8B9DFF7D994C4 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AdmobExample/Pods-AdmobExample-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AdmobExample/Pods-AdmobExample-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -559,7 +561,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CB9C3D706B3CAC84608ECF3A /* Pods-AdmobExample.debug.xcconfig */;
+			baseConfigurationReference = D334F0D765AC9F74F76972EA /* Pods-AdmobExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -582,7 +584,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D9221C8C15223094E0D434D6 /* Pods-AdmobExample.release.xcconfig */;
+			baseConfigurationReference = FFCE47666D1561AACE3084FA /* Pods-AdmobExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -739,7 +741,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 ";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 i386";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -800,7 +802,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 ";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 i386";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
