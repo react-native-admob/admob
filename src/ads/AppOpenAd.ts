@@ -1,4 +1,4 @@
-import { AppState, AppStateStatus, NativeModules } from 'react-native';
+import { NativeModules } from 'react-native';
 import {
   AppOpenAdEvent,
   AppOpenAdOptions,
@@ -9,8 +9,13 @@ import {
 
 import MobileAd from './MobileAd';
 
-const { requestAd, presentAd } =
-  NativeModules.RNAdMobAppOpen as FullScreenAdInterface;
+interface AppOpenAdInterface extends FullScreenAdInterface {
+  setUnitId: (unitId: string) => void;
+  setOptions: (options: AppOpenAdOptions) => void;
+}
+
+const { requestAd, presentAd, setUnitId, setOptions } =
+  NativeModules.RNAdMobAppOpen as AppOpenAdInterface;
 
 const defaultOptions: AppOpenAdOptions = {
   showOnColdStart: false,
@@ -19,11 +24,16 @@ const defaultOptions: AppOpenAdOptions = {
 };
 
 export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
-  private constructor(unitId: string) {
-    super('AppOpen', 0, unitId);
-  }
+  private options: AppOpenAdOptions;
 
-  private currentAppState: AppStateStatus = 'unknown';
+  private constructor(unitId: string, options: AppOpenAdOptions) {
+    super('AppOpen', 0, unitId);
+    this.options = options;
+    this.setRequestOptions(options.requestOptions);
+    this.addEventListener('adFailedToLoad', this.handleLoadError);
+    setUnitId(unitId);
+    setOptions(options);
+  }
 
   private handleLoadError = (error: Error) => {
     if (error.message.startsWith('Frequency')) {
@@ -35,17 +45,6 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
     }
   };
 
-  private handleAppStateChange = (state: AppStateStatus) => {
-    if (this.currentAppState === 'background' && state === 'active') {
-      AppOpenAd.show().catch((err) => {
-        if (err.code === 'E_AD_NOT_READY') {
-          AppOpenAd.load().catch(this.handleLoadError);
-        }
-      });
-    }
-    this.currentAppState = state;
-  };
-
   static sharedInstance: AppOpenAd;
 
   private static checkInstance() {
@@ -55,40 +54,18 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
   }
 
   /**
-   * Creates a AppOpenAd instance. You can create AppOpenAd only once in your app. Ad is loaded automatically after created and dismissed.
+   * Creates a AppOpenAd instance. If you create ad more than once, ad created before is destroyed. Ad is loaded automatically after created and dismissed.
    * @param unitId The Ad Unit ID for the App Open Ad. You can find this on your Google AdMob dashboard.
    * @param options Optional AppOpenAdOptions object.
    */
   static createAd(unitId: string, options: AppOpenAdOptions) {
     if (this.sharedInstance) {
-      throw new Error(
-        '[RNAdmob(AppOpenAd)] You already created AppOpenAd once.'
-      );
+      this.sharedInstance.removeAllListeners();
     }
 
-    const { showOnColdStart, showOnAppForeground, requestOptions } =
-      Object.assign(defaultOptions, options);
+    const _options = Object.assign(defaultOptions, options);
 
-    this.sharedInstance = new AppOpenAd(unitId);
-    this.sharedInstance.setRequestOptions(requestOptions);
-    this.sharedInstance.addEventListener('adDismissed', () => {
-      this.load().catch(this.sharedInstance.handleLoadError);
-    });
-
-    this.load()
-      .then(() => {
-        if (showOnColdStart) {
-          this.show();
-        }
-      })
-      .catch(this.sharedInstance.handleLoadError);
-
-    if (showOnAppForeground) {
-      AppState.addEventListener(
-        'change',
-        this.sharedInstance.handleAppStateChange
-      );
-    }
+    this.sharedInstance = new AppOpenAd(unitId, _options);
   }
 
   /**
@@ -118,7 +95,11 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
    */
   static setRequestOptions(requestOptions?: RequestOptions) {
     this.checkInstance();
-    return this.sharedInstance.setRequestOptions(requestOptions);
+    this.sharedInstance.setRequestOptions(requestOptions);
+
+    let options = { ...this.sharedInstance.options };
+    options.requestOptions = requestOptions || {};
+    setOptions(options);
   }
 
   /**

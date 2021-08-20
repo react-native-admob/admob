@@ -24,7 +24,7 @@ TODO
 static createAd(unitId: string, showOnColdStart?: boolean, requestOptions?: RequestOptions): AppOpenAd
 ```
 
-Creates an ad instance. You can create AppOpenAd only once in your app. Ad is loaded automatically after created and dismissed.
+Creates an ad instance. If you create ad more than once, ad created before is destroyed. Ad is loaded automatically after created and dismissed.
 
 **Parameters**
 

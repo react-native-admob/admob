@@ -62,16 +62,12 @@ export default function (
     if (!unitId) {
       return;
     }
-    if (!AppOpenAd.sharedInstance) {
+    if (
+      !AppOpenAd.sharedInstance ||
+      AppOpenAd.sharedInstance.unitId !== unitId
+    ) {
       AppOpenAd.createAd(unitId, options!);
-    } else if (AppOpenAd.sharedInstance.unitId !== unitId) {
-      console.error(
-        '[RNAdmob(AppOpenAd)] You cannnot update unitId of AppOpenAd'
-      );
-      return;
     }
-
-    AppOpenAd.setRequestOptions(options?.requestOptions);
 
     const loadListener = AppOpenAd.addEventListener('adLoaded', () =>
       setAdLoaded(true)
