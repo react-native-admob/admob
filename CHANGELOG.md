@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.0.7
+
+Bug Fixes
+
+- AppOpenAd(android): Fix Ad is opened when other activity is opened
+
 ## 1.0.6
 
 Features
