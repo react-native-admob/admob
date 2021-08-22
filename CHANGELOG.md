@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.0.9
+
+Bug Fixes
+
+- BannerAd(android): Fix setAdSize related issue
+
 ## 1.0.8
 
 Bug Fixes
