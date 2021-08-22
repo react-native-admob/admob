@@ -1,11 +1,12 @@
 import { NativeModules } from 'react-native';
+
 import {
   AppOpenAdEvent,
   AppOpenAdOptions,
   FullScreenAdInterface,
   HandlerType,
   RequestOptions,
-} from 'src/types';
+} from '../types';
 
 import MobileAd from './MobileAd';
 

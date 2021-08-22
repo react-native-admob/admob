@@ -7,6 +7,7 @@ import static com.rnadmob.admob.RNAdMobEventModule.AD_LOADED;
 import static com.rnadmob.admob.RNAdMobEventModule.AD_PRESENTED;
 
 import android.app.Activity;
+import android.os.Handler;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -51,7 +52,10 @@ public class RNAdMobAppOpenAdModule extends ReactContextBaseJavaModule implement
 
     public RNAdMobAppOpenAdModule(ReactApplicationContext reactContext) {
         super(reactContext);
-        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
+        Handler mainHandler = new Handler(reactContext.getMainLooper());
+        mainHandler.post(() -> {
+            ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
+        });
     }
 
     private void sendEvent(String eventName, @Nullable WritableMap data) {
@@ -62,6 +66,7 @@ public class RNAdMobAppOpenAdModule extends ReactContextBaseJavaModule implement
         @Override
         public void onAdDismissedFullScreenContent() {
             sendEvent(AD_DISMISSED, null);
+            requestAd(null, null);
         }
 
         @Override
@@ -74,6 +79,7 @@ public class RNAdMobAppOpenAdModule extends ReactContextBaseJavaModule implement
             error.putInt("code", adError.getCode());
             error.putString("message", adError.getMessage());
             sendEvent(AD_FAILED_TO_PRESENT, error);
+            requestAd(null, null);
         }
 
         @Override

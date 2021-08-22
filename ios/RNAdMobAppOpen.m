@@ -4,8 +4,8 @@
 @interface RNAdMobAppOpen : NSObject <RCTBridgeModule, GADFullScreenContentDelegate>
 
 @property (strong, nonatomic) GADAppOpenAd *appOpenAd;
-@property (weak, nonatomic) NSString *unitId;
-@property (weak, nonatomic) NSDictionary *requestOptions;
+@property (strong, nonatomic) NSString *unitId;
+@property (strong, nonatomic) NSDictionary *requestOptions;
 @property (nonatomic) BOOL showOnAppForeground;
 @property (nonatomic) BOOL showOnColdStart;
 @property (nonatomic) BOOL appStarted;
@@ -49,7 +49,6 @@ RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(setUnitId:(NSString *_Nonnull)unitId) {
     _unitId = unitId;
-    NSLog(@"hihi1");
     [self requestAd:nil resolver:nil rejecter:nil];
 }
 
@@ -57,7 +56,6 @@ RCT_EXPORT_METHOD(setOptions:(NSDictionary *_Nonnull)options) {
     _requestOptions = [options valueForKey:@"requestOptions"];
     _showOnColdStart = [options valueForKey:@"showOnColdStart"];
     _showOnAppForeground = [options valueForKey:@"showOnAppForeground"];
-    NSLog(@"hihi2");
     [self requestAd:nil resolver:nil rejecter:nil];
 }
 
@@ -66,7 +64,6 @@ RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId
                   requestOptions: (NSDictionary *) requestOptions
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
-    NSLog(@"hihi3");
     [self requestAd:requestOptions resolver:resolve rejecter:reject];
 }
 
@@ -83,7 +80,6 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId
          rejecter:(RCTPromiseRejectBlock)reject
 {
     if (_unitId == nil || _requestOptions == nil) return;
-    NSLog(@"hihi");
     _appOpenAd = nil;
     requestOptions = requestOptions ? requestOptions : _requestOptions;
     [GADAppOpenAd loadWithAdUnitID:_unitId
@@ -125,7 +121,8 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId
 {
     if (_appOpenAd && [self wasLoadTimeLessThanNHoursAgo:4]) {
         [_appOpenAd presentFromRootViewController:RCTPresentedViewController()];
-    } else {        [self requestAd:nil resolver:nil rejecter:nil];
+    } else {
+        [self requestAd:nil resolver:nil rejecter:nil];
         if (_presentReject) {
             _presentReject(@"E_AD_NOT_READY", @"Ad is not ready.", nil);
             _presentResolve = nil;
@@ -175,11 +172,13 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId
         _presentResolve = nil;
         _presentReject = nil;
     }
+    [self requestAd:nil resolver:nil rejecter:nil];
 }
 
 - (void)adDidDismissFullScreenContent:(GADAppOpenAd *)ad
 {
     [self sendEvent:kEventAdDismissed data:nil];
+    [self requestAd:nil resolver:nil rejecter:nil];
 }
 
 @end
