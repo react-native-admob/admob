@@ -23,12 +23,12 @@ class BannerAd extends Component<GAMBannerAdProps> {
     UIManager.dispatchViewManagerCommand(
       //@ts-expect-error
       findNodeHandle(this.bannerRef),
-      UIManager.getViewManagerConfig('RNAdMobBannerView').Commands.requestAd,
+      'requestAd',
       undefined
     );
   }
 
-  handleSizeChange(event: any) {
+  private handleSizeChange(event: any) {
     const { height, width } = event.nativeEvent;
     this.setState({ style: { width, height } });
     if (this.props.onSizeChange) {
@@ -36,31 +36,31 @@ class BannerAd extends Component<GAMBannerAdProps> {
     }
   }
 
-  handleOnAdLoaded() {
+  private handleOnAdLoaded() {
     if (this.props.onAdLoaded) {
       this.props.onAdLoaded();
     }
   }
 
-  handleOnAdFailedToLoad(event: any) {
+  private handleOnAdFailedToLoad(event: any) {
     if (this.props.onAdFailedToLoad) {
       this.props.onAdFailedToLoad(event.nativeEvent);
     }
   }
 
-  handleOnAdOpened() {
+  private handleOnAdOpened() {
     if (this.props.onAdOpened) {
       this.props.onAdOpened();
     }
   }
 
-  handleOnAdClosed() {
+  private handleOnAdClosed() {
     if (this.props.onAdClosed) {
       this.props.onAdClosed();
     }
   }
 
-  handleOnAppEvent(event: any) {
+  private handleOnAppEvent(event: any) {
     const { name, info } = event.nativeEvent;
     if (this.props.onAppEvent) {
       this.props.onAppEvent(name, info);

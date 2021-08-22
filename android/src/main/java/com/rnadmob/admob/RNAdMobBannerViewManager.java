@@ -22,7 +22,7 @@ public class RNAdMobBannerViewManager extends SimpleViewManager<RNAdMobBannerVie
     public static final String EVENT_SIZE_CHANGE = "onSizeChange";
     public static final String EVENT_APP_EVENT = "onAppEvent";
 
-    private static final int COMMAND_REQUEST_AD = 1;
+    private static final String COMMAND_REQUEST_AD = "requestAd";
 
     @Nonnull
     @Override
@@ -73,16 +73,9 @@ public class RNAdMobBannerViewManager extends SimpleViewManager<RNAdMobBannerVie
         view.setRequestOptions(requestOptions);
     }
 
-    @Nullable
     @Override
-    public Map<String, Integer> getCommandsMap() {
-        return MapBuilder.of("requestAd", COMMAND_REQUEST_AD);
-    }
-
-
-    @Override
-    public void receiveCommand(@Nonnull RNAdMobBannerView bannerView, int commandId, @Nullable ReadableArray args) {
-        if (COMMAND_REQUEST_AD == commandId) {
+    public void receiveCommand(@Nonnull RNAdMobBannerView bannerView, String commandId, @Nullable ReadableArray args) {
+        if (commandId.equals(COMMAND_REQUEST_AD)) {
             bannerView.requestAd();
         }
     }
