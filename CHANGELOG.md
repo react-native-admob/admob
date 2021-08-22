@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.0.8
+
+Bug Fixes
+
+- AppOpenAd(android): Fix Main Thread related issue
+- AppOpenAd(iOS): Fix ad is not loaded in some cases
+
 ## 1.0.7
 
 Bug Fixes
