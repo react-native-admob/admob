@@ -16,6 +16,7 @@ import AdMob, {
   AdHookOptions,
   BannerAd,
   BannerAdSize,
+  GAMBannerAd,
   useAppOpenAd,
   useInterstitialAd,
   useRewardedAd,
@@ -57,7 +58,7 @@ const hookOptions: AdHookOptions = {
 function Example() {
   const bannerRef = useRef<BannerAd>(null);
   const adaptiveBannerRef = useRef<BannerAd>(null);
-  const gamBannerRef = useRef<BannerAd>(null);
+  const gamBannerRef = useRef<GAMBannerAd>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [adTick, setAdTick] = useState(5);
   const rewardedAd = useRewardedAd(UNIT_ID_REWARDED, hookOptions);
@@ -135,7 +136,7 @@ function Example() {
           />
         </ExampleGroup>
         <ExampleGroup title="Ad Manager Banner">
-          <BannerAd
+          <GAMBannerAd
             size={BannerAdSize.BANNER}
             sizes={[BannerAdSize.BANNER, BannerAdSize.MEDIUM_RECTANGLE]}
             onSizeChange={(size) => {

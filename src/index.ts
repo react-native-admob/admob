@@ -2,6 +2,7 @@ import AdMob from './AdMob';
 
 export default AdMob;
 export { default as BannerAd } from './ads/BannerAd';
+export { default as GAMBannerAd } from './ads/GAMBannerAd';
 export { default as InterstitialAd } from './ads/InterstitialAd';
 export { default as RewardedAd } from './ads/RewardedAd';
 export { default as RewardedInterstitialAd } from './ads/RewardedInterstitialAd';

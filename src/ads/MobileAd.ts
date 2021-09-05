@@ -27,7 +27,7 @@ export default class MobileAd<
   requested: boolean;
   listeners: EmitterSubscription[];
 
-  constructor(type: AdType, requestId: number, unitId: string) {
+  protected constructor(type: AdType, requestId: number, unitId: string) {
     this.type = type;
     this.requestId = requestId;
     this.unitId = unitId;
