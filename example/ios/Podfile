@@ -13,7 +13,6 @@ target 'AdmobExample' do
   )
 
   pod 'RNAdMob', :path => '../../'
-  pod 'Google-Mobile-Ads-SDK', '8.7.0'
 
   # Enables Flipper.
   #
