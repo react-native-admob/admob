@@ -12,5 +12,6 @@ export { default as useRewardedAd } from './hooks/useRewardedAd';
 export { default as useRewardedInterstitialAd } from './hooks/useRewardedInterstitialAd';
 export { default as useAppOpenAd } from './hooks/useAppOpenAd';
 export { default as BannerAdSize } from './BannerAdSize';
+export { default as TestIds } from './TestIds';
 
 export * from './types';

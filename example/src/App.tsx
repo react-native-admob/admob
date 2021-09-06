@@ -17,6 +17,7 @@ import AdMob, {
   BannerAd,
   BannerAdSize,
   GAMBannerAd,
+  TestIds,
   useAppOpenAd,
   useInterstitialAd,
   useRewardedAd,
@@ -41,13 +42,6 @@ const ExampleGroup = ({
   </View>
 );
 
-const UNIT_ID_REWARDED = 'ca-app-pub-3940256099942544/5224354917';
-const UNIT_ID_INTERSTITIAL = 'ca-app-pub-3940256099942544/1033173712';
-const UNIT_ID_REWARDED_INTERSTITIAL = 'ca-app-pub-3940256099942544/6978759866';
-const UNIT_ID_BANNER = 'ca-app-pub-3940256099942544/6300978111';
-const UNIT_ID_GAM_BANNER = '/6499/example/banner';
-const UNIT_ID_APP_OPEN = 'ca-app-pub-3940256099942544/5662855259';
-
 const hookOptions: AdHookOptions = {
   loadOnDismissed: true,
   requestOptions: {
@@ -55,16 +49,18 @@ const hookOptions: AdHookOptions = {
   },
 };
 
+const UNIT_ID_GAM_BANNER = '/6499/example/banner';
+
 function Example() {
   const bannerRef = useRef<BannerAd>(null);
   const adaptiveBannerRef = useRef<BannerAd>(null);
   const gamBannerRef = useRef<GAMBannerAd>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [adTick, setAdTick] = useState(5);
-  const rewardedAd = useRewardedAd(UNIT_ID_REWARDED, hookOptions);
-  const interstitalAd = useInterstitialAd(UNIT_ID_INTERSTITIAL, hookOptions);
+  const rewardedAd = useRewardedAd(TestIds.REWARDED, hookOptions);
+  const interstitalAd = useInterstitialAd(TestIds.INTERSTITIAL, hookOptions);
   const rewardedInterstitialAd = useRewardedInterstitialAd(
-    UNIT_ID_REWARDED_INTERSTITIAL,
+    TestIds.REWARDED_INTERSTITIAL,
     hookOptions
   );
 
@@ -115,7 +111,7 @@ function Example() {
         <ExampleGroup title="AdMob - Basic">
           <BannerAd
             size={BannerAdSize.BANNER}
-            unitId={UNIT_ID_BANNER}
+            unitId={TestIds.BANNER}
             onAdLoaded={() => console.log('Banner Ad loaded!')}
             ref={bannerRef}
           />
@@ -124,7 +120,7 @@ function Example() {
         <ExampleGroup title="Adaptive Banner">
           <BannerAd
             size={BannerAdSize.ADAPTIVE_BANNER}
-            unitId={UNIT_ID_BANNER}
+            unitId={TestIds.BANNER}
             ref={adaptiveBannerRef}
             requestOptions={{
               requestNonPersonalizedAdsOnly: true,
@@ -206,7 +202,7 @@ export default function App() {
   const [loaded, setLoaded] = useState(false);
   const [splashDismissed, setSplashDismissed] = useState(false);
   const { adDismissed, adLoadError } = useAppOpenAd(
-    initialized ? UNIT_ID_APP_OPEN : null,
+    initialized ? TestIds.APP_OPEN : null,
     {
       showOnColdStart: true,
     }
