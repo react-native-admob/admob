@@ -1,5 +1,16 @@
 # Change Log
 
+## 1.1.0
+
+BREAKING CHANGES
+
+- Added `GAMBannerAd` component to distinguish it from AdMob ads. To display Google Ad Manager banner ads, now you must use `GAMBannerAd` component.
+- iOS: Added global variable `RNAdMobAsStaticFramework` to podspec. Now you don't need to manually include Google-Mobile-Ads-SDK pod, but if you are using `use-frameworks!` to use static frameworks, you have to add `$RNFirebaseAsStaticFramework = true` to your podfile.
+
+Features
+
+- Added `TestIds`
+
 ## 1.0.9
 
 Bug Fixes
