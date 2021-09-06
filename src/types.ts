@@ -151,11 +151,11 @@ export interface BannerAdProps extends ViewProps {
 
 export interface GAMBannerAdProps extends BannerAdProps {
   /**
-   * The available sizes of the banner. Can be a predefined sizes via `BannerAdSize` or custom dimensions, e.g. `300x200`. Available only in AdManager ad.
+   * The available sizes of the banner. Can be a predefined sizes via `BannerAdSize` or custom dimensions, e.g. `300x200`.
    */
   sizes?: string[];
   /**
-   * A callback that gets called when the Ad Manager specific app events occurred. Available only in Ad Manager Ad.
+   * A callback that gets called when the Ad Manager specific app events occurred.
    */
   onAppEvent?: (name: string, info: string) => void;
 }

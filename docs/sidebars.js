@@ -44,7 +44,7 @@ module.exports = {
     {
       type: 'category',
       label: 'Components',
-      items: ['components/banner'],
+      items: ['components/BannerAd', 'components/GAMBannerAd'],
       collapsed: false,
     },
   ],

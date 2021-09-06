@@ -18,19 +18,21 @@ Add your AdMob App ID to `AndroidManifest.xml`, as described in the [Google Mobi
 
 ## iOS Setup
 
-Open your Podfile and add this line to your app's target:
-
-```ruby
-pod 'Google-Mobile-Ads-SDK', '~> 8.0'
-```
-
-Then from the command line run (inside the ios folder):
+From the command line run (inside the ios folder):
 
 ```bash
 pod install
 ```
 
-Finally, update your Info.plist as described in the [Google Mobile Ads SDK documentation](https://developers.google.com/admob/ios/quick-start#update_your_infoplist).
+Then, update your Info.plist as described in the [Google Mobile Ads SDK documentation](https://developers.google.com/admob/ios/quick-start#update_your_infoplist).
+
+### Allow iOS Static Frameworks
+
+If you are using Static Frameworks on iOS, you need to manually enable this for the project. To enable Static Framework support, add the following global to the top of your /ios/Podfile file:
+
+```ruby
+$RNAdMobAsStaticFramework = true
+```
 
 ## Requesting IDFA on iOS 14
 

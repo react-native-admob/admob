@@ -1,19 +1,19 @@
 ---
-id: banner
-title: BannerAd
-sidebar_label: BannerAd
+id: GAMBannerAd
+title: GAMBannerAd
+sidebar_label: GAMBannerAd
 ---
 
-Renders a [Banner Ad](https://support.google.com/admob/answer/9993556). Supports both AdMob and AdManager.
+Renders a Google Ad Manager [Banner Ad](https://support.google.com/admanager/answer/10017110).
 
 ```jsx
-import { BannerAd } from '@react-native-admob/admob';
+import { GAMBannerAd } from '@react-native-admob/admob';
 
 export default function App() {
   const bannerRef = useRef(null);
   return (
     <View>
-      <BannerAd
+      <GAMBannerAd
         size={BannerAdSize.BANNER}
         unitId={UNIT_ID_BANNER}
         onAdFailedToLoad={(error) => console.error(error)}
@@ -29,7 +29,7 @@ export default function App() {
 
 ### `unitId`
 
-Your Banner Ad's [ad Unit ID](https://support.google.com/admob/answer/7356431)
+Your Banner Ad's [ad Unit ID](https://support.google.com/admanager/answer/6238708)
 
 | Type   |
 | :----- |
@@ -45,7 +45,7 @@ The size of the banner. Can be a predefined size via `BannerAdSize` or custom di
 
 ### `sizes`
 
-The available sizes of the banner. Can be a predefined sizes via `BannerAdSize` or custom dimensions, e.g. `300x200`. Available only in Ad Manager ad.
+The available sizes of the banner. Can be a predefined sizes via `BannerAdSize` or custom dimensions, e.g. `300x200`.
 
 | Type                                        |
 | :------------------------------------------ |
@@ -101,7 +101,7 @@ A callback that gets called when the user is about to return to the app after ta
 
 ### `onAppEvent`
 
-A callback that gets called when the Ad Manager specific app events occured. Availbale only in Ad Manager Ad.
+A callback that gets called when the Ad Manager specific app events occured.
 
 | Type                                 |
 | :----------------------------------- |
