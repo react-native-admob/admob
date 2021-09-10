@@ -17,7 +17,9 @@ interface BannerAdState {
 export const RNAdMobBannerView =
   requireNativeComponent<GAMBannerAdProps>('RNAdMobBannerView');
 
-abstract class BaseAd<T extends BannerAdProps> extends Component<T> {
+abstract class BaseAd<
+  T extends BannerAdProps | GAMBannerAdProps
+> extends Component<T> {
   state: BannerAdState = {
     style: { width: 0, height: 0 },
   };
