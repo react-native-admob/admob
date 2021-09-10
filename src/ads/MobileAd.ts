@@ -4,7 +4,12 @@ import {
   NativeModules,
 } from 'react-native';
 
-import { AdType, RequestOptions } from '../types';
+import {
+  AdType,
+  AppOpenAdOptions,
+  FullScreenAdOptions,
+  RequestOptions,
+} from '../types';
 
 const RNAdMobEvent = NativeModules.RNAdMobEvent;
 
@@ -16,6 +21,27 @@ type Event = {
   data?: any;
 };
 
+interface FullScreenAdInterface {
+  requestAd: (
+    requestId: number,
+    unitId: string,
+    options: FullScreenAdOptions | AppOpenAdOptions
+  ) => Promise<void>;
+  presentAd: (requestId: number) => Promise<void>;
+}
+
+const defaultOptions: FullScreenAdOptions = {
+  loadOnMounted: true,
+  showOnLoaded: false,
+  loadOnDismissed: false,
+  requestOptions: {},
+};
+
+const requestIdMap = new Map<AdType, Set<number>>();
+requestIdMap.set('Interstitial', new Set());
+requestIdMap.set('Rewarded', new Set());
+requestIdMap.set('RewardedInterstitial', new Set());
+
 export default class MobileAd<
   E extends string,
   H extends (event?: any) => any
@@ -23,17 +49,31 @@ export default class MobileAd<
   type: AdType;
   requestId: number;
   unitId: string;
-  requestOptions: RequestOptions;
-  requested: boolean;
   listeners: EmitterSubscription[];
+  options: FullScreenAdOptions | AppOpenAdOptions;
+  private nativeModule: FullScreenAdInterface;
 
-  protected constructor(type: AdType, requestId: number, unitId: string) {
+  protected constructor(
+    type: AdType,
+    requestId: number,
+    unitId: string,
+    options?: FullScreenAdOptions | AppOpenAdOptions
+  ) {
     this.type = type;
     this.requestId = requestId;
     this.unitId = unitId;
-    this.requestOptions = {};
-    this.requested = false;
     this.listeners = [];
+    this.options =
+      type === 'AppOpen' ? options! : { ...defaultOptions, ...options };
+    this.nativeModule = NativeModules[`RNAdMob${type}`];
+    if (
+      type !== 'AppOpen' &&
+      (this.options as FullScreenAdOptions).loadOnMounted &&
+      !requestIdMap.get(type)?.has(requestId)
+    ) {
+      this.load();
+    }
+    requestIdMap.get(type)?.add(requestId);
   }
 
   /**
@@ -41,7 +81,7 @@ export default class MobileAd<
    * @param requestOptions RequestOptions used to load the ad.
    */
   setRequestOptions(requestOptions: RequestOptions = {}) {
-    this.requestOptions = requestOptions;
+    this.options.requestOptions = requestOptions;
   }
 
   /**
@@ -52,9 +92,6 @@ export default class MobileAd<
   addEventListener(event: E, handler: H) {
     const eventHandler = (e: Event) => {
       if (e.type === this.type && e.requestId === this.requestId) {
-        if (event === 'adDismissed') {
-          this.requested = false;
-        }
         handler(e.data);
       }
     };
@@ -77,5 +114,26 @@ export default class MobileAd<
   removeAllListeners() {
     this.listeners.forEach((listener) => listener.remove());
     this.listeners = [];
+  }
+
+  /**
+   * Loads a new Ad.
+   * @param requestOptions Optional RequestOptions used to load the ad.
+   */
+  load(requestOptions: RequestOptions = {}) {
+    const options = {
+      ...this.options,
+      ...({
+        requestOptions,
+      } as FullScreenAdOptions | AppOpenAdOptions),
+    };
+    return this.nativeModule.requestAd(this.requestId, this.unitId, options);
+  }
+
+  /**
+   * Shows loaded Ad.
+   */
+  show() {
+    return this.nativeModule.presentAd(this.requestId);
   }
 }

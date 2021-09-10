@@ -8,6 +8,7 @@ static __strong NSMutableDictionary *requestIdMap;
 static __strong NSMutableDictionary *adMap;
 static __strong NSMutableDictionary *presentAdResolveMap;
 static __strong NSMutableDictionary *presentAdRejectMap;
+static __strong NSMutableDictionary *optionsMap;
 
 @implementation RNAdMobInterstitial
 
@@ -29,6 +30,7 @@ static __strong NSMutableDictionary *presentAdRejectMap;
         adMap = [[NSMutableDictionary alloc] init];
         presentAdResolveMap = [[NSMutableDictionary alloc] init];
         presentAdRejectMap = [[NSMutableDictionary alloc] init];
+        optionsMap = [[NSMutableDictionary alloc] init];
     });
     return self;
 }
@@ -43,21 +45,31 @@ static __strong NSMutableDictionary *presentAdRejectMap;
     [adMap removeAllObjects];
     [presentAdResolveMap removeAllObjects];
     [presentAdRejectMap removeAllObjects];
+    [optionsMap removeAllObjects];
 }
 
 RCT_EXPORT_MODULE();
 
 #pragma mark exported methods
 
-RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId
-                  unitId:(NSString *_Nonnull)unitId
-                  requestOptions:(NSDictionary *)requestOptions
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_REMAP_METHOD(requestAd, requestId:(NSNumber *_Nonnull)requestId
+                 unitId:(NSString *_Nonnull)unitId
+                 options:(NSDictionary *)options
+                 resolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject)
+{
+    [self requestAd:requestId unitId:unitId options:options resolver:resolve rejecter:reject];
+}
+
+- (void)requestAd:(NSNumber *_Nonnull)requestId
+           unitId:(NSString *_Nonnull)unitId
+          options:(NSDictionary *)options
+         resolver:(RCTPromiseResolveBlock)resolve
+         rejecter:(RCTPromiseRejectBlock)reject
 {
     [adMap removeObjectForKey:requestId];
-
-    GAMRequest *request = [RNAdMobCommon buildAdRequest:requestOptions];
+    
+    GAMRequest *request = [RNAdMobCommon buildAdRequest:[options valueForKey:@"requestOptions"]];
     [GADInterstitialAd loadWithAdUnitID:unitId
                                 request:request
                       completionHandler:^(GADInterstitialAd *ad, NSError *error) {
@@ -68,24 +80,37 @@ RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId
             [self sendEvent:kEventAdFailedToLoad requestId:requestId data:jsError];
             return;
         }
-
+        
         ad.fullScreenContentDelegate = self;
         
         requestIdMap[ad.responseInfo.responseIdentifier] = requestId;
         adMap[requestId] = ad;
+        optionsMap[requestId] = options;
         
-        resolve(nil);
+        if (resolve) {
+            resolve(nil);
+        }
         [self sendEvent:kEventAdLoaded requestId:requestId data:nil];
+        
+        NSNumber *showOnLoaded = [options valueForKey:@"showOnLoaded"];
+        if (showOnLoaded.boolValue) {
+            [self presentAd:requestId resolver:nil rejecter:nil];
+        }
     }];
 }
 
-RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_REMAP_METHOD(presentAd, requestId:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+{
+    [self presentAd:requestId resolver:resolve rejecter:reject];
+}
+
+- (void)presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject
 {
     GADInterstitialAd *ad = adMap[requestId];
     if (ad) {
         presentAdResolveMap[requestId] = resolve;
         presentAdRejectMap[requestId] = reject;
-
+        
         [ad presentFromRootViewController:RCTPresentedViewController()];
     }
     else {
@@ -134,7 +159,7 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseRe
     if (requestId == nil) {
         return;
     }
-
+    
     NSDictionary *jsError = RCTJSErrorFromCodeMessageAndNSError(@"E_AD_PRESENT_FAILED", error.localizedDescription, error);
     [self sendEvent:kEventAdFailedToPresent requestId:requestId data:jsError];
     
@@ -151,10 +176,18 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId resolver:(RCTPromiseRe
     if (requestId == nil) {
         return;
     }
-
+    
     [self sendEvent:kEventAdDismissed requestId:requestId data:nil];
-
+    
     [self removeAdMap:requestId requestIdMapKey:ad.responseInfo.responseIdentifier];
+    
+    NSDictionary *options = optionsMap[requestId];
+    if (options == nil) {
+        return;
+    }
+    if ([options valueForKey:@"loadOnDismissed"]) {
+        [self requestAd:requestId unitId:ad.adUnitID options:options resolver:nil rejecter:nil];
+    }
 }
 
 @end

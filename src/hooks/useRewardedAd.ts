@@ -1,37 +1,32 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import RewardedAd from '../ads/RewardedAd';
-import { AdHookOptions, AdHookReturns, RequestOptions, Reward } from '../types';
-
-const defaultOptions: AdHookOptions = {
-  loadOnMounted: true,
-  showOnLoaded: false,
-  loadOnDismissed: false,
-  requestOptions: {},
-};
+import {
+  AdHookReturns,
+  FullScreenAdOptions,
+  RequestOptions,
+  Reward,
+} from '../types';
 
 /**
  * React Hook for AdMob Rewarded Ad.
  * @param unitId Rewarded Ad Unit Id
- * @param options `AdHookOptions`
+ * @param options `FullScreenAdOptions`
  */
 export default function useRewardedAd(
   unitId: string,
-  options = defaultOptions
+  options?: FullScreenAdOptions
 ): AdHookReturns {
-  const rewardedAd = useMemo(() => RewardedAd.createAd(unitId), [unitId]);
+  const rewardedAd = useMemo(
+    () => RewardedAd.createAd(unitId, options),
+    [unitId, options]
+  );
   const [adLoaded, setAdLoaded] = useState(false);
   const [adPresented, setAdPresented] = useState(false);
   const [adDismissed, setAdDismissed] = useState(false);
   const [adLoadError, setAdLoadError] = useState<Error>();
   const [adPresentError, setAdPresentError] = useState<Error>();
   const [reward, setReward] = useState<Reward>();
-  const {
-    loadOnMounted,
-    showOnLoaded,
-    loadOnDismissed,
-    requestOptions: adRequestOptions,
-  } = Object.assign(defaultOptions, options);
 
   const init = () => {
     setAdLoaded(false);
@@ -47,61 +42,53 @@ export default function useRewardedAd(
   );
 
   const load = useCallback(
-    (requestOptions: RequestOptions = adRequestOptions!) => {
+    (requestOptions?: RequestOptions) => {
       init();
-      rewardedAd
-        .load(requestOptions)
-        .catch((e: Error) => setAdLoadError(e))
-        .then(() => setAdLoaded(true));
+      rewardedAd.load(requestOptions);
     },
-    [rewardedAd, adRequestOptions]
+    [rewardedAd]
   );
 
   const show = useCallback(() => {
     if (adPresented) {
       console.warn('[RNAdmob(RewardedAd)] Ad is already presented once.');
     } else if (adLoaded) {
-      rewardedAd
-        .show()
-        .catch((e: Error) => setAdPresentError(e))
-        .then(() => setAdPresented(true));
+      rewardedAd.show();
     } else {
       console.warn('[RNAdmob(RewardedAd)] Ad is not loaded.');
     }
   }, [rewardedAd, adPresented, adLoaded]);
 
   useEffect(() => {
-    if (!rewardedAd.requested && loadOnMounted) {
-      load();
-    }
-  }, [rewardedAd, loadOnMounted, load]);
-
-  useEffect(() => {
-    if (adLoaded && showOnLoaded) {
-      show();
-    }
-  }, [adLoaded, showOnLoaded, show]);
-
-  useEffect(() => {
-    if (adDismissed && loadOnDismissed) {
-      load();
-    }
-  }, [adDismissed, loadOnDismissed, load]);
-
-  useEffect(() => {
-    const presentListener = rewardedAd.addEventListener('adPresented', () =>
-      setAdDismissed(false)
+    const loadListener = rewardedAd.addEventListener('adLoaded', () => {
+      setAdLoaded(true);
+      setAdPresented(false);
+    });
+    const loadFailListener = rewardedAd.addEventListener(
+      'adFailedToLoad',
+      (error: Error) => setAdLoadError(error)
+    );
+    const presentListener = rewardedAd.addEventListener('adPresented', () => {
+      setAdPresented(true);
+      setAdDismissed(false);
+    });
+    const presentFailListener = rewardedAd.addEventListener(
+      'adFailedToPresent',
+      (error: Error) => setAdPresentError(error)
     );
     const dismissListener = rewardedAd.addEventListener('adDismissed', () => {
       setAdDismissed(true);
-      init();
+      setAdLoaded(false);
     });
     const rewardListener = rewardedAd.addEventListener(
       'rewarded',
       (r: Reward) => setReward(r)
     );
     return () => {
+      loadListener.remove();
+      loadFailListener.remove();
       presentListener.remove();
+      presentFailListener.remove();
       dismissListener.remove();
       rewardListener.remove();
     };

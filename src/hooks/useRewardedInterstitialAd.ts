@@ -1,27 +1,25 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import RewardedInterstitialAd from '../ads/RewardedInterstitialAd';
-import { AdHookOptions, AdHookReturns, RequestOptions, Reward } from '../types';
-
-const defaultOptions: AdHookOptions = {
-  loadOnMounted: true,
-  showOnLoaded: false,
-  loadOnDismissed: false,
-  requestOptions: {},
-};
+import {
+  AdHookReturns,
+  FullScreenAdOptions,
+  RequestOptions,
+  Reward,
+} from '../types';
 
 /**
  * React Hook for AdMob Rewarded Interstitial Ad.
  * @param unitId Rewarded Interstitial Ad Unit Id
- * @param options `AdHookOptions`
+ * @param options `FullScreenAdOptions`
  */
 export default function useRewardedInterstitialAd(
   unitId: string,
-  options = defaultOptions
+  options?: FullScreenAdOptions
 ): AdHookReturns {
   const rewardedInterstitialAd = useMemo(
-    () => RewardedInterstitialAd.createAd(unitId),
-    [unitId]
+    () => RewardedInterstitialAd.createAd(unitId, options),
+    [unitId, options]
   );
   const [adLoaded, setAdLoaded] = useState(false);
   const [adPresented, setAdPresented] = useState(false);
@@ -29,12 +27,6 @@ export default function useRewardedInterstitialAd(
   const [adLoadError, setAdLoadError] = useState<Error>();
   const [adPresentError, setAdPresentError] = useState<Error>();
   const [reward, setReward] = useState<Reward>();
-  const {
-    loadOnMounted,
-    showOnLoaded,
-    loadOnDismissed,
-    requestOptions: adRequestOptions,
-  } = Object.assign(defaultOptions, options);
 
   const init = () => {
     setAdLoaded(false);
@@ -50,14 +42,11 @@ export default function useRewardedInterstitialAd(
   );
 
   const load = useCallback(
-    (requestOptions: RequestOptions = adRequestOptions!) => {
+    (requestOptions?: RequestOptions) => {
       init();
-      rewardedInterstitialAd
-        .load(requestOptions)
-        .catch((e: Error) => setAdLoadError(e))
-        .then(() => setAdLoaded(true));
+      rewardedInterstitialAd.load(requestOptions);
     },
-    [rewardedInterstitialAd, adRequestOptions]
+    [rewardedInterstitialAd]
   );
 
   const show = useCallback(() => {
@@ -66,43 +55,40 @@ export default function useRewardedInterstitialAd(
         '[RNAdMob(RewardedInterstitialAd)] Ad is already presented once.'
       );
     } else if (adLoaded) {
-      rewardedInterstitialAd
-        .show()
-        .catch((e: Error) => setAdPresentError(e))
-        .then(() => setAdPresented(true));
+      rewardedInterstitialAd.show();
     } else {
       console.warn('[RNAdMob(RewardedInterstitialAd)] Ad is not loaded.');
     }
   }, [rewardedInterstitialAd, adPresented, adLoaded]);
 
   useEffect(() => {
-    if (!rewardedInterstitialAd.requested && loadOnMounted) {
-      load();
-    }
-  }, [rewardedInterstitialAd, loadOnMounted, load]);
-
-  useEffect(() => {
-    if (adLoaded && showOnLoaded) {
-      show();
-    }
-  }, [adLoaded, showOnLoaded, show]);
-
-  useEffect(() => {
-    if (adDismissed && loadOnDismissed) {
-      load();
-    }
-  }, [adDismissed, loadOnDismissed, load]);
-
-  useEffect(() => {
+    const loadListener = rewardedInterstitialAd.addEventListener(
+      'adLoaded',
+      () => {
+        setAdLoaded(true);
+        setAdPresented(false);
+      }
+    );
+    const loadFailListener = rewardedInterstitialAd.addEventListener(
+      'adFailedToLoad',
+      (error: Error) => setAdLoadError(error)
+    );
     const presentListener = rewardedInterstitialAd.addEventListener(
       'adPresented',
-      () => setAdDismissed(false)
+      () => {
+        setAdPresented(true);
+        setAdDismissed(false);
+      }
+    );
+    const presentFailListener = rewardedInterstitialAd.addEventListener(
+      'adFailedToPresent',
+      (error: Error) => setAdPresentError(error)
     );
     const dismissListener = rewardedInterstitialAd.addEventListener(
       'adDismissed',
       () => {
         setAdDismissed(true);
-        init();
+        setAdLoaded(false);
       }
     );
     const rewardListener = rewardedInterstitialAd.addEventListener(
@@ -110,7 +96,10 @@ export default function useRewardedInterstitialAd(
       (r: Reward) => setReward(r)
     );
     return () => {
+      loadListener.remove();
+      loadFailListener.remove();
       presentListener.remove();
+      presentFailListener.remove();
       dismissListener.remove();
       rewardListener.remove();
     };

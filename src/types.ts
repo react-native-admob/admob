@@ -149,7 +149,9 @@ export interface BannerAdProps extends ViewProps {
   onAdClosed?: () => void;
 }
 
+export interface GAMBannerAdProps extends Omit<BannerAdProps, 'size'> {
   size?: typeof BannerAdSize | string;
+
   /**
    * The available sizes of the banner. Can be a predefined sizes via `BannerAdSize` or custom dimensions, e.g. `300x200`.
    */
@@ -183,21 +185,12 @@ export type HandlerType = (() => void) | ((error: Error) => void);
 
 export type RewardedAdHandlerType = HandlerType | ((reward: Reward) => void);
 
-export interface FullScreenAdInterface {
-  requestAd: (
-    requestId: number,
-    unitId: string,
-    requestOptions: RequestOptions
-  ) => Promise<void>;
-  presentAd: (requestId: number) => Promise<void>;
-}
-
 export type Reward = {
   type: string;
   amount: number;
 };
 
-export type AdHookOptions = {
+export type FullScreenAdOptions = {
   /**
    * Whether your ad to load automatically on mounted. Defaults to `true`.
    */

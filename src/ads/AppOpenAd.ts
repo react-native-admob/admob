@@ -1,22 +1,11 @@
-import { NativeModules } from 'react-native';
-
 import {
   AppOpenAdEvent,
   AppOpenAdOptions,
-  FullScreenAdInterface,
   HandlerType,
   RequestOptions,
 } from '../types';
 
 import MobileAd from './MobileAd';
-
-interface AppOpenAdInterface extends FullScreenAdInterface {
-  setUnitId: (unitId: string) => void;
-  setOptions: (options: AppOpenAdOptions) => void;
-}
-
-const { requestAd, presentAd, setUnitId, setOptions } =
-  NativeModules.RNAdMobAppOpen as AppOpenAdInterface;
 
 const defaultOptions: AppOpenAdOptions = {
   showOnColdStart: false,
@@ -25,15 +14,12 @@ const defaultOptions: AppOpenAdOptions = {
 };
 
 export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
-  private options: AppOpenAdOptions;
-
   private constructor(unitId: string, options: AppOpenAdOptions) {
-    super('AppOpen', 0, unitId);
+    super('AppOpen', 0, unitId, options);
     this.options = options;
     this.setRequestOptions(options.requestOptions);
     this.addEventListener('adFailedToLoad', this.handleLoadError);
-    setUnitId(unitId);
-    setOptions(options);
+    this.load();
   }
 
   private handleLoadError = (error: Error) => {
@@ -55,16 +41,20 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
   }
 
   /**
-   * Creates a AppOpenAd instance. If you create ad more than once, ad created before is destroyed. Ad is loaded automatically after created and dismissed.
+   * Creates a AppOpenAd instance. Ad is loaded automatically after created and dismissed.
    * @param unitId The Ad Unit ID for the App Open Ad. You can find this on your Google AdMob dashboard.
    * @param options Optional AppOpenAdOptions object.
    */
-  static createAd(unitId: string, options: AppOpenAdOptions) {
+  static createAd(unitId: string, options?: AppOpenAdOptions) {
+    const _options = { ...defaultOptions, ...options };
+
     if (this.sharedInstance) {
+      if (this.sharedInstance.unitId === unitId) {
+        this.sharedInstance.options = _options;
+        return;
+      }
       this.sharedInstance.removeAllListeners();
     }
-
-    const _options = Object.assign(defaultOptions, options);
 
     this.sharedInstance = new AppOpenAd(unitId, _options);
   }
@@ -75,11 +65,7 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
    */
   static load(requestOptions?: RequestOptions) {
     this.checkInstance();
-    return requestAd(
-      this.sharedInstance.requestId,
-      this.sharedInstance.unitId,
-      requestOptions || this.sharedInstance.requestOptions
-    );
+    return this.sharedInstance.load(requestOptions);
   }
 
   /**
@@ -87,7 +73,7 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
    */
   static show() {
     this.checkInstance();
-    return presentAd(this.sharedInstance.requestId);
+    return this.sharedInstance.show();
   }
 
   /**
@@ -97,10 +83,6 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
   static setRequestOptions(requestOptions?: RequestOptions) {
     this.checkInstance();
     this.sharedInstance.setRequestOptions(requestOptions);
-
-    let options = { ...this.sharedInstance.options };
-    options.requestOptions = requestOptions || {};
-    setOptions(options);
   }
 
   /**

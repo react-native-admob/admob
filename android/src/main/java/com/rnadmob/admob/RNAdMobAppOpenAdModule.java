@@ -53,9 +53,7 @@ public class RNAdMobAppOpenAdModule extends ReactContextBaseJavaModule implement
     public RNAdMobAppOpenAdModule(ReactApplicationContext reactContext) {
         super(reactContext);
         Handler mainHandler = new Handler(reactContext.getMainLooper());
-        mainHandler.post(() -> {
-            ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
-        });
+        mainHandler.post(() -> ProcessLifecycleOwner.get().getLifecycle().addObserver(this));
     }
 
     private void sendEvent(String eventName, @Nullable WritableMap data) {
@@ -66,7 +64,7 @@ public class RNAdMobAppOpenAdModule extends ReactContextBaseJavaModule implement
         @Override
         public void onAdDismissedFullScreenContent() {
             sendEvent(AD_DISMISSED, null);
-            requestAd(null, null);
+            requestAd(null);
         }
 
         @Override
@@ -79,7 +77,7 @@ public class RNAdMobAppOpenAdModule extends ReactContextBaseJavaModule implement
             error.putInt("code", adError.getCode());
             error.putString("message", adError.getMessage());
             sendEvent(AD_FAILED_TO_PRESENT, error);
-            requestAd(null, null);
+            requestAd(null);
         }
 
         @Override
@@ -93,22 +91,12 @@ public class RNAdMobAppOpenAdModule extends ReactContextBaseJavaModule implement
     };
 
     @ReactMethod
-    public void setUnitId(String unitId) {
+    public void requestAd(int requestId, String unitId, ReadableMap options, final Promise promise) {
         this.unitId = unitId;
-        requestAd(null, null);
-    }
-
-    @ReactMethod
-    public void setOptions(ReadableMap options) {
         requestOptions = options.getMap("requestOptions");
         showOnAppForeground = options.getBoolean("showOnAppForeground");
         showOnColdStart = options.getBoolean("showOnColdStart");
-        requestAd(null, null);
-    }
-
-    @ReactMethod
-    public void requestAd(int requestId, String unitId, ReadableMap requestOptions, final Promise promise) {
-        requestAd(requestOptions, promise);
+        requestAd(promise);
     }
 
     @ReactMethod
@@ -117,8 +105,8 @@ public class RNAdMobAppOpenAdModule extends ReactContextBaseJavaModule implement
         showAdIfAvailable();
     }
 
-    private void requestAd(@Nullable ReadableMap requestOptions, @Nullable final Promise promise) {
-        if (unitId == null || this.requestOptions == null) return;
+    private void requestAd(@Nullable final Promise promise) {
+        if (unitId == null) return;
         Activity activity = getCurrentActivity();
         if (activity == null) {
             if (promise != null) {
@@ -126,47 +114,44 @@ public class RNAdMobAppOpenAdModule extends ReactContextBaseJavaModule implement
             }
             return;
         }
-        requestOptions = requestOptions != null ? requestOptions : this.requestOptions;
         AdManagerAdRequest adRequest = RNAdMobCommon.buildAdRequest(requestOptions);
-        activity.runOnUiThread(() -> {
-            AppOpenAd.load(getReactApplicationContext(), unitId, adRequest, AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT,
-                    new AppOpenAd.AppOpenAdLoadCallback() {
-                        @Override
-                        public void onAdLoaded(@NonNull AppOpenAd ad) {
-                            ad.setFullScreenContentCallback(fullScreenContentCallback);
-                            appOpenAd = ad;
-                            loadTime = (new Date()).getTime();
-                            if (promise != null) {
-                                promise.resolve(null);
-                            }
-
-                            sendEvent(AD_LOADED, null);
-
-                            if (!appStarted) {
-                                appStarted = true;
-                                if (showOnColdStart) {
-                                    showAdIfAvailable();
-                                }
-                            }
+        activity.runOnUiThread(() -> AppOpenAd.load(getReactApplicationContext(), unitId, adRequest, AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT,
+                new AppOpenAd.AppOpenAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(@NonNull AppOpenAd ad) {
+                        ad.setFullScreenContentCallback(fullScreenContentCallback);
+                        appOpenAd = ad;
+                        loadTime = (new Date()).getTime();
+                        if (promise != null) {
+                            promise.resolve(null);
                         }
 
-                        @Override
-                        public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                            if (promise != null) {
-                                promise.reject(String.valueOf(loadAdError.getCode()), loadAdError.getMessage());
-                            }
+                        sendEvent(AD_LOADED, null);
 
-                            WritableMap error = Arguments.createMap();
-                            error.putInt("code", loadAdError.getCode());
-                            error.putString("message", loadAdError.getMessage());
-                            sendEvent(AD_FAILED_TO_LOAD, error);
-
-                            if (!appStarted) {
-                                appStarted = true;
+                        if (!appStarted) {
+                            appStarted = true;
+                            if (showOnColdStart) {
+                                showAdIfAvailable();
                             }
                         }
-                    });
-        });
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        if (promise != null) {
+                            promise.reject(String.valueOf(loadAdError.getCode()), loadAdError.getMessage());
+                        }
+
+                        WritableMap error = Arguments.createMap();
+                        error.putInt("code", loadAdError.getCode());
+                        error.putString("message", loadAdError.getMessage());
+                        sendEvent(AD_FAILED_TO_LOAD, error);
+
+                        if (!appStarted) {
+                            appStarted = true;
+                        }
+                    }
+                }));
     }
 
     private void showAdIfAvailable() {
@@ -182,7 +167,7 @@ public class RNAdMobAppOpenAdModule extends ReactContextBaseJavaModule implement
             if (appOpenAd != null && wasLoadTimeLessThanNHoursAgo(4)) {
                 appOpenAd.show(activity);
             } else {
-                requestAd(null, null);
+                requestAd(null);
                 if (presentPromise != null) {
                     presentPromise.reject("E_AD_NOT_READY", "Ad is not ready.");
                     presentPromise = null;

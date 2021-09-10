@@ -47,24 +47,16 @@
 
 RCT_EXPORT_MODULE();
 
-RCT_EXPORT_METHOD(setUnitId:(NSString *_Nonnull)unitId) {
+RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId
+                  unitId: (NSString *_Nonnull)unitId
+                  options: (NSDictionary *) options
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
     _unitId = unitId;
-    [self requestAd:nil resolver:nil rejecter:nil];
-}
-
-RCT_EXPORT_METHOD(setOptions:(NSDictionary *_Nonnull)options) {
     _requestOptions = [options valueForKey:@"requestOptions"];
     _showOnColdStart = [options valueForKey:@"showOnColdStart"];
     _showOnAppForeground = [options valueForKey:@"showOnAppForeground"];
-    [self requestAd:nil resolver:nil rejecter:nil];
-}
-
-RCT_EXPORT_METHOD(requestAd:(NSNumber *_Nonnull)requestId
-                  unitId: (NSString *_Nonnull)unitId
-                  requestOptions: (NSDictionary *) requestOptions
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject) {
-    [self requestAd:requestOptions resolver:resolve rejecter:reject];
+    [self requestAd:resolve rejecter:reject];
 }
 
 RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId
@@ -75,15 +67,13 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId
     [self showAdIfAvailable];
 }
 
-- (void)requestAd:(NSDictionary *) requestOptions
-         resolver:(RCTPromiseResolveBlock)resolve
+- (void)requestAd:(RCTPromiseResolveBlock)resolve
          rejecter:(RCTPromiseRejectBlock)reject
 {
-    if (_unitId == nil || _requestOptions == nil) return;
+    if (_unitId == nil) return;
     _appOpenAd = nil;
-    requestOptions = requestOptions ? requestOptions : _requestOptions;
     [GADAppOpenAd loadWithAdUnitID:_unitId
-                           request:[RNAdMobCommon buildAdRequest:requestOptions]
+                           request:[RNAdMobCommon buildAdRequest:_requestOptions]
                        orientation:UIInterfaceOrientationPortrait
                  completionHandler:^(GADAppOpenAd *_Nullable ad, NSError *_Nullable error) {
         if (error) {
@@ -122,7 +112,7 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId
     if (_appOpenAd && [self wasLoadTimeLessThanNHoursAgo:4]) {
         [_appOpenAd presentFromRootViewController:RCTPresentedViewController()];
     } else {
-        [self requestAd:nil resolver:nil rejecter:nil];
+        [self requestAd:nil rejecter:nil];
         if (_presentReject) {
             _presentReject(@"E_AD_NOT_READY", @"Ad is not ready.", nil);
             _presentResolve = nil;
@@ -172,13 +162,13 @@ RCT_EXPORT_METHOD(presentAd:(NSNumber *_Nonnull)requestId
         _presentResolve = nil;
         _presentReject = nil;
     }
-    [self requestAd:nil resolver:nil rejecter:nil];
+    [self requestAd:nil rejecter:nil];
 }
 
 - (void)adDidDismissFullScreenContent:(GADAppOpenAd *)ad
 {
     [self sendEvent:kEventAdDismissed data:nil];
-    [self requestAd:nil resolver:nil rejecter:nil];
+    [self requestAd:nil rejecter:nil];
 }
 
 @end

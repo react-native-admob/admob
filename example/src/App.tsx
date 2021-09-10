@@ -13,9 +13,9 @@ import {
 } from 'react-native';
 import RNBootSplash from 'react-native-bootsplash';
 import AdMob, {
-  AdHookOptions,
   BannerAd,
   BannerAdSize,
+  FullScreenAdOptions,
   GAMBannerAd,
   TestIds,
   useAppOpenAd,
@@ -42,7 +42,7 @@ const ExampleGroup = ({
   </View>
 );
 
-const hookOptions: AdHookOptions = {
+const hookOptions: FullScreenAdOptions = {
   loadOnDismissed: true,
   requestOptions: {
     requestNonPersonalizedAdsOnly: true,
@@ -133,7 +133,6 @@ function Example() {
         </ExampleGroup>
         <ExampleGroup title="Ad Manager Banner">
           <GAMBannerAd
-            size={BannerAdSize.BANNER}
             sizes={[BannerAdSize.BANNER, BannerAdSize.MEDIUM_RECTANGLE]}
             onSizeChange={(size) => {
               console.log(size);

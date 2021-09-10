@@ -1,39 +1,26 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import InterstitialAd from '../ads/InterstitialAd';
-import { AdHookOptions, AdHookReturns, RequestOptions } from '../types';
-
-const defaultOptions: AdHookOptions = {
-  loadOnMounted: true,
-  showOnLoaded: false,
-  loadOnDismissed: false,
-  requestOptions: {},
-};
+import { AdHookReturns, FullScreenAdOptions, RequestOptions } from '../types';
 
 /**
  * React Hook for AdMob Interstitial Ad.
  * @param unitId Interstitial Ad Unit Id
- * @param options `AdHookOptions`
+ * @param options `FullScreenAdOptions`
  */
 export default function (
   unitId: string,
-  options?: AdHookOptions
+  options?: FullScreenAdOptions
 ): AdHookReturns {
   const interstitialAd = useMemo(
-    () => InterstitialAd.createAd(unitId),
-    [unitId]
+    () => InterstitialAd.createAd(unitId, options),
+    [unitId, options]
   );
   const [adLoaded, setAdLoaded] = useState(false);
   const [adPresented, setAdPresented] = useState(false);
   const [adDismissed, setAdDismissed] = useState(false);
   const [adLoadError, setAdLoadError] = useState<Error>();
   const [adPresentError, setAdPresentError] = useState<Error>();
-  const {
-    loadOnMounted,
-    showOnLoaded,
-    loadOnDismissed,
-    requestOptions: adRequestOptions,
-  } = Object.assign(defaultOptions, options);
 
   const init = () => {
     setAdLoaded(false);
@@ -48,60 +35,55 @@ export default function (
   );
 
   const load = useCallback(
-    (requestOptions: RequestOptions = adRequestOptions!) => {
+    (requestOptions?: RequestOptions) => {
       init();
-      interstitialAd
-        .load(requestOptions)
-        .catch((e: Error) => setAdLoadError(e))
-        .then(() => setAdLoaded(true));
+      interstitialAd.load(requestOptions);
     },
-    [interstitialAd, adRequestOptions]
+    [interstitialAd]
   );
 
   const show = useCallback(() => {
     if (adPresented) {
       console.warn('[RNAdmob(InterstitialAd)] Ad is already presented once.');
     } else if (adLoaded) {
-      interstitialAd
-        .show()
-        .catch((e: Error) => setAdPresentError(e))
-        .then(() => setAdPresented(true));
+      interstitialAd.show();
     } else {
       console.warn('[RNAdmob(InterstitialAd)] Ad is not loaded.');
     }
   }, [interstitialAd, adPresented, adLoaded]);
 
   useEffect(() => {
-    if (!interstitialAd.requested && loadOnMounted) {
-      load();
-    }
-  }, [interstitialAd, loadOnMounted, load]);
-
-  useEffect(() => {
-    if (adLoaded && showOnLoaded) {
-      show();
-    }
-  }, [adLoaded, showOnLoaded, show]);
-
-  useEffect(() => {
-    if (adDismissed && loadOnDismissed) {
-      load();
-    }
-  }, [adDismissed, loadOnDismissed, load]);
-
-  useEffect(() => {
-    const presentListener = interstitialAd.addEventListener('adPresented', () =>
-      setAdDismissed(false)
+    const loadListener = interstitialAd.addEventListener('adLoaded', () => {
+      setAdLoaded(true);
+      setAdPresented(false);
+    });
+    const loadFailListener = interstitialAd.addEventListener(
+      'adFailedToLoad',
+      (error: Error) => setAdLoadError(error)
+    );
+    const presentListener = interstitialAd.addEventListener(
+      'adPresented',
+      () => {
+        setAdPresented(true);
+        setAdDismissed(false);
+      }
+    );
+    const presentFailListener = interstitialAd.addEventListener(
+      'adFailedToPresent',
+      (error) => setAdPresentError(error)
     );
     const dismissListener = interstitialAd.addEventListener(
       'adDismissed',
       () => {
         setAdDismissed(true);
-        init();
+        setAdLoaded(false);
       }
     );
     return () => {
+      loadListener.remove();
+      loadFailListener.remove();
       presentListener.remove();
+      presentFailListener.remove();
       dismissListener.remove();
     };
   }, [interstitialAd]);

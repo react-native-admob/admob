@@ -3,12 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import AppOpenAd from '../ads/AppOpenAd';
 import { AdHookReturns, AppOpenAdOptions, RequestOptions } from '../types';
 
-const defaultOptions: AppOpenAdOptions = {
-  showOnColdStart: false,
-  showOnAppForeground: true,
-  requestOptions: {},
-};
-
 /**
  * React Hook for AdMob App Open Ad.
  */
@@ -21,10 +15,6 @@ export default function (
   const [adDismissed, setAdDismissed] = useState(false);
   const [adLoadError, setAdLoadError] = useState<Error>();
   const [adPresentError, setAdPresentError] = useState<Error>();
-  const { requestOptions: adRequestOptions } = Object.assign(
-    defaultOptions,
-    options
-  );
 
   const init = () => {
     setAdLoaded(false);
@@ -38,21 +28,14 @@ export default function (
     [adPresented, adDismissed]
   );
 
-  const load = useCallback(
-    (requestOptions: RequestOptions = adRequestOptions!) => {
-      init();
-      AppOpenAd.load(requestOptions)
-        .catch((e: Error) => setAdLoadError(e))
-        .then(() => setAdLoaded(true));
-    },
-    [adRequestOptions]
-  );
+  const load = (requestOptions?: RequestOptions) => {
+    init();
+    AppOpenAd.load(requestOptions);
+  };
 
   const show = useCallback(() => {
     if (adLoaded) {
-      AppOpenAd.show()
-        .catch((e: Error) => setAdPresentError(e))
-        .then(() => setAdPresented(true));
+      AppOpenAd.show();
     } else {
       console.warn('[RNAdmob(AppOpenAd)] Ad is not loaded.');
     }
@@ -62,31 +45,33 @@ export default function (
     if (!unitId) {
       return;
     }
-    if (
-      !AppOpenAd.sharedInstance ||
-      AppOpenAd.sharedInstance.unitId !== unitId
-    ) {
-      AppOpenAd.createAd(unitId, options!);
-    }
+    AppOpenAd.createAd(unitId, options);
 
-    const loadListener = AppOpenAd.addEventListener('adLoaded', () =>
-      setAdLoaded(true)
-    );
-    const failListener = AppOpenAd.addEventListener(
+    const loadListener = AppOpenAd.addEventListener('adLoaded', () => {
+      setAdLoaded(true);
+      setAdPresented(false);
+    });
+    const loadFailListener = AppOpenAd.addEventListener(
       'adFailedToLoad',
       (error: Error) => setAdLoadError(error)
     );
-    const presentListener = AppOpenAd.addEventListener('adPresented', () =>
-      setAdDismissed(false)
+    const presentListener = AppOpenAd.addEventListener('adPresented', () => {
+      setAdPresented(true);
+      setAdDismissed(false);
+    });
+    const presentFailListener = AppOpenAd.addEventListener(
+      'adFailedToPresent',
+      (error) => setAdPresentError(error)
     );
     const dismissListener = AppOpenAd.addEventListener('adDismissed', () => {
       setAdDismissed(true);
-      init();
+      setAdLoaded(false);
     });
     return () => {
       loadListener.remove();
-      failListener.remove();
+      loadFailListener.remove();
       presentListener.remove();
+      presentFailListener.remove;
       dismissListener.remove();
     };
   }, [unitId, options]);

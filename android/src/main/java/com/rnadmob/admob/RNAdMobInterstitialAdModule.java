@@ -7,6 +7,7 @@ import static com.rnadmob.admob.RNAdMobEventModule.AD_LOADED;
 import static com.rnadmob.admob.RNAdMobEventModule.AD_PRESENTED;
 
 import android.app.Activity;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +25,8 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.admanager.AdManagerAdRequest;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+
+import java.util.Objects;
 
 public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
 
@@ -53,12 +56,17 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
         RNAdMobEventModule.sendEvent(eventName, "Interstitial", requestId, data);
     }
 
-    private FullScreenContentCallback getFullScreenContentCallback(int requestId) {
+    private FullScreenContentCallback getFullScreenContentCallback(int requestId, String unitId, ReadableMap options) {
         return new FullScreenContentCallback(){
             @Override
             public void onAdDismissedFullScreenContent() {
                 sendEvent(AD_DISMISSED, requestId, null);
                 adHolder.remove(requestId);
+
+                if (options.getBoolean("loadOnDismissed")) {
+                    Log.d("fuck", "fuck");
+                    requestAd(requestId, unitId, options, null);
+                }
             }
 
             @Override
@@ -83,7 +91,7 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void requestAd(int requestId, String unitId, ReadableMap requestOptions, final Promise promise) {
+    public void requestAd(int requestId, String unitId, ReadableMap options, final Promise promise) {
         Activity activity = getCurrentActivity();
         if (activity == null) {
             promise.reject("E_NULL_ACTIVITY", "Interstitial ad attempted to load but the current Activity was null.");
@@ -92,23 +100,27 @@ public class RNAdMobInterstitialAdModule extends ReactContextBaseJavaModule {
 
         adHolder.remove(requestId);
         activity.runOnUiThread(() -> {
-            AdManagerAdRequest adRequest = RNAdMobCommon.buildAdRequest(requestOptions);
+            AdManagerAdRequest adRequest = RNAdMobCommon.buildAdRequest(Objects.requireNonNull(options.getMap("requestOptions")));
             InterstitialAd.load(getReactApplicationContext(), unitId, adRequest,
                     new InterstitialAdLoadCallback() {
                         @Override
                         public void onAdLoaded(@NonNull InterstitialAd ad) {
-                            FullScreenContentCallback callback = getFullScreenContentCallback(requestId);
+                            FullScreenContentCallback callback = getFullScreenContentCallback(requestId, unitId, options);
                             ad.setFullScreenContentCallback(callback);
                             adHolder.add(requestId, ad);
 
-                            promise.resolve(null);
+                            if (promise != null) promise.resolve(null);
 
                             sendEvent(AD_LOADED, requestId, null);
+
+                            if (options.getBoolean("showOnLoaded")) {
+                                presentAd(requestId, null);
+                            }
                         }
 
                         @Override
                         public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                            promise.reject(String.valueOf(loadAdError.getCode()), loadAdError.getMessage());
+                            if (promise != null) promise.reject(String.valueOf(loadAdError.getCode()), loadAdError.getMessage());
 
                             WritableMap error = Arguments.createMap();
                             error.putInt("code", loadAdError.getCode());
