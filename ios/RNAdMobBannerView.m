@@ -27,10 +27,10 @@
 
 - (void)requestAd
 {
-    if (_unitId == nil || _size == nil || _requestOptions == nil) {
+    if (_unitId == nil || (_size == nil && _sizes == nil) || _requestOptions == nil) {
         return;
     }
-    GADAdSize size = [RNAdMobCommon stringToAdSize:_size];
+    GADAdSize size = [RNAdMobCommon stringToAdSize:_size ? _size : _sizes[0]];
     if (!_bannerView) {
         _bannerView = [[GAMBannerView alloc] initWithAdSize:size];
         _bannerView.delegate = self;

@@ -149,7 +149,7 @@ export interface BannerAdProps extends ViewProps {
   onAdClosed?: () => void;
 }
 
-export interface GAMBannerAdProps extends BannerAdProps {
+  size?: typeof BannerAdSize | string;
   /**
    * The available sizes of the banner. Can be a predefined sizes via `BannerAdSize` or custom dimensions, e.g. `300x200`.
    */
