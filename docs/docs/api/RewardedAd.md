@@ -36,7 +36,16 @@ Creates an ad instance.
 
 `unitId` : Rewarded Ad [unitId](https://support.google.com/admob/answer/7356431).
 
-`requestOptions` (Optional) : [RequestOptions](RequestOptions) used to load the ad. 
+`options` (Optional) : Options for this ad. 
+
+Properties:
+
+| Name            | Type                             | Default | Description                                                |
+| :-------------- | :------------------------------- | :------ | :--------------------------------------------------------- |
+| loadOnMounted   | boolean                          | `true`  | Whether your ad to load automatically on mounted.          |
+| showOnLoaded    | boolean                          | `false` | Whether your ad to show automatically on loaded.           |
+| loadOnDismissed | boolean                          | `false` | Whether your ad to load new ad automatically on dismissed. |
+| requestOptions  | [RequestOptions](RequestOptions) | {}      | Optional RequestOptions used to load the ad.               |
 
 **Returns**
 

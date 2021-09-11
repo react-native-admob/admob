@@ -21,7 +21,7 @@ TODO
 ### createAd()
 
 ```js
-static createAd(unitId: string, showOnColdStart?: boolean, requestOptions?: RequestOptions): AppOpenAd
+static createAd(unitId: string, options?: AppOpenAdOptions): AppOpenAd
 ```
 
 Creates an ad instance. If you create ad more than once, ad created before is destroyed. Ad is loaded automatically after created and dismissed.
@@ -30,11 +30,15 @@ Creates an ad instance. If you create ad more than once, ad created before is de
 
 `unitId` : App Open Ad [unitId](https://support.google.com/admob/answer/7356431).
 
-`showOnColdStart` : Whether to show ad on app [coldstart](https://developers.google.com/admob/android/app-open-ads#coldstart). Defaults to `false`.
+`options` (Optional) : `AppOpenAdOptions` object
 
-`showOnAppForeground` : Whether to show ad on app becomes foreground. Defaults to `true`.
+Properties :
 
-`requestOptions` (Optional) : [RequestOptions](RequestOptions) used to load the ad.
+- `showOnColdStart` : Whether to show ad on app [coldstart](https://developers.google.com/admob/android/app-open-ads#coldstart). Defaults to `false`.
+
+- `showOnAppForeground` : Whether to show ad on app becomes foreground. Defaults to `true`.
+
+- `requestOptions` : [RequestOptions](RequestOptions) used to load the ad.
 
 ### load()
 
