@@ -27,7 +27,7 @@ Methods listed below except [`createAd()`](#createad) must be called from instan
 ### createAd()
 
 ```js
-static createAd(unitId: string, options?: Options): InterstitialAd
+static createAd(unitId: string, options?: FullScreenAdOptions): InterstitialAd
 ```
 
 Creates an ad instance.
