@@ -31,7 +31,7 @@ For detailed usage of `AdMob.initialize()` function, [head over to API section](
 
 ## Displaying Banner Ad
 
-See [BannerAd](components/banner).
+See [BannerAd](components/BannerAd).
 
 ## Displaying App Open Ad(beta)
 
