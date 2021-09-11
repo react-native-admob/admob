@@ -4,12 +4,22 @@
 
 BREAKING CHANGES
 
+- `AdHookOptions` is now renamed to `FullScreenAdOptions`
+- `createAd()`'s second parameter is changed to `FullScreenAdOptions` (was `RequestOptions`).
 - Added `GAMBannerAd` component to distinguish it from AdMob ads. To display Google Ad Manager banner ads, now you must use `GAMBannerAd` component.
 - iOS: Added global variable `RNAdMobAsStaticFramework` to podspec. Now you don't need to manually include Google-Mobile-Ads-SDK pod, but if you are using `use-frameworks!` to use static frameworks, you have to add `$RNFirebaseAsStaticFramework = true` to your podfile.
 
 Features
 
 - Added `TestIds`
+
+Bug Fixes
+
+- `GAMBannerAd`'s size prop is changed to nullable property.
+
+Peformance Improvements
+
+- Peformance of Full Screen Ads Hooks is improved.
 
 ## 1.0.9
 
