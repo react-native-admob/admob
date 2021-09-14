@@ -191,7 +191,7 @@ RCT_REMAP_METHOD(presentAd, requestId:(NSNumber *_Nonnull)requestId resolver:(RC
     if (options == nil) {
         return;
     }
-    if ([options valueForKey:@"loadOnDismissed"]) {
+    if (options[@"loadOnDismissed"] && [options[@"loadOnDismissed"] boolValue]) {
         [self requestAd:requestId unitId:ad.adUnitID options:options resolver:nil rejecter:nil];
     }
 }
