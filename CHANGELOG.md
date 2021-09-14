@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.1.1
+
+Bug Fixes
+
+- Fix loadOnDismissed not working properly in iOS
 ## 1.1.0
 
 BREAKING CHANGES
