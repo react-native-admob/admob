@@ -134,8 +134,7 @@ public class RNAdMobBannerView extends ReactViewGroup implements AppEventListene
         if (sizes != null) {
             if ((RNAdMobCommon.getIsAdManager(unitId))) {
                 adView.setAdSizes(sizes);
-            }
-            else {
+            } else {
                 throw new Error("Trying to set sizes on non Ad Manager unit Id");
             }
         }

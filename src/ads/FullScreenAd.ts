@@ -28,6 +28,7 @@ interface FullScreenAdInterface {
     options: FullScreenAdOptions | AppOpenAdOptions
   ) => Promise<void>;
   presentAd: (requestId: number) => Promise<void>;
+  destroyAd: (requestId: number) => void;
 }
 
 const defaultOptions: FullScreenAdOptions = {
@@ -42,7 +43,7 @@ requestIdMap.set('Interstitial', new Set());
 requestIdMap.set('Rewarded', new Set());
 requestIdMap.set('RewardedInterstitial', new Set());
 
-export default class MobileAd<
+export default class FullScreenAd<
   E extends string,
   H extends (event?: any) => any
 > {
@@ -65,7 +66,7 @@ export default class MobileAd<
     this.listeners = [];
     this.options =
       type === 'AppOpen' ? options! : { ...defaultOptions, ...options };
-    this.nativeModule = NativeModules[`RNAdMob${type}`];
+    this.nativeModule = NativeModules[`RNAdMob${type}Ad`];
     if (
       type !== 'AppOpen' &&
       (this.options as FullScreenAdOptions).loadOnMounted &&
@@ -135,5 +136,14 @@ export default class MobileAd<
    */
   show() {
     return this.nativeModule.presentAd(this.requestId);
+  }
+
+  /**
+   * Destroys the Ad.
+   */
+  destroy() {
+    this.removeAllListeners();
+    requestIdMap.get(this.type)?.delete(this.requestId);
+    this.nativeModule.destroyAd(this.requestId);
   }
 }

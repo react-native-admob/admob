@@ -4,11 +4,11 @@ import {
   InterstitialAdEvent,
 } from '../types';
 
-import MobileAd from './MobileAd';
+import FullScreenAd from './FullScreenAd';
 
 let _interstitialRequest = 0;
 
-export default class InterstitialAd extends MobileAd<
+export default class InterstitialAd extends FullScreenAd<
   InterstitialAdEvent,
   HandlerType
 > {

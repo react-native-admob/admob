@@ -15,7 +15,7 @@ public class RNAdMobPromiseHolder {
     public void clear() {
         promiseArray.clear();
     }
-    
+
     public void resolve(int requestId) {
         Promise promise = promiseArray.get(requestId);
         if (promise != null) {
@@ -28,6 +28,14 @@ public class RNAdMobPromiseHolder {
         Promise promise = promiseArray.get(requestId);
         if (promise != null) {
             promise.reject(String.valueOf(adError.getCode()), adError.getMessage());
+            promiseArray.delete(requestId);
+        }
+    }
+
+    public void reject(int requestId, String code, String message) {
+        Promise promise = promiseArray.get(requestId);
+        if (promise != null) {
+            promise.reject(code, message);
             promiseArray.delete(requestId);
         }
     }

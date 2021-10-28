@@ -5,7 +5,7 @@ import {
   RequestOptions,
 } from '../types';
 
-import MobileAd from './MobileAd';
+import FullScreenAd from './FullScreenAd';
 
 const defaultOptions: AppOpenAdOptions = {
   showOnColdStart: false,
@@ -13,7 +13,10 @@ const defaultOptions: AppOpenAdOptions = {
   requestOptions: {},
 };
 
-export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
+export default class AppOpenAd extends FullScreenAd<
+  AppOpenAdEvent,
+  HandlerType
+> {
   private constructor(unitId: string, options: AppOpenAdOptions) {
     super('AppOpen', 0, unitId, options);
     this.options = options;

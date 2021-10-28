@@ -2,6 +2,7 @@ package com.rnadmob.admob;
 
 import android.content.Context;
 import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.Arguments;
@@ -44,7 +45,7 @@ public class RNAdMobModule extends ReactContextBaseJavaModule {
 
         MobileAds.initialize(context, (InitializationStatus status) -> {
             WritableArray array = Arguments.createArray();
-            for (Map.Entry<String, AdapterStatus> entry: status.getAdapterStatusMap().entrySet()) {
+            for (Map.Entry<String, AdapterStatus> entry : status.getAdapterStatusMap().entrySet()) {
                 AdapterStatus adapterStatus = entry.getValue();
 
                 WritableMap info = Arguments.createMap();
