@@ -35,6 +35,7 @@ public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd>
         super(reactContext);
         Handler mainHandler = new Handler(reactContext.getMainLooper());
         mainHandler.post(() -> ProcessLifecycleOwner.get().getLifecycle().addObserver(this));
+        appStarted = false;
     }
 
     @Override
