@@ -79,12 +79,7 @@ public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd>
     }
 
     @Override
-    protected void show(AppOpenAd ad, int requestId) {
-        Activity activity = getCurrentActivity();
-        if (activity == null) {
-            presentPromiseHolder.reject(requestId, "E_NULL_ACTIVITY", "Ad attempted to load but the current Activity was null.");
-            return;
-        }
+    protected void show(AppOpenAd ad, Activity activity, int requestId) {
         if (isAdExpired()) {
             presentPromiseHolder.reject(requestId, "E_AD_NOT_READY", "Ad is not ready.");
             return;

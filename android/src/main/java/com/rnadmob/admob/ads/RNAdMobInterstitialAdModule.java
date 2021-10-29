@@ -64,11 +64,7 @@ public class RNAdMobInterstitialAdModule extends RNAdMobFullScreenAdModule<Inter
     }
 
     @Override
-    protected void show(InterstitialAd ad, int requestId) {
-        Activity activity = getCurrentActivity();
-        if (activity == null) {
-            return;
-        }
+    protected void show(InterstitialAd ad, Activity activity, int requestId) {
         ad.show(activity);
     }
 

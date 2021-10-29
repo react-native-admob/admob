@@ -68,11 +68,7 @@ public class RNAdMobRewardedAdModule extends RNAdMobFullScreenAdModule<RewardedA
     }
 
     @Override
-    protected void show(RewardedAd ad, int requestId) {
-        Activity activity = getCurrentActivity();
-        if (activity == null) {
-            return;
-        }
+    protected void show(RewardedAd ad, Activity activity, int requestId) {
         ad.show(activity, rewardItem -> {
             WritableMap reward = Arguments.createMap();
             reward.putInt("amount", rewardItem.getAmount());

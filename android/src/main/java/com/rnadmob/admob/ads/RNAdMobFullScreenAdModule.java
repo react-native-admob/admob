@@ -55,10 +55,18 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ReactContextBaseJavaM
 
     protected abstract void load(String unitId, AdManagerAdRequest adRequest, AdLoadCallback<T> adLoadCallback, FullScreenContentCallback fullScreenContentCallback);
 
-    protected abstract void show(T ad, int requestId);
+    protected abstract void show(T ad, Activity activity, int requestId);
 
     protected void sendEvent(String eventName, int requestId, @Nullable WritableMap data) {
         RNAdMobEventModule.sendEvent(eventName, getAdType(), requestId, data);
+    }
+
+    protected Activity getCurrentActivity(Promise promise) {
+        Activity activity = super.getCurrentActivity();
+        if (activity == null && promise != null) {
+            promise.reject("E_NULL_ACTIVITY", "Cannot process Ad because the current Activity is null.");
+        }
+        return activity;
     }
 
     private AdLoadCallback<T> getAdLoadCallback(int requestId, ReadableMap options, Promise promise) {
@@ -147,9 +155,8 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ReactContextBaseJavaM
     }
 
     protected void requestAd(int requestId, String unitId, ReadableMap options, final Promise promise) {
-        Activity activity = getCurrentActivity();
+        Activity activity = getCurrentActivity(promise);
         if (activity == null) {
-            promise.reject("E_NULL_ACTIVITY", "Ad attempted to load but the current Activity was null.");
             return;
         }
 
@@ -163,10 +170,8 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ReactContextBaseJavaM
     }
 
     protected void presentAd(int requestId, final Promise promise) {
-        Activity activity = getCurrentActivity();
+        Activity activity = getCurrentActivity(promise);
         if (activity == null) {
-            if (promise != null)
-                promise.reject("E_NULL_ACTIVITY", "Ad attempted to load but the current Activity was null.");
             return;
         }
 
@@ -174,7 +179,7 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ReactContextBaseJavaM
             T ad = adHolder.get(requestId);
             if (ad != null) {
                 presentPromiseHolder.add(requestId, promise);
-                show(ad, requestId);
+                show(ad, activity, requestId);
             } else {
                 if (promise != null)
                     promise.reject("E_AD_NOT_READY", "Ad is not ready.");

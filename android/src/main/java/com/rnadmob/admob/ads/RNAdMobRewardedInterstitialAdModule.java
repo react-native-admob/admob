@@ -68,11 +68,7 @@ public class RNAdMobRewardedInterstitialAdModule extends RNAdMobFullScreenAdModu
     }
 
     @Override
-    protected void show(RewardedInterstitialAd ad, int requestId) {
-        Activity activity = getCurrentActivity();
-        if (activity == null) {
-            return;
-        }
+    protected void show(RewardedInterstitialAd ad, Activity activity, int requestId) {
         ad.show(activity, rewardItem -> {
             WritableMap reward = Arguments.createMap();
             reward.putInt("amount", rewardItem.getAmount());
