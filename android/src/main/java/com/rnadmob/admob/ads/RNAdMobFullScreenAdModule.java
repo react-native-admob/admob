@@ -15,7 +15,6 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.google.android.gms.ads.AdError;
@@ -147,8 +146,7 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ReactContextBaseJavaM
         };
     }
 
-    @ReactMethod
-    public void requestAd(int requestId, String unitId, ReadableMap options, final Promise promise) {
+    protected void requestAd(int requestId, String unitId, ReadableMap options, final Promise promise) {
         Activity activity = getCurrentActivity();
         if (activity == null) {
             promise.reject("E_NULL_ACTIVITY", "Ad attempted to load but the current Activity was null.");
@@ -164,8 +162,7 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ReactContextBaseJavaM
         });
     }
 
-    @ReactMethod
-    public void presentAd(int requestId, final Promise promise) {
+    protected void presentAd(int requestId, final Promise promise) {
         Activity activity = getCurrentActivity();
         if (activity == null) {
             if (promise != null)
@@ -185,8 +182,7 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ReactContextBaseJavaM
         });
     }
 
-    @ReactMethod
-    public void destroyAd(int requestId) {
+    protected void destroyAd(int requestId) {
         adHolder.remove(requestId);
         presentPromiseHolder.reject(requestId, "E_AD_DESTROYED", "Ad has been destroyed.");
     }

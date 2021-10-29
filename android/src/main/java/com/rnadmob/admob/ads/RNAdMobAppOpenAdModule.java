@@ -4,13 +4,13 @@ import android.app.Activity;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.google.android.gms.ads.AdLoadCallback;
 import com.google.android.gms.ads.FullScreenContentCallback;
@@ -20,7 +20,7 @@ import com.google.android.gms.ads.appopen.AppOpenAd;
 
 import java.util.Date;
 
-public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd> implements LifecycleObserver {
+public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd> implements DefaultLifecycleObserver {
 
     public static final String AD_TYPE = "AppOpen";
     private static final int AD_EXPIRE_HOUR = 4;
@@ -37,14 +37,27 @@ public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd>
     }
 
     @Override
-    public String getAdType() {
+    protected String getAdType() {
         return AD_TYPE;
     }
 
     @Override
+    @ReactMethod
     public void requestAd(int requestId, String unitId, ReadableMap options, final Promise promise) {
         super.requestAd(requestId, unitId, options, promise);
         showOnAppForeground = options.getBoolean("showOnAppForeground");
+    }
+
+    @Override
+    @ReactMethod
+    protected void presentAd(int requestId, final Promise promise) {
+        super.presentAd(requestId, promise);
+    }
+
+    @Override
+    @ReactMethod
+    protected void destroyAd(int requestId) {
+        super.destroyAd(requestId);
     }
 
     @Override
@@ -85,8 +98,8 @@ public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd>
         return (dateDifference > (numMilliSecondsPerHour * (long) AD_EXPIRE_HOUR));
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    public void onMoveToForeground() {
+    @Override
+    public void onStart(@NonNull LifecycleOwner owner) {
         if (showOnAppForeground) {
             presentAd(0, null);
         }

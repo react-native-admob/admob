@@ -7,7 +7,10 @@ import android.app.Activity;
 import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.google.android.gms.ads.AdLoadCallback;
 import com.google.android.gms.ads.FullScreenContentCallback;
@@ -25,8 +28,26 @@ public class RNAdMobRewardedInterstitialAdModule extends RNAdMobFullScreenAdModu
     }
 
     @Override
-    public String getAdType() {
+    protected String getAdType() {
         return AD_TYPE;
+    }
+
+    @Override
+    @ReactMethod
+    public void requestAd(int requestId, String unitId, ReadableMap options, final Promise promise) {
+        super.requestAd(requestId, unitId, options, promise);
+    }
+
+    @Override
+    @ReactMethod
+    protected void presentAd(int requestId, final Promise promise) {
+        super.presentAd(requestId, promise);
+    }
+
+    @Override
+    @ReactMethod
+    protected void destroyAd(int requestId) {
+        super.destroyAd(requestId);
     }
 
     @Override
