@@ -25,6 +25,7 @@ public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd>
     public static final String AD_TYPE = "AppOpen";
     private static final int AD_EXPIRE_HOUR = 4;
 
+    public static int requestId = 0;
     public static boolean appStarted = false;
 
     private boolean showOnAppForeground = true;
@@ -45,6 +46,7 @@ public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd>
     @ReactMethod
     public void requestAd(int requestId, String unitId, ReadableMap options, final Promise promise) {
         super.requestAd(requestId, unitId, options, promise);
+        RNAdMobAppOpenAdModule.requestId = requestId;
         showOnAppForeground = options.getBoolean("showOnAppForeground");
     }
 
@@ -96,7 +98,7 @@ public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd>
     @Override
     public void onStart(@NonNull LifecycleOwner owner) {
         if (showOnAppForeground) {
-            presentAd(0, null);
+            presentAd(requestId, null);
         }
     }
 

@@ -13,23 +13,25 @@ const defaultOptions: AppOpenAdOptions = {
   requestOptions: {},
 };
 
+let _appOpenRequest = 0;
+
 export default class AppOpenAd extends FullScreenAd<
   AppOpenAdEvent,
   HandlerType
 > {
-  private constructor(unitId: string, options: AppOpenAdOptions) {
-    super('AppOpen', 0, unitId, options);
-    this.options = options;
-    this.setRequestOptions(options.requestOptions);
+  private constructor(
+    requestId: number,
+    unitId: string,
+    options: AppOpenAdOptions
+  ) {
+    super('AppOpen', requestId, unitId, options);
     this.addEventListener('adFailedToLoad', this.handleLoadError);
     this.load();
   }
 
   private handleLoadError = (error: Error) => {
     if (error.message.startsWith('Frequency')) {
-      console.info(
-        '[RNAdmob(AppOpenAd)] Ad not loaded because frequency cap reached.'
-      );
+      console.info('Ad not loaded because frequency cap reached.');
     } else {
       console.error(error);
     }
@@ -39,7 +41,7 @@ export default class AppOpenAd extends FullScreenAd<
 
   private static checkInstance() {
     if (!this.sharedInstance) {
-      throw new Error('[RNAdmob(AppOpenAd)] AppOpenAd is not created.');
+      throw new Error('AppOpenAd is not created.');
     }
   }
 
@@ -48,18 +50,20 @@ export default class AppOpenAd extends FullScreenAd<
    * @param unitId The Ad Unit ID for the App Open Ad. You can find this on your Google AdMob dashboard.
    * @param options Optional AppOpenAdOptions object.
    */
-  static createAd(unitId: string, options?: AppOpenAdOptions) {
+  static createAd(unitId: string, options?: AppOpenAdOptions): AppOpenAd {
     const _options = { ...defaultOptions, ...options };
 
     if (this.sharedInstance) {
       if (this.sharedInstance.unitId === unitId) {
         this.sharedInstance.options = _options;
-        return;
+        return this.sharedInstance;
       }
-      this.sharedInstance.removeAllListeners();
+      this.sharedInstance.destroy();
     }
 
-    this.sharedInstance = new AppOpenAd(unitId, _options);
+    const requestId = _appOpenRequest++;
+    this.sharedInstance = new AppOpenAd(requestId, unitId, _options);
+    return this.sharedInstance;
   }
 
   /**
@@ -77,6 +81,14 @@ export default class AppOpenAd extends FullScreenAd<
   static show() {
     this.checkInstance();
     return this.sharedInstance.show();
+  }
+
+  /**
+   * Destroys the App Open Ad.
+   */
+  static destroy() {
+    this.checkInstance();
+    this.sharedInstance.destroy();
   }
 
   /**

@@ -42,6 +42,7 @@ const requestIdMap = new Map<AdType, Set<number>>();
 requestIdMap.set('Interstitial', new Set());
 requestIdMap.set('Rewarded', new Set());
 requestIdMap.set('RewardedInterstitial', new Set());
+requestIdMap.set('AppOpen', new Set());
 
 export default class FullScreenAd<
   E extends string,
