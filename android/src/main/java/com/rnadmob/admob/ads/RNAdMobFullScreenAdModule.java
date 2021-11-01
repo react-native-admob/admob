@@ -27,6 +27,7 @@ import com.rnadmob.admob.RNAdMobCommon;
 import com.rnadmob.admob.RNAdMobEventModule;
 import com.rnadmob.admob.RNAdMobPromiseHolder;
 
+import java.util.Locale;
 import java.util.Objects;
 
 public abstract class RNAdMobFullScreenAdModule<T> extends ReactContextBaseJavaModule {
@@ -96,8 +97,10 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ReactContextBaseJavaM
 
             @Override
             public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                if (promise != null)
-                    promise.reject(String.valueOf(loadAdError.getCode()), loadAdError.getMessage());
+                if (promise != null) {
+                    String code = String.format(Locale.getDefault(), "E_AD_LOAD_FAILED(%d)", loadAdError.getCode());
+                    promise.reject(code, loadAdError.getMessage());
+                }
 
                 WritableMap error = Arguments.createMap();
                 error.putInt("code", loadAdError.getCode());
@@ -181,8 +184,12 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ReactContextBaseJavaM
                 presentPromiseHolder.add(requestId, promise);
                 show(ad, activity, requestId);
             } else {
-                if (promise != null)
+                if (promise != null) {
                     promise.reject("E_AD_NOT_READY", "Ad is not ready.");
+                }
+                WritableMap error = Arguments.createMap();
+                error.putString("message", "Ad is not ready.");
+                sendEvent(AD_FAILED_TO_PRESENT, requestId, error);
             }
         });
     }

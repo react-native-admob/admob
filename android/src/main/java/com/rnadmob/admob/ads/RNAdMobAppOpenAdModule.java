@@ -1,5 +1,7 @@
 package com.rnadmob.admob.ads;
 
+import static com.rnadmob.admob.RNAdMobEventModule.AD_FAILED_TO_PRESENT;
+
 import android.app.Activity;
 import android.os.Handler;
 
@@ -8,10 +10,12 @@ import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 import com.google.android.gms.ads.AdLoadCallback;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
@@ -35,6 +39,11 @@ public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd>
         super(reactContext);
         Handler mainHandler = new Handler(reactContext.getMainLooper());
         mainHandler.post(() -> ProcessLifecycleOwner.get().getLifecycle().addObserver(this));
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
         appStarted = false;
     }
 
@@ -84,7 +93,10 @@ public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd>
     @Override
     protected void show(AppOpenAd ad, Activity activity, int requestId) {
         if (isAdExpired()) {
-            presentPromiseHolder.reject(requestId, "E_AD_NOT_READY", "Ad is not ready.");
+            presentPromiseHolder.reject(requestId, "E_AD_NOT_READY", "Ad is expired.");
+            WritableMap error = Arguments.createMap();
+            error.putString("message", "Ad is expired.");
+            sendEvent(AD_FAILED_TO_PRESENT, requestId, error);
             return;
         }
         ad.show(activity);
