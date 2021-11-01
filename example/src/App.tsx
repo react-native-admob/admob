@@ -84,9 +84,8 @@ function Example() {
     if (adTick > 0 && modalVisible) {
       const timeout = setTimeout(() => setAdTick((prev) => prev - 1), 1000);
       return () => clearTimeout(timeout);
-    } else if (adTick === 0) {
+    } else if (adTick === 0 && !rewardedInterstitialAd.adPresented) {
       rewardedInterstitialAd.show();
-      setAdTick(5);
     } else if (!modalVisible) {
       setAdTick(5);
     }
