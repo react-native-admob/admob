@@ -94,9 +94,6 @@ class RNAdMobFullScreenAd<T>: NSObject {
             self.unitId = unitId;
             self.options = options;
         }
-        deinit {
-            module.delegateMap.removeValue(forKey: requestId)
-        }
         func adDidPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
             module.presentPromiseHolder.resolve(requestId: requestId)
             module.sendEvent(eventName: kEventAdPresented, requestId: requestId, data: nil)
@@ -131,35 +128,38 @@ class RNAdMobFullScreenAd<T>: NSObject {
     }
     
     func requestAd(_ requestId: Int, unitId: String, options: Dictionary<String, Any>, resolve: RCTPromiseResolveBlock?, reject: RCTPromiseRejectBlock?) {
-        adHolder.remove(requestId: requestId)
-        
-        let adRequest = RNAdMobCommon.buildAdRequest(options["requestOptions"] as? [AnyHashable : Any])
-        let adLoadDelegate = AdLoadDelegate(module: self, requestId: requestId, options: options, resolve: resolve, reject: reject)
-        let fullScreenContentDelegate = FullScreenContentDelegate(module: self, requestId: requestId, unitId: unitId, options: options)
-        delegateMap.updateValue(fullScreenContentDelegate, forKey: requestId)
-        
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [self] in
+            adHolder.remove(requestId: requestId)
+            
+            let adRequest = RNAdMobCommon.buildAdRequest(options["requestOptions"] as? [AnyHashable : Any])
+            let adLoadDelegate = AdLoadDelegate(module: self, requestId: requestId, options: options, resolve: resolve, reject: reject)
+            let fullScreenContentDelegate = FullScreenContentDelegate(module: self, requestId: requestId, unitId: unitId, options: options)
+            delegateMap.updateValue(fullScreenContentDelegate, forKey: requestId)
+            
             self.load(unitId: unitId, adRequest: adRequest!, adLoadDelegate: adLoadDelegate, fullScreenContentDelegate: fullScreenContentDelegate)
         }
     }
     
     func presentAd(_ requestId: Int, resolve: RCTPromiseResolveBlock?, reject: RCTPromiseRejectBlock?) {
-        let viewController = getViewController(reject: reject)
-        if (viewController == nil) {
-            return
-        }
-        
-        let ad = adHolder.get(requestId: requestId)
-        if (ad != nil) {
-            if (resolve != nil && reject != nil) {
-                presentPromiseHolder.add(requestId: requestId, resolve: resolve!, reject: reject!)
+        DispatchQueue.main.async { [self] in
+            let viewController = getViewController(reject: reject)
+            if (viewController == nil) {
+                return
             }
-            DispatchQueue.main.async {
+            
+            let ad = adHolder.get(requestId: requestId)
+            if (ad != nil) {
+                if (resolve != nil && reject != nil) {
+                    presentPromiseHolder.add(requestId: requestId, resolve: resolve!, reject: reject!)
+                }
                 self.show(ad: ad!, viewController: viewController!, requestId: requestId)
-            }
-        } else {
-            if (reject != nil) {
-                reject!("E_AD_NOT_READY", "Ad is not ready", nil)
+            } else {
+                if (reject != nil) {
+                    reject!("E_AD_NOT_READY", "Ad is not ready", nil)
+                    var error = Dictionary<String, Any>()
+                    error.updateValue("Ad is not ready", forKey: "message")
+                    sendEvent(eventName: kEventAdFailedToPresent, requestId: requestId, data: error)
+                }
             }
         }
     }
