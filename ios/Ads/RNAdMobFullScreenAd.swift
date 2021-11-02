@@ -156,10 +156,10 @@ class RNAdMobFullScreenAd<T>: NSObject {
             } else {
                 if (reject != nil) {
                     reject!("E_AD_NOT_READY", "Ad is not ready", nil)
-                    var error = Dictionary<String, Any>()
-                    error.updateValue("Ad is not ready", forKey: "message")
-                    sendEvent(eventName: kEventAdFailedToPresent, requestId: requestId, data: error)
                 }
+                var error = Dictionary<String, Any>()
+                error.updateValue("Ad is not ready", forKey: "message")
+                sendEvent(eventName: kEventAdFailedToPresent, requestId: requestId, data: error)
             }
         }
     }
