@@ -5,15 +5,21 @@ class RNAdMobAppOpen: RNAdMobFullScreenAd<GADAppOpenAd>, RCTInvalidating {
     static let AD_TYPE = "AppOpen"
     static let AD_EXPIRE_HOUR = 4
     
-    static var requestId = 0
     static var appStarted = false
     
-    var showOnAppForeground = true
+    var requestId: Int? = nil
+    var unitId: String? = nil
+    var options: Dictionary<String, Any>? = nil
+    
     lazy var loadTime = Date()
     
     override init() {
         super.init()
         NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     func invalidate() {
@@ -26,10 +32,9 @@ class RNAdMobAppOpen: RNAdMobFullScreenAd<GADAppOpenAd>, RCTInvalidating {
     
     override func requestAd(_ requestId: Int, unitId: String, options: Dictionary<String, Any>, resolve: RCTPromiseResolveBlock?, reject: RCTPromiseRejectBlock?) {
         super.requestAd(requestId, unitId: unitId, options: options, resolve: resolve, reject: reject)
-        RNAdMobAppOpen.requestId = requestId
-        if (options["showOnAppForeground"] != nil) {
-            showOnAppForeground = options["showOnAppForeground"] as! Bool
-        }
+        self.requestId = requestId
+        self.unitId = unitId
+        self.options = options
     }
     
     override func load(unitId: String, adRequest: GAMRequest, adLoadDelegate: RNAdMobFullScreenAd<GADAppOpenAd>.AdLoadDelegate, fullScreenContentDelegate: RNAdMobFullScreenAd<GADAppOpenAd>.FullScreenContentDelegate) {
@@ -51,6 +56,7 @@ class RNAdMobAppOpen: RNAdMobFullScreenAd<GADAppOpenAd>, RCTInvalidating {
             var error = Dictionary<String, Any>()
             error.updateValue("Ad is expired", forKey: "message")
             sendEvent(eventName: kEventAdFailedToPresent, requestId: requestId, data: error)
+            requestAd(requestId, unitId: unitId!, options: options!, resolve: nil, reject: nil)
             return
         }
         ad.present(fromRootViewController: viewController)
@@ -65,8 +71,19 @@ class RNAdMobAppOpen: RNAdMobFullScreenAd<GADAppOpenAd>, RCTInvalidating {
     }
     
     @objc func applicationDidBecomeActive(notification: NSNotification) {
+        if (requestId == nil || unitId == nil || options == nil) {
+            return
+        }
+        var showOnAppForeground = true
+        if (options!["showOnAppForeground"] != nil) {
+            showOnAppForeground = options!["showOnAppForeground"] as! Bool
+        }
         if (showOnAppForeground) {
-            presentAd(RNAdMobAppOpen.requestId, resolve: nil, reject: nil)
+            if (adHolder.get(requestId: requestId!) != nil) {
+                presentAd(requestId!, resolve: nil, reject: nil)
+            } else {
+                requestAd(requestId!, unitId: unitId!, options: options!, resolve: nil, reject: nil)
+            }
         }
     }
 }

@@ -29,10 +29,12 @@ public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd>
     public static final String AD_TYPE = "AppOpen";
     private static final int AD_EXPIRE_HOUR = 4;
 
-    public static int requestId = 0;
     public static boolean appStarted = false;
 
-    private boolean showOnAppForeground = true;
+    private Integer requestId = null;
+    private String unitId = null;
+    private ReadableMap options = null;
+
     private long loadTime = 0;
 
     public RNAdMobAppOpenAdModule(ReactApplicationContext reactContext) {
@@ -56,8 +58,9 @@ public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd>
     @ReactMethod
     public void requestAd(int requestId, String unitId, ReadableMap options, final Promise promise) {
         super.requestAd(requestId, unitId, options, promise);
-        RNAdMobAppOpenAdModule.requestId = requestId;
-        showOnAppForeground = options.getBoolean("showOnAppForeground");
+        this.requestId = requestId;
+        this.unitId = unitId;
+        this.options = options;
     }
 
     @Override
@@ -97,6 +100,7 @@ public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd>
             WritableMap error = Arguments.createMap();
             error.putString("message", "Ad is expired.");
             sendEvent(AD_FAILED_TO_PRESENT, requestId, error);
+            requestAd(requestId, unitId, options, null);
             return;
         }
         ad.show(activity);
@@ -110,8 +114,19 @@ public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd>
 
     @Override
     public void onStart(@NonNull LifecycleOwner owner) {
+        if (requestId == null || unitId == null || options == null) {
+            return;
+        }
+        boolean showOnAppForeground = true;
+        if (options.hasKey("showOnAppForeground")) {
+            showOnAppForeground = options.getBoolean("showOnAppForeground");
+        }
         if (showOnAppForeground) {
-            presentAd(requestId, null);
+            if (adHolder.get(requestId) != null) {
+                presentAd(requestId, null);
+            } else {
+                requestAd(requestId, unitId, options, null);
+            }
         }
     }
 
