@@ -25,17 +25,8 @@ export default class AppOpenAd extends FullScreenAd<
     options: AppOpenAdOptions
   ) {
     super('AppOpen', requestId, unitId, options);
-    this.addEventListener('adFailedToLoad', this.handleLoadError);
     this.load();
   }
-
-  private handleLoadError = (error: Error) => {
-    if (error.message.startsWith('Frequency')) {
-      console.info('Ad not loaded because frequency cap reached.');
-    } else {
-      console.error(error);
-    }
-  };
 
   static sharedInstance: AppOpenAd;
 

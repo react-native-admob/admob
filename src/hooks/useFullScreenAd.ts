@@ -39,24 +39,16 @@ export default function useFullScreenAd<
       if (ad) {
         init();
         ad.load(requestOptions);
-      } else {
-        console.warn('Ad is not created. Did you set unitId?');
       }
     },
     [ad]
   );
 
   const show = useCallback(() => {
-    if (ad && adLoaded) {
-      if (!adPresented) {
-        ad.show();
-      } else {
-        console.warn('Ad is already presented once.');
-      }
-    } else {
-      console.warn('Ad is not loaded.');
+    if (ad) {
+      ad.show();
     }
-  }, [ad, adPresented, adLoaded]);
+  }, [ad]);
 
   useEffect(() => {
     if (!ad) {
