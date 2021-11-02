@@ -1,7 +1,7 @@
 import Foundation
 import GoogleMobileAds
 
-class RNAdMobAppOpen: RNAdMobFullScreenAd<GADAppOpenAd>, RCTInvalidating {
+class RNAdMobAppOpen: RNAdMobFullScreenAd<GADAppOpenAd> {
     static let AD_TYPE = "AppOpen"
     static let AD_EXPIRE_HOUR = 4
     
@@ -20,10 +20,6 @@ class RNAdMobAppOpen: RNAdMobFullScreenAd<GADAppOpenAd>, RCTInvalidating {
     
     deinit {
         NotificationCenter.default.removeObserver(self)
-    }
-    
-    func invalidate() {
-        RNAdMobAppOpen.appStarted = false
     }
     
     override func getAdType() -> String {
@@ -95,7 +91,7 @@ class RNAdMobAppOpenAd: NSObject, RCTInvalidating {
         return true
     }
     @objc func invalidate() {
-        RNAdMobAppOpenAd.ad.invalidate()
+        RNAdMobAppOpen.appStarted = false
     }
     @objc func requestAd(_ requestId: NSNumber, unitId: String, options: NSDictionary, resolve: RCTPromiseResolveBlock?, reject: RCTPromiseRejectBlock?) {
         RNAdMobAppOpenAd.ad.requestAd(requestId.intValue, unitId: unitId, options: options as! Dictionary<String, Any>, resolve: resolve, reject: reject)
