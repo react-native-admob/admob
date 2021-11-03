@@ -33,6 +33,13 @@ class RNAdMobAppOpen: RNAdMobFullScreenAd<GADAppOpenAd> {
         self.options = options
     }
     
+    override func destroyAd(_ requestId: Int) {
+        super.destroyAd(requestId)
+        self.requestId = nil
+        unitId = nil
+        options = nil
+    }
+    
     override func load(unitId: String, adRequest: GAMRequest, adLoadDelegate: RNAdMobFullScreenAd<GADAppOpenAd>.AdLoadDelegate, fullScreenContentDelegate: RNAdMobFullScreenAd<GADAppOpenAd>.FullScreenContentDelegate) {
         GADAppOpenAd.load(withAdUnitID: unitId, request: adRequest, orientation: UIInterfaceOrientation.portrait) {
             (ad, error) in

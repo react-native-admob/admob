@@ -25,10 +25,9 @@ export default class AppOpenAd extends FullScreenAd<
     options: AppOpenAdOptions
   ) {
     super('AppOpen', requestId, unitId, options);
-    this.load();
   }
 
-  static sharedInstance: AppOpenAd;
+  private static sharedInstance: AppOpenAd | null = null;
 
   private static checkInstance() {
     if (!this.sharedInstance) {
@@ -37,16 +36,17 @@ export default class AppOpenAd extends FullScreenAd<
   }
 
   /**
-   * Creates a AppOpenAd instance. Ad is loaded automatically after created and dismissed.
+   * Creates a AppOpenAd instance. Ad is loaded automatically after created and after dismissed.
    * @param unitId The Ad Unit ID for the App Open Ad. You can find this on your Google AdMob dashboard.
    * @param options Optional AppOpenAdOptions object.
    */
-  static createAd(unitId: string, options?: AppOpenAdOptions): AppOpenAd {
+  static createAd(unitId: string, options?: AppOpenAdOptions) {
     const _options = { ...defaultOptions, ...options };
 
     if (this.sharedInstance) {
       if (this.sharedInstance.unitId === unitId) {
         this.sharedInstance.options = _options;
+        this.sharedInstance.load();
         return this.sharedInstance;
       }
       this.sharedInstance.destroy();
@@ -58,12 +58,19 @@ export default class AppOpenAd extends FullScreenAd<
   }
 
   /**
+   * Returns loaded App Open Ad instance.
+   */
+  static getAd() {
+    return this.sharedInstance;
+  }
+
+  /**
    * Loads a new App Open ad.
    * @param requestOptions Optional RequestOptions used to load the ad.
    */
   static load(requestOptions?: RequestOptions) {
     this.checkInstance();
-    return this.sharedInstance.load(requestOptions);
+    return this.sharedInstance!.load(requestOptions);
   }
 
   /**
@@ -71,7 +78,7 @@ export default class AppOpenAd extends FullScreenAd<
    */
   static show() {
     this.checkInstance();
-    return this.sharedInstance.show();
+    return this.sharedInstance!.show();
   }
 
   /**
@@ -79,7 +86,8 @@ export default class AppOpenAd extends FullScreenAd<
    */
   static destroy() {
     this.checkInstance();
-    this.sharedInstance.destroy();
+    this.sharedInstance!.destroy();
+    this.sharedInstance = null;
   }
 
   /**
@@ -88,7 +96,7 @@ export default class AppOpenAd extends FullScreenAd<
    */
   static setRequestOptions(requestOptions?: RequestOptions) {
     this.checkInstance();
-    this.sharedInstance.setRequestOptions(requestOptions);
+    return this.sharedInstance!.setRequestOptions(requestOptions);
   }
 
   /**
@@ -98,7 +106,7 @@ export default class AppOpenAd extends FullScreenAd<
    */
   static addEventListener(event: AppOpenAdEvent, handler: HandlerType) {
     this.checkInstance();
-    return this.sharedInstance.addEventListener(event, handler);
+    return this.sharedInstance!.addEventListener(event, handler);
   }
 
   /**
@@ -106,6 +114,6 @@ export default class AppOpenAd extends FullScreenAd<
    */
   static removeAllListeners() {
     this.checkInstance();
-    return this.sharedInstance.removeAllListeners();
+    return this.sharedInstance!.removeAllListeners();
   }
 }
