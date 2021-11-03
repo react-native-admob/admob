@@ -73,6 +73,9 @@ public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd>
     @ReactMethod
     protected void destroyAd(int requestId) {
         super.destroyAd(requestId);
+        this.requestId = null;
+        unitId = null;
+        options = null;
     }
 
     @Override
