@@ -1,34 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useContext } from 'react';
 
-import AppOpenAd from '../ads/AppOpenAd';
-import { AdHookReturns, AppOpenAdOptions } from '../types';
+import AppOpenAdContext from '../AppOpenAdContext';
+import { AdHookReturns } from '../types';
 
 import useFullScreenAd from './useFullScreenAd';
 
 /**
  * React Hook for AdMob App Open Ad.
- * @param unitId App Open Ad Unit Id
- * @param options `AppOpenAdOptions`
+ * Must be created inside `AppOpenAdProvider`.
  */
-export default function (
-  unitId: string | null,
-  options?: AppOpenAdOptions
-): Omit<AdHookReturns, 'reward'> {
-  const [appOpenAd, setAppOpenAd] = useState<AppOpenAd | null>(null);
-  const returns = useFullScreenAd(appOpenAd);
-
-  useEffect(() => {
-    if (!unitId) {
-      setAppOpenAd((prevAd) => {
-        if (prevAd) {
-          prevAd.destroy();
-        }
-        return null;
-      });
-      return;
-    }
-    setAppOpenAd(AppOpenAd.createAd(unitId, options));
-  }, [unitId, options]);
+export default function useAppOpenAd(): Omit<AdHookReturns, 'reward'> {
+  const appOpenAdContext = useContext(AppOpenAdContext);
+  if (!appOpenAdContext) {
+    throw new Error(
+      'AppOpenAdProvider is not found. You should wrap your components with AppOpenProvider to use useAppOpenAd hook.'
+    );
+  }
+  const returns = useFullScreenAd(appOpenAdContext.appOpenAd);
 
   return returns;
 }
