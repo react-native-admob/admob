@@ -38,12 +38,6 @@ const defaultOptions: FullScreenAdOptions = {
   requestOptions: {},
 };
 
-const requestIdMap = new Map<AdType, Set<number>>();
-requestIdMap.set('Interstitial', new Set());
-requestIdMap.set('Rewarded', new Set());
-requestIdMap.set('RewardedInterstitial', new Set());
-requestIdMap.set('AppOpen', new Set());
-
 export default class FullScreenAd<
   E extends string,
   H extends (event?: any) => any
@@ -69,13 +63,11 @@ export default class FullScreenAd<
       type === 'AppOpen' ? options! : { ...defaultOptions, ...options };
     this.nativeModule = NativeModules[`RNAdMob${type}Ad`];
     if (
-      type !== 'AppOpen' &&
-      (this.options as FullScreenAdOptions).loadOnMounted &&
-      !requestIdMap.get(type)?.has(requestId)
+      type === 'AppOpen' ||
+      (this.options as FullScreenAdOptions).loadOnMounted
     ) {
       this.load();
     }
-    requestIdMap.get(type)?.add(requestId);
   }
 
   /**
@@ -144,7 +136,6 @@ export default class FullScreenAd<
    */
   destroy() {
     this.removeAllListeners();
-    requestIdMap.get(this.type)?.delete(this.requestId);
     this.nativeModule.destroyAd(this.requestId);
   }
 }
