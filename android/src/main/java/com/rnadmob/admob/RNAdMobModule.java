@@ -1,8 +1,5 @@
 package com.rnadmob.admob;
 
-import android.content.Context;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.Arguments;
@@ -27,6 +24,7 @@ public class RNAdMobModule extends ReactContextBaseJavaModule {
 
     public RNAdMobModule(ReactApplicationContext context) {
         super(context);
+        MobileAds.initialize(context);
     }
 
     @NonNull
@@ -36,26 +34,25 @@ public class RNAdMobModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void initialize(Promise promise) {
-        Context context = getReactApplicationContext().getCurrentActivity();
-        if (context == null) {
-            Log.e("E_NULL_ACTIVITY", "initialize() is called outside Activity");
-            context = getReactApplicationContext();
+    public void getInitializationStatus(Promise promise) {
+        InitializationStatus status = MobileAds.getInitializationStatus();
+
+        if (status == null) {
+            promise.reject("E_MOBILE_ADS_NOT_INITIALIZED", "MobileAds SDK is not initialized yet.");
+            return;
         }
 
-        MobileAds.initialize(context, (InitializationStatus status) -> {
-            WritableArray array = Arguments.createArray();
-            for (Map.Entry<String, AdapterStatus> entry : status.getAdapterStatusMap().entrySet()) {
-                AdapterStatus adapterStatus = entry.getValue();
+        WritableArray array = Arguments.createArray();
+        for (Map.Entry<String, AdapterStatus> entry : status.getAdapterStatusMap().entrySet()) {
+            AdapterStatus adapterStatus = entry.getValue();
 
-                WritableMap info = Arguments.createMap();
-                info.putString("name", entry.getKey());
-                info.putBoolean("state", adapterStatus.getInitializationState().equals(AdapterStatus.State.READY));
-                info.putString("description", adapterStatus.getDescription());
-                array.pushMap(info);
-            }
-            promise.resolve(array);
-        });
+            WritableMap info = Arguments.createMap();
+            info.putString("name", entry.getKey());
+            info.putBoolean("state", adapterStatus.getInitializationState().equals(AdapterStatus.State.READY));
+            info.putString("description", adapterStatus.getDescription());
+            array.pushMap(info);
+        }
+        promise.resolve(array);
     }
 
     @ReactMethod
