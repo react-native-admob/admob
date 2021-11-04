@@ -5,7 +5,7 @@ import {
   RequestOptions,
 } from '../types';
 
-import MobileAd from './MobileAd';
+import FullScreenAd from './FullScreenAd';
 
 const defaultOptions: AppOpenAdOptions = {
   showOnColdStart: false,
@@ -13,35 +13,30 @@ const defaultOptions: AppOpenAdOptions = {
   requestOptions: {},
 };
 
-export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
-  private constructor(unitId: string, options: AppOpenAdOptions) {
-    super('AppOpen', 0, unitId, options);
-    this.options = options;
-    this.setRequestOptions(options.requestOptions);
-    this.addEventListener('adFailedToLoad', this.handleLoadError);
-    this.load();
+let _appOpenRequest = 0;
+
+export default class AppOpenAd extends FullScreenAd<
+  AppOpenAdEvent,
+  HandlerType
+> {
+  private constructor(
+    requestId: number,
+    unitId: string,
+    options: AppOpenAdOptions
+  ) {
+    super('AppOpen', requestId, unitId, options);
   }
 
-  private handleLoadError = (error: Error) => {
-    if (error.message.startsWith('Frequency')) {
-      console.info(
-        '[RNAdmob(AppOpenAd)] Ad not loaded because frequency cap reached.'
-      );
-    } else {
-      console.error(error);
-    }
-  };
-
-  static sharedInstance: AppOpenAd;
+  private static sharedInstance: AppOpenAd | null = null;
 
   private static checkInstance() {
     if (!this.sharedInstance) {
-      throw new Error('[RNAdmob(AppOpenAd)] AppOpenAd is not created.');
+      throw new Error('AppOpenAd is not created.');
     }
   }
 
   /**
-   * Creates a AppOpenAd instance. Ad is loaded automatically after created and dismissed.
+   * Creates a AppOpenAd instance. Ad is loaded automatically after created and after dismissed.
    * @param unitId The Ad Unit ID for the App Open Ad. You can find this on your Google AdMob dashboard.
    * @param options Optional AppOpenAdOptions object.
    */
@@ -51,12 +46,22 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
     if (this.sharedInstance) {
       if (this.sharedInstance.unitId === unitId) {
         this.sharedInstance.options = _options;
-        return;
+        this.sharedInstance.load();
+        return this.sharedInstance;
       }
-      this.sharedInstance.removeAllListeners();
+      this.sharedInstance.destroy();
     }
 
-    this.sharedInstance = new AppOpenAd(unitId, _options);
+    const requestId = _appOpenRequest++;
+    this.sharedInstance = new AppOpenAd(requestId, unitId, _options);
+    return this.sharedInstance;
+  }
+
+  /**
+   * Returns loaded App Open Ad instance.
+   */
+  static getAd() {
+    return this.sharedInstance;
   }
 
   /**
@@ -65,7 +70,7 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
    */
   static load(requestOptions?: RequestOptions) {
     this.checkInstance();
-    return this.sharedInstance.load(requestOptions);
+    return this.sharedInstance!.load(requestOptions);
   }
 
   /**
@@ -73,7 +78,16 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
    */
   static show() {
     this.checkInstance();
-    return this.sharedInstance.show();
+    return this.sharedInstance!.show();
+  }
+
+  /**
+   * Destroys the App Open Ad.
+   */
+  static destroy() {
+    this.checkInstance();
+    this.sharedInstance!.destroy();
+    this.sharedInstance = null;
   }
 
   /**
@@ -82,7 +96,7 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
    */
   static setRequestOptions(requestOptions?: RequestOptions) {
     this.checkInstance();
-    this.sharedInstance.setRequestOptions(requestOptions);
+    return this.sharedInstance!.setRequestOptions(requestOptions);
   }
 
   /**
@@ -92,7 +106,7 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
    */
   static addEventListener(event: AppOpenAdEvent, handler: HandlerType) {
     this.checkInstance();
-    return this.sharedInstance.addEventListener(event, handler);
+    return this.sharedInstance!.addEventListener(event, handler);
   }
 
   /**
@@ -100,6 +114,6 @@ export default class AppOpenAd extends MobileAd<AppOpenAdEvent, HandlerType> {
    */
   static removeAllListeners() {
     this.checkInstance();
-    return this.sharedInstance.removeAllListeners();
+    return this.sharedInstance!.removeAllListeners();
   }
 }

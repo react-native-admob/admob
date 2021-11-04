@@ -1,5 +1,28 @@
 # Change Log
 
+## 1.2.0
+
+BREAKING CHANGES
+
+- `AdMob.initialize()` is no more needed and deprecated.
+- Added `AppOpenAdProver`. App must wrapped with `AppOpenAdProvider` to use `useAppOpenAd` hook.
+- Removed `size` prop from `GAMBannerAd`. Use `sizes` prop instead.
+
+Bug Fixes
+
+- Fix AppOpenAd showed even if after disabled.
+- Fix AppOpenAd showed when `showOnColdStart` is `false`.
+
+Features
+
+- Add ability to conditionally load ad using hooks.
+- Improve documents and example app.
+
+Refactor
+
+- Refactored Full Screen Ad related codes/
+
+
 ## 1.1.2
 
 Bug Fixes

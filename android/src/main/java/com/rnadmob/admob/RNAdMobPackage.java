@@ -6,6 +6,10 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
+import com.rnadmob.admob.ads.RNAdMobAppOpenAdModule;
+import com.rnadmob.admob.ads.RNAdMobInterstitialAdModule;
+import com.rnadmob.admob.ads.RNAdMobRewardedAdModule;
+import com.rnadmob.admob.ads.RNAdMobRewardedInterstitialAdModule;
 
 import java.util.Arrays;
 import java.util.List;

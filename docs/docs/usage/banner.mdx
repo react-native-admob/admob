@@ -1,0 +1,83 @@
+---
+title: Creating Banner Ad
+sidebar_position: 1
+---
+
+[Banner Ad](https://support.google.com/admob/answer/9993556) is a rectangular ads that occupy a portion of an app's layout.
+
+<details markdown="1">
+  <summary>View example of banner ads</summary>
+  <img
+    src="https://storage.googleapis.com/support-kms-prod/2XpIo0DsKZTFDE1Akcox5C8ixzFCySgs8FTo"
+    alt="banner ad example image"
+  />
+</details>
+
+## Fundamentals
+
+You can create Banner Ad by adding `BannerAd` component.
+
+```tsx
+import { BannerAd, TestIds } from '@react-native-admob/admob';
+
+export default function App() {
+  const bannerRef = useRef(null);
+  return (
+    <View>
+      <BannerAd size={BannerAdSize.BANNER} unitId={TestIds.BANNER} />
+    </View>
+  );
+}
+```
+
+Following two props are required:
+
+- `unitId` is the ad unit ID created in the AdMob console. You can set this to `TestIds.BANNER` for testing.
+- `size` is size of the ad. It can be predefined value one of the `BannerAdSize`, or custom dimensions string, e.g. `"300x200"`.
+
+## Reloading ad
+
+Ad is loaded automatically when component is mounted, but you can reload it by calling `loadAd` method from its `ref` object.
+
+```tsx {4,10,12}
+import { BannerAd, TestIds } from '@react-native-admob/admob';
+
+export default function App() {
+  const bannerRef = useRef(null);
+  return (
+    <View>
+      <BannerAd
+        size={BannerAdSize.BANNER}
+        unitId={TestIds.BANNER}
+        ref={bannerRef}
+      />
+      <Button title="Reload" onPress={() => bannerRef.current?.loadAd()} />
+    </View>
+  );
+}
+```
+
+## Handling events
+
+You can handle events by adding props to the component.
+
+```tsx {10}
+import { BannerAd, TestIds } from '@react-native-admob/admob';
+
+export default function App() {
+  const bannerRef = useRef(null);
+  return (
+    <View>
+      <BannerAd
+        size={BannerAdSize.BANNER}
+        unitId={TestIds.BANNER}
+        onAdFailedToLoad={(error) => console.error(error)}
+        ref={bannerRef}
+      />
+      <Button title="Reload" onPress={() => bannerRef.current?.loadAd()} />
+    </View>
+  );
+}
+```
+
+See suppported events in [BannerAd API Reference](/docs/api/components/BannerAd#props).

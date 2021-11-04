@@ -1,0 +1,41 @@
+---
+id: getInitializationStatus
+title: getInitializationStatus
+sidebar_label: getInitializationStatus
+---
+
+Use this function to get each mediation adapter's initialization status.
+
+## Usage example
+
+```js
+import AdMob from '@react-native-admob/admob';
+
+export default function App() {
+  useEffect(() => {
+    const getStatus = async () => {
+      const initializationStatus = await AdMob.getInitializationStatus();
+      console.log(initializationStatus);
+    };
+
+    getStatus();
+  }, []);
+
+  return (/* Your App code */)
+```
+
+## Returns
+
+The function returns `Promise<InitializationStatus[]>` which is Promise of each mediation adapter's initialization status.
+
+| Type                                 |
+| :----------------------------------- |
+| Promise<[InitializationStatus](#)[]> |
+
+Properties of `InitializationStatus`:
+
+| Name        | Type    | Description                   |
+| :---------- | :------ | :---------------------------- |
+| name        | string  | Name of the adapter.          |
+| description | string  | Description of the status.    |
+| isReady     | boolean | Whether the adapter is ready. |

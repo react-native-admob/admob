@@ -1,0 +1,110 @@
+import CodeBlock from '@theme/CodeBlock';
+
+## Methods
+
+:::info
+
+Methods listed below except [`createAd()`](#createad) must be called from instance created by [`createAd()`](#createad) static method.
+
+:::
+
+### createAd()
+
+<CodeBlock className="language-ts">
+  static createAd(unitId: string, options?: FullScreenAdOptions):{' '}
+  {props.type || 'FullScreen'}Ad
+</CodeBlock>
+
+Creates an ad instance.
+
+**Parameters**
+
+`unitId` : Ad [unitId](https://support.google.com/admob/answer/7356431).
+
+`options` (Optional) : Options for this ad.
+
+Properties:
+
+| Name            | Type                                      | Default | Description                                                |
+| :-------------- | :---------------------------------------- | :------ | :--------------------------------------------------------- |
+| loadOnMounted   | boolean                                   | `true`  | Whether your ad to load automatically on mounted.          |
+| showOnLoaded    | boolean                                   | `false` | Whether your ad to show automatically on loaded.           |
+| loadOnDismissed | boolean                                   | `false` | Whether your ad to load new ad automatically on dismissed. |
+| requestOptions  | [RequestOptions](../types/RequestOptions) | `{}`    | Optional RequestOptions used to load the ad.               |
+
+**Returns**
+
+<code>{props.type || 'FullScreen'}Ad</code> instance
+
+### load()
+
+```ts
+load(requestOptions?: RequestOptions): Promise<void>
+```
+
+Loads new Ad.
+
+**Parameters**
+
+`requestOptions` (Optional) : [RequestOptions](../types/RequestOptions) used to load the ad.
+
+**Returns**
+
+`Promise` that waits for ad load. When error is occured while loading ad, the Promise will reject with `Error` object.
+
+### show()
+
+```ts
+show(): Promise<void>
+```
+
+Shows loaded Ad.
+
+Ad must be loaded before calling this function.
+
+**Returns**
+
+`Promise` that waits for ad present. When error is occurred while presenting ad, the Promise will reject with `Error` object.
+
+### addEventListener()
+
+```ts
+addEventListener(event: string, handler: (event?: any) => any): void
+```
+
+Adds an event handler for an ad event.
+
+**Parameters**
+
+`event` : Event name. Supported events:
+
+| Event Name        | Description                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------------ |
+| adLoaded          | Fires when the ad has finished loading.                                                                |
+| adFailedToLoad    | Fires when the ad has failed to load. The argument to the event handler is `Error` object.             |
+| adPresented       | Fires when the ad is presented to user.                                                                |
+| adFailedToPresent | Fires when an error occurred while presenting ad. The argument to the event handler is `Error` object. |
+| adDismissed       | Fires when the ad is dismissed.                                                                        |
+| rewarded          | Fires when user earned reward. The argument to the event handler is `Reward` object.                   |
+
+`handler` : An event handler.
+
+### removeAllListeners()
+
+```ts
+removeAllListeners(): void
+```
+
+Removes all registered event handlers for this ad.
+
+### setRequestOptions()
+
+```ts
+setRequestOptions(requestOptions?: RequestOptions): void
+```
+
+Sets RequestOptions for this Ad instance.
+
+**Parameters**
+
+`requestOptions` : [RequestOptions](../types/RequestOptions) used to load the ad.

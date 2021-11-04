@@ -1,0 +1,42 @@
+---
+title: Non Personalized Ads
+---
+
+To load non-personalized ads only, set `requestNonPersonalizedAdsOnly` to `true` in [RequestOptions](/docs/api/types/RequestOptions) for your ads.
+
+```tsx title=Hook
+const requestOptions = {
+  requestNonPersonalizedAdsOnly: true,
+};
+
+const rewardedAd = useRewardedAd(UNIT_ID_REWARDED, {
+  requestOptions,
+});
+```
+
+```tsx title=Class
+const requestOptions = {
+  requestNonPersonalizedAdsOnly: true,
+};
+
+// Requesting npa only in class instance (only for this request)
+interstitialAd
+  .requestAd(requestOptions)
+  .catch((e: Error) => setAdLoadError(e))
+  .then(() => setAdLoaded(true));
+
+// Requesting npa only in class instance (for all requests in this ad instance)
+interstitialAd.setRequestOptions(requestOptions);
+```
+
+```tsx title=BannerAd
+const requestOptions = {
+  requestNonPersonalizedAdsOnly: true,
+};
+
+<BannerAd
+  size={BannerAdSize.BANNER}
+  unitId={UNIT_ID_BANNER}
+  reqeustOptions={requestOptions}
+/>;
+```

@@ -12,10 +12,9 @@
 
 @implementation RNAdMob
 
-RCT_EXPORT_MODULE();
-
-RCT_EXPORT_METHOD(initialize:(RCTPromiseResolveBlock) resolve rejecter:(RCTPromiseRejectBlock) reject)
-{
+-(id)init{
+    self = [super init];
+    
 #if __has_include("<FBAudienceNetwork/FBAdSettings.h>")
     if (@available(iOS 14, *)) {
         if ([ATTrackingManager trackingAuthorizationStatus] == ATTrackingManagerAuthorizationStatusAuthorized) {
@@ -26,20 +25,39 @@ RCT_EXPORT_METHOD(initialize:(RCTPromiseResolveBlock) resolve rejecter:(RCTPromi
     
     GADMobileAds *ads = [GADMobileAds sharedInstance];
     ads.requestConfiguration.testDeviceIdentifiers = @[kGAMSimulatorID];
-    [ads startWithCompletionHandler:^(GADInitializationStatus *status) {
-        NSDictionary *adapterStatuses = [status adapterStatusesByClassName];
-        NSMutableArray *adapters = [NSMutableArray array];
-        for (NSString *adapter in adapterStatuses) {
-            GADAdapterStatus *adapterStatus = adapterStatuses[adapter];
-            NSDictionary *dict = @{
-                @"name":adapter,
-                @"state":@([@(adapterStatus.state) boolValue]),
-                @"description":adapterStatus.description
-            };
-            [adapters addObject:dict];
-        }
-        resolve(adapters);
-    }];
+    [ads startWithCompletionHandler:nil];
+    
+    return self;
+}
+
++(BOOL)requiresMainQueueSetup {
+    return YES;
+}
+
+RCT_EXPORT_MODULE();
+
+RCT_EXPORT_METHOD(getInitializationStatus:(RCTPromiseResolveBlock) resolve rejecter:(RCTPromiseRejectBlock) reject)
+{
+    GADMobileAds *ads = [GADMobileAds sharedInstance];
+    GADInitializationStatus *status = [ads initializationStatus];
+    
+    if (status == nil) {
+        reject(@"E_MOBILE_ADS_NOT_INITIALIZED", @"MobileAds SDK is not initialized yet.", nil);
+        return;
+    }
+    
+    NSDictionary *adapterStatuses = [status adapterStatusesByClassName];
+    NSMutableArray *adapters = [NSMutableArray array];
+    for (NSString *adapter in adapterStatuses) {
+        GADAdapterStatus *adapterStatus = adapterStatuses[adapter];
+        NSDictionary *dict = @{
+            @"name":adapter,
+            @"state":@([@(adapterStatus.state) boolValue]),
+            @"description":adapterStatus.description
+        };
+        [adapters addObject:dict];
+    }
+    resolve(adapters);
 }
 
 RCT_EXPORT_METHOD(setRequestConfiguration:(NSDictionary *)config)

@@ -9,9 +9,13 @@
     "start": "react-native start"
   },
   "dependencies": {
+    "@react-navigation/native": "^6.0.6",
+    "@react-navigation/native-stack": "^6.2.5",
     "react": "17.0.2",
-    "react-native": "0.65.1",
-    "react-native-bootsplash": "^3.2.4"
+    "react-native": "0.66.1",
+    "react-native-bootsplash": "^3.2.4",
+    "react-native-safe-area-context": "^3.3.2",
+    "react-native-screens": "^3.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.14.8",
@@ -21,7 +25,6 @@
     "babel-plugin-module-resolver": "^4.1.0",
     "eslint": "^7.20.0",
     "metro-react-native-babel-preset": "^0.66.2",
-    "react-native-codegen": "^0.0.7",
     "typescript": "^4.3.5"
   }
 }

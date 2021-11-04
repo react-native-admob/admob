@@ -1,0 +1,46 @@
+The `AppOpenAdProvider` provides context related to AppOpenAd to be used for the `useAppOpenAd` hook.
+
+You should wrap your app components with `AppOpenAdProvider` to use `useAppOpenAd` hook in your app.
+
+```jsx
+import { AppOpenAdProvider, TestIds } from '@react-native-admob/admob';
+
+export default function App() {
+  return (
+    <AppOpenAdProvider
+      unitId={isPaid ? null : TestIds.APP_OPEN}
+      options={{ showOnColdStart: true }}
+    >
+      {/* ... */}
+    </AppOpenAdProvider>
+  );
+}
+```
+
+For detailed usage, see [useAppOpenAd](/docs/api/hooks/useAppOpenAd#usage-example).
+
+## Props
+
+### `unitId`
+
+Your App Open Ad's [ad Unit ID](https://support.google.com/admob/answer/7356431)
+
+| Type   |
+| :----- |
+| string |
+
+### `options`
+
+Options for your App Open Ad. Available values are listed below:
+
+| Type   |
+| :----- |
+| object |
+
+Properties:
+
+| Name                | Type                                             | Default | Description                                                                                                |
+| :------------------ | :----------------------------------------------- | :------ | :--------------------------------------------------------------------------------------------------------- |
+| showOnColdStart     | boolean                                          | `false` | Whether to show ad on app [coldstart](https://developers.google.com/admob/android/app-open-ads#coldstart). |
+| showOnAppForeground | boolean                                          | `true`  | Whether to show ad on app becomes foreground.                                                              |
+| requestOptions      | [RequestOptions](/docs/api/types/RequestOptions) | {}      | Optional RequestOptions used to load the ad.                                                               |

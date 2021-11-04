@@ -4,7 +4,7 @@ import BannerAdSize from './BannerAdSize';
 
 export type MaxAdContentRating = 'G' | 'MA' | 'PG' | 'T';
 
-export type RequestConfiguration = {
+export interface RequestConfiguration {
   /**
    * Maximum Ad Content Rating. Defaults to `UNSPECIFIED`.
    * The following values are currently supported:
@@ -27,9 +27,9 @@ export type RequestConfiguration = {
    * Array of your test devices' ID
    */
   testDeviceIds: Array<string>;
-};
+}
 
-export type RequestOptions = {
+export interface RequestOptions {
   /**
    * If `true` only non-personalized ads will be loaded.
    *
@@ -102,13 +102,13 @@ export type RequestOptions = {
    * @ios
    */
   locationAccuracy?: number;
-};
+}
 
-export type InitializationStatus = {
+export interface InitializationStatus {
   name: string;
   description: string;
   isReady: boolean;
-};
+}
 
 export interface BannerAdProps extends ViewProps {
   /**
@@ -150,8 +150,6 @@ export interface BannerAdProps extends ViewProps {
 }
 
 export interface GAMBannerAdProps extends Omit<BannerAdProps, 'size'> {
-  size?: typeof BannerAdSize | string;
-
   /**
    * The available sizes of the banner. Can be a predefined sizes via `BannerAdSize` or custom dimensions, e.g. `300x200`.
    */
@@ -185,12 +183,12 @@ export type HandlerType = (() => void) | ((error: Error) => void);
 
 export type RewardedAdHandlerType = HandlerType | ((reward: Reward) => void);
 
-export type Reward = {
+export interface Reward {
   type: string;
   amount: number;
-};
+}
 
-export type FullScreenAdOptions = {
+export interface FullScreenAdOptions {
   /**
    * Whether your ad to load automatically on mounted. Defaults to `true`.
    */
@@ -207,9 +205,9 @@ export type FullScreenAdOptions = {
    * Optional RequestOptions used to load the ad.
    */
   requestOptions?: RequestOptions;
-};
+}
 
-export type AdHookReturns = {
+export interface AdHookReturns {
   /**
    * Whether your ad is loaded and ready to present.
    */
@@ -248,9 +246,9 @@ export type AdHookReturns = {
    * Shows loaded ad.
    */
   show: () => void;
-};
+}
 
-export type AppOpenAdOptions = {
+export interface AppOpenAdOptions {
   /**
    * Whether to show App Open Ad on app cold start. Defaults to `false`.
    * @see {@link https://developers.google.com/admob/android/app-open-ads#coldstart}
@@ -264,4 +262,4 @@ export type AppOpenAdOptions = {
    * Optional RequestOptions used to load the ad.
    */
   requestOptions?: RequestOptions;
-};
+}

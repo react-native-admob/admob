@@ -6,7 +6,7 @@ buildscript {
         }
 
         dependencies {
-            classpath 'com.android.tools.build:gradle:4.2.1'
+            classpath 'com.android.tools.build:gradle:7.0.3'
         }
     }
 }
@@ -18,14 +18,11 @@ def safeExtGet(prop, fallback) {
 }
 
 android {
-    compileSdkVersion safeExtGet('Admob_compileSdkVersion', 30)
-    buildToolsVersion safeExtGet('Admob_buildToolsVersion', '30.0.2')
+    compileSdkVersion safeExtGet('compileSdkVersion', 30)
+    buildToolsVersion safeExtGet('buildToolsVersion', '30.0.2')
     defaultConfig {
-        minSdkVersion safeExtGet('Admob_minSdkVersion', 21)
-        targetSdkVersion safeExtGet('Admob_targetSdkVersion', 30)
-        versionCode 1
-        versionName "1.0"
-
+        minSdkVersion safeExtGet('minSdkVersion', 21)
+        targetSdkVersion safeExtGet('targetSdkVersion', 30)
     }
 
     buildTypes {
@@ -48,6 +45,10 @@ repositories {
         // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
         url("$rootDir/../node_modules/react-native/android")
     }
+    maven {
+        // Android JSC is installed from npm
+        url "$rootDir/../node_modules/jsc-android/dist"
+    }
     google()
     mavenCentral()
 }
@@ -57,5 +58,8 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation 'com.google.android.gms:play-services-ads:[20.0, 21.0['
 
-    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+    def lifecycle_version = "2.3.0"
+    implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-process:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 }

@@ -4,11 +4,11 @@ import {
   RewardedAdHandlerType,
 } from '../types';
 
-import MobileAd from './MobileAd';
+import FullScreenAd from './FullScreenAd';
 
 let _rewardedRequest = 0;
 
-export default class RewardedAd extends MobileAd<
+export default class RewardedAd extends FullScreenAd<
   RewardedAdEvent,
   RewardedAdHandlerType
 > {
