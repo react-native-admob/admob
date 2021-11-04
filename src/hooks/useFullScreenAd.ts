@@ -78,8 +78,11 @@ export default function useFullScreenAd<
     });
     const isRewardedAd =
       ad instanceof RewardedAd || ad instanceof RewardedInterstitialAd;
-    const rewardListener = isRewardedAd
-      ? ad.addEventListener('rewarded', (r: Reward) => setReward(r))
+    let rewardListener = isRewardedAd
+      ? (ad as RewardedAd | RewardedInterstitialAd).addEventListener(
+          'rewarded',
+          (r: Reward) => setReward(r)
+        )
       : undefined;
     return () => {
       loadListener.remove();
