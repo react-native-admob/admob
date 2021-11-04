@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import RNBootSplash from 'react-native-bootsplash';
 import { useAppOpenAd } from '@react-native-admob/admob';
+
+import PaidContext from '../PaidContext';
 
 interface AppOpenAdExampleProps {
   onSplashDismissed: () => void;
@@ -10,6 +12,7 @@ interface AppOpenAdExampleProps {
 const AppOpenAdExample = ({ onSplashDismissed }: AppOpenAdExampleProps) => {
   const [loaded, setLoaded] = useState(false);
   const { adDismissed, adLoadError } = useAppOpenAd();
+  const { isPaid } = useContext(PaidContext);
 
   useEffect(() => {
     const load = async () => {
@@ -24,10 +27,10 @@ const AppOpenAdExample = ({ onSplashDismissed }: AppOpenAdExampleProps) => {
       await RNBootSplash.hide({ fade: true });
       onSplashDismissed();
     }
-    if (loaded && (adDismissed || adLoadError)) {
+    if (isPaid || (loaded && (adDismissed || adLoadError))) {
       hide();
     }
-  }, [loaded, adDismissed, adLoadError, onSplashDismissed]);
+  }, [loaded, adDismissed, adLoadError, onSplashDismissed, isPaid]);
 
   return <View />;
 };

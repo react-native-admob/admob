@@ -1,38 +1,42 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button } from 'react-native';
 import { InterstitialAd, TestIds } from '@react-native-admob/admob';
 import { useNavigation } from '@react-navigation/native';
 
 import { RootStackNavigationProps } from '../../App';
 import ExampleGroup from '../../components/ExampleGroup';
+import PaidContext from '../../PaidContext';
 
 interface State {
   adLoaded: boolean;
-  interstitialAd: InterstitialAd;
+  interstitialAd: InterstitialAd | null;
 }
 
 class ClassComponentExample extends React.Component<{
   navigation: RootStackNavigationProps<'Examples'>;
+  isPaid: boolean;
 }> {
   state: State = {
     adLoaded: false,
-    interstitialAd: InterstitialAd.createAd(TestIds.INTERSTITIAL_VIDEO, {
-      loadOnDismissed: true,
-      requestOptions: {
-        requestNonPersonalizedAdsOnly: true,
-      },
-    }),
+    interstitialAd: this.props.isPaid
+      ? null
+      : InterstitialAd.createAd(TestIds.INTERSTITIAL_VIDEO, {
+          loadOnDismissed: true,
+          requestOptions: {
+            requestNonPersonalizedAdsOnly: true,
+          },
+        }),
   };
   componentDidMount() {
-    this.state.interstitialAd.addEventListener('adLoaded', () => {
+    this.state.interstitialAd?.addEventListener('adLoaded', () => {
       this.setState({ adLoaded: true });
     });
-    this.state.interstitialAd.addEventListener('adDismissed', () => {
+    this.state.interstitialAd?.addEventListener('adDismissed', () => {
       this.props.navigation.navigate('Second');
     });
   }
   componentWillUnmount() {
-    this.state.interstitialAd.removeAllListeners();
+    this.state.interstitialAd?.removeAllListeners();
   }
   render() {
     return (
@@ -40,7 +44,13 @@ class ClassComponentExample extends React.Component<{
         <Button
           title="Show Interstitial Ad and move to next screen"
           disabled={!this.state.adLoaded}
-          onPress={() => this.state.interstitialAd.show()}
+          onPress={() => {
+            if (this.props.isPaid) {
+              this.props.navigation.navigate('Second');
+            } else {
+              this.state.interstitialAd?.show();
+            }
+          }}
         />
       </ExampleGroup>
     );
@@ -49,5 +59,6 @@ class ClassComponentExample extends React.Component<{
 
 export default function () {
   const navigation = useNavigation<RootStackNavigationProps<'Examples'>>();
-  return <ClassComponentExample navigation={navigation} />;
+  const { isPaid } = useContext(PaidContext);
+  return <ClassComponentExample navigation={navigation} isPaid={isPaid} />;
 }

@@ -11,13 +11,9 @@ const ExamplesScreen = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <ScrollView>
-        {!isPaid && (
-          <>
-            <BannerAdExample />
-            <ClassComponentExample />
-            <FunctionComponentExample />
-          </>
-        )}
+        <BannerAdExample />
+        <ClassComponentExample />
+        <FunctionComponentExample />
         <Button
           title={`${isPaid ? 'En' : 'Dis'}able Ads`}
           onPress={() => onPaidChange(!isPaid)}
