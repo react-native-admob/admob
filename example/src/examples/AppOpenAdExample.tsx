@@ -27,7 +27,7 @@ const AppOpenAdExample = ({ onSplashDismissed }: AppOpenAdExampleProps) => {
       await RNBootSplash.hide({ fade: true });
       onSplashDismissed();
     }
-    if (isPaid || (loaded && (adDismissed || adLoadError))) {
+    if (loaded && (isPaid || adDismissed || adLoadError)) {
       hide();
     }
   }, [loaded, adDismissed, adLoadError, onSplashDismissed, isPaid]);

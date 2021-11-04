@@ -12,31 +12,44 @@ interface State {
   interstitialAd: InterstitialAd | null;
 }
 
-class ClassComponentExample extends React.Component<{
+interface Props {
   navigation: RootStackNavigationProps<'Examples'>;
   isPaid: boolean;
-}> {
+}
+
+class ClassComponentExample extends React.Component<Props, State> {
   state: State = {
     adLoaded: false,
-    interstitialAd: this.props.isPaid
-      ? null
-      : InterstitialAd.createAd(TestIds.INTERSTITIAL_VIDEO, {
-          loadOnDismissed: true,
-          requestOptions: {
-            requestNonPersonalizedAdsOnly: true,
-          },
-        }),
+    interstitialAd: this.props.isPaid ? null : this.createAd(),
   };
-  componentDidMount() {
-    this.state.interstitialAd?.addEventListener('adLoaded', () => {
+  createAd() {
+    const ad = InterstitialAd.createAd(TestIds.INTERSTITIAL_VIDEO, {
+      loadOnDismissed: true,
+      requestOptions: {
+        requestNonPersonalizedAdsOnly: true,
+      },
+    });
+    ad.addEventListener('adLoaded', () => {
       this.setState({ adLoaded: true });
     });
-    this.state.interstitialAd?.addEventListener('adDismissed', () => {
+    ad.addEventListener('adDismissed', () => {
       this.props.navigation.navigate('Second');
     });
+    return ad;
+  }
+  createAndSetAd() {
+    this.setState({ interstitialAd: this.createAd() });
+  }
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (this.props.isPaid && !prevProps.isPaid) {
+      this.createAndSetAd();
+    }
+    if (this.state.interstitialAd !== prevState.interstitialAd) {
+      prevState.interstitialAd?.destroy();
+    }
   }
   componentWillUnmount() {
-    this.state.interstitialAd?.removeAllListeners();
+    this.state.interstitialAd?.destroy();
   }
   render() {
     return (
