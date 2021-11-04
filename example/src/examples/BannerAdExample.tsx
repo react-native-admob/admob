@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useRef } from 'react';
 import { Button, Text } from 'react-native';
 import {
   BannerAd,
@@ -8,7 +8,7 @@ import {
 } from '@react-native-admob/admob';
 
 import ExampleGroup from '../components/ExampleGroup';
-import PaidContext from '../PaidContext';
+import { usePaidState } from '../PaidProvider';
 
 const UNIT_ID_GAM_BANNER = '/6499/example/banner';
 
@@ -24,7 +24,7 @@ const BannerAdExample = () => {
   const bannerRef = useRef<BannerAd>(null);
   const adaptiveBannerRef = useRef<BannerAd>(null);
   const gamBannerRef = useRef<GAMBannerAd>(null);
-  const { isPaid } = useContext(PaidContext);
+  const { isPaid } = usePaidState();
 
   return (
     <>

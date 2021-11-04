@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Button } from 'react-native';
 import { InterstitialAd, TestIds } from '@react-native-admob/admob';
 import { useNavigation } from '@react-navigation/native';
 
-import { RootStackNavigationProps } from '../../App';
 import ExampleGroup from '../../components/ExampleGroup';
-import PaidContext from '../../PaidContext';
+import { RootStackNavigationProps } from '../../Navigator';
+import { usePaidState } from '../../PaidProvider';
 
 interface State {
   adLoaded: boolean;
@@ -59,6 +59,6 @@ class ClassComponentExample extends React.Component<{
 
 export default function () {
   const navigation = useNavigation<RootStackNavigationProps<'Examples'>>();
-  const { isPaid } = useContext(PaidContext);
+  const { isPaid } = usePaidState();
   return <ClassComponentExample navigation={navigation} isPaid={isPaid} />;
 }

@@ -7,9 +7,9 @@ import {
 } from '@react-native-admob/admob';
 import { useNavigation } from '@react-navigation/core';
 
-import { RootStackNavigationProps } from '../../App';
 import CountDownModal from '../../components/CountDownModal';
 import ExampleGroup from '../../components/ExampleGroup';
+import { RootStackNavigationProps } from '../../Navigator';
 
 const hookOptions: FullScreenAdOptions = {
   loadOnDismissed: true,

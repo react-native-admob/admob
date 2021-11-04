@@ -4,10 +4,11 @@ import { Button, SafeAreaView, ScrollView } from 'react-native';
 import BannerAdExample from '../examples/BannerAdExample';
 import ClassComponentExample from '../examples/FullScreenAdExamples/ClassComponentExample';
 import FunctionComponentExample from '../examples/FullScreenAdExamples/FunctionComponentExample';
-import PaidContext from '../PaidContext';
+import { usePaidDispatch, usePaidState } from '../PaidProvider';
 
 const ExamplesScreen = () => {
-  const { isPaid, onPaidChange } = React.useContext(PaidContext);
+  const { isPaid } = usePaidState();
+  const dispatch = usePaidDispatch();
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <ScrollView>
@@ -16,7 +17,7 @@ const ExamplesScreen = () => {
         <FunctionComponentExample />
         <Button
           title={`${isPaid ? 'En' : 'Dis'}able Ads`}
-          onPress={() => onPaidChange(!isPaid)}
+          onPress={() => dispatch({ type: 'TOGGLE_PAID' })}
         />
       </ScrollView>
     </SafeAreaView>
