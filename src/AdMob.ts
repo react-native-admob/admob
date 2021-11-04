@@ -14,7 +14,7 @@ async function initialize(): Promise<InitializationStatus[]> {
 }
 
 /**
- * Initializes Mobile Ads SDK.
+ * Get Mobile Ads SDK initialization status.
  * @returns Promise of each mediation adapter's initialization status
  */
 async function getInitializationStatus(): Promise<InitializationStatus[]> {
