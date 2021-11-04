@@ -1,0 +1,136 @@
+---
+title: Full Screen Ad Fundamentals
+sidebar_position: 2
+---
+
+Full Screen Ad is ad covers the whole page.
+This includes [Interstitial Ad](https://support.google.com/admob/answer/7311435),
+[Rewarded Ad](https://support.google.com/admob/answer/7372450),
+[Rewarded Interstial Ad](https://support.google.com/admob/answer/9884467),
+and [App Open Ad](https://support.google.com/admob/answer/9341964).
+
+You can create Full Screen Ad in two ways:
+
+- [Using Hook API](#hook-api)
+- [Using Class API](#class-api)
+
+## Options
+
+When creating Full Screen Ad, you can pass in the [FullScreenOptions](../api/types/FullScreenAdOptions) object. Some options can help you control ad behavior without additional code.
+
+### `loadOnMounted`
+
+`loadOnMounted` is an option whether ad to load automatically on mounted. As default value is `true`, ad will be loaded automatically if you don't specify this option.
+
+### `showOnLoaded`
+
+`showOnLoaded` is an option whether ad to show automatically on loaded. Default value is `false`. If set to `true`, ad will be shown automatically when ad is loaded.
+
+:::danger
+
+AdMob guidelines disallow showing an ad unexpectedly. You should only use this option if you know what you are doing.
+See related [AdMob documentation](https://support.google.com/admob/answer/6201362)
+
+:::
+
+### `loadOnDismissed`
+
+`loadOnDismissed` is an option whether ad to load new ad automatically on dismissed. Default value is `false`. If set to `true`, ad will be loaded automatically when ad is dismissed.
+
+## API Comparison
+
+### Hook API
+
+Hook API provides react hook for configuring ad and getting derived states of ad.
+
+```tsx
+import { useInterstitialAd } from '@react-native-admob/admob';
+
+export default function App({ navigation }) {
+  const { adLoaded, adDismissed, show } = useInterstitialAd(
+    TestIds.REWARDED_INTERSTITIAL
+  );
+
+  useEffect(() => {
+    if (adDismissed) {
+      navigation.navigate('NextScreen');
+    }
+  }, [adDismissed, navigation]);
+
+  return (
+    <View>
+      <Button
+        title="Navigate to next screen"
+        onPress={() => {
+          if (adLoaded) {
+            show();
+          } else {
+            navigation.navigate('NextScreen');
+          }
+        }}
+      />
+    </View>
+  );
+}
+```
+
+Hook API automatically manages ad lifecycle such as create, load, show, and destroy depending on the options you provided.
+Also, the hooks returns derived state of the ad, for example `adLoaded`, `adDismissed`, etc. without adding any event listeners.
+Thanks to these features, Hook API can reduce boilerplate code in general use cases.
+
+### Class API
+
+Class API provides API to create ad, load ad, show ad, and listen to ad events.
+
+```tsx
+import { InterstitialAd, TestIds } from '@react-native-admob/admob';
+
+export default function App({ navigation }) {
+  const [interstitialAd, setInterstitialAd] = useState<InterstitialAd | null>(
+    null
+  );
+  const [adLoaded, setAdLoaded] = useState(false);
+  const [adDismissed, setAdDismissed] = useState(false);
+
+  useEffect(() => {
+    const interstitial = InterstitialAd.createAd(TestIds.INTERSTITIAL);
+    setInterstitialAd(interstitial);
+
+    const subscriptions = [
+      interstitial.addEventListener('onAdLoaded', () => {
+        setAdLoaded(true);
+      }),
+      interstitial.addEventListener('onAdDismissed', () => {
+        setAdDismissed(true);
+      }),
+    ];
+
+    return () => subscriptions.forEach((sub) => sub.remove());
+  }, []);
+
+  useEffect(() => {
+    if (adDismissed) {
+      navigation.navigate('NextScreen');
+    }
+  }, [adDismissed, navigation]);
+
+  return (
+    <View>
+      <Button
+        title="Navigate to next screen"
+        onPress={() => {
+          if (adLoaded) {
+            interstitialAd?.show();
+          } else {
+            navigation.navigate('NextScreen');
+          }
+        }}
+      />
+    </View>
+  );
+}
+```
+
+Class API provides more control over ad since it provides ad event subscriptions.
+So if you are implementing more advanced use cases, you can consider use Class API.
+Also, since hook is not supported in class components, you should use Class API if you are implementing ad in class components.

@@ -18,7 +18,7 @@ const hookOptions: FullScreenAdOptions = {
   },
 };
 
-const FunctionComponentExample = () => {
+const HookApiExample = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const { adLoaded, adDismissed, reward, show } = useRewardedInterstitialAd(
     TestIds.REWARDED_INTERSTITIAL,
@@ -73,4 +73,4 @@ const FunctionComponentExample = () => {
   );
 };
 
-export default FunctionComponentExample;
+export default HookApiExample;

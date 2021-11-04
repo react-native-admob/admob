@@ -1,0 +1,63 @@
+## Arguments
+
+### `unitId`
+
+Your Ad's [ad Unit ID](https://support.google.com/admob/answer/7356431)
+
+If `unitId` is set or changed, new ad instance will be created automatically.
+If `unitId` is set to `null`, ad will be destroyed automatically and derived states will be initialized to initial state.
+
+| Type   |
+| :----- |
+| string |
+
+### `options`
+
+Options for your hook. Available values are listed below:
+
+| Type                                                |
+| :-------------------------------------------------- |
+| [FullScreenAdOptions](../types/FullScreenAdOptions) |
+
+Properties:
+
+| Name            | Type                                      | Default | Description                                                |
+| :-------------- | :---------------------------------------- | :------ | :--------------------------------------------------------- |
+| loadOnMounted   | boolean                                   | `true`  | Whether your ad to load automatically on mounted.          |
+| showOnLoaded    | boolean                                   | `false` | Whether your ad to show automatically on loaded.           |
+| loadOnDismissed | boolean                                   | `false` | Whether your ad to load new ad automatically on dismissed. |
+| requestOptions  | [RequestOptions](../types/RequestOptions) | {}      | Optional RequestOptions used to load the ad.               |
+
+## Returns
+
+| Type   |
+| :----- |
+| object |
+
+Properties:
+
+| Name           | Type                     | Description                                                                                                                      |
+| :------------- | :----------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
+| adLoaded       | boolean                  | Whether your ad is loaded and ready to present.                                                                                  |
+| adPresented    | boolean                  | Whether your ad is presented to user. Value is remained `true` until **new ad is requested**.                                    |
+| adDismissed    | boolean                  | Whether your ad is dismissed. Value is remained `true` until new ad is requested.                                                |
+| adShowing      | boolean                  | Whether your ad is showing. The value is equal with `adPresented && !adDismissed`.                                               |
+| adLoadError    | Error \| undefined       | `Error` object throwed during ad load.                                                                                           |
+| adPresentError | Error \| undefined       | `Error` object throwed during ad present.                                                                                        |
+| reward         | [Reward](#) \| undefined | Reward earned by user. The value is `undefined` until user earns reward. Available only in RewardedAd or RewardedInterstitialAd. |
+| load           | Function                 | Loads new ad. Can not call this function if the ad is loaded but not presented and dismissed.                                    |
+| show           | Function                 | Shows loaded ad. Ad must be loaded prior to this call.                                                                           |
+
+:::tip
+
+Note that `adPresented` value remains `true` after the ad is dismissed.
+The value changes to `false` when ad is initialized via `load()`.
+To determine whether the ad is showing, use `adShowing` value.
+
+:::
+
+:::caution
+
+When using with `loadOnDismissed` option to `true`, changed `adDimissed` and `reward` value will appear for a very short time and initialized to `false` and `undefined` respectively as derived states are initialized just after new ad is requested.
+
+:::

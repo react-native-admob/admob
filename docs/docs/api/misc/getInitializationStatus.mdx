@@ -1,10 +1,10 @@
 ---
-id: initialize
-title: initialize
-sidebar_label: initialize
+id: getInitializationStatus
+title: getInitializationStatus
+sidebar_label: getInitializationStatus
 ---
 
-Use this function to initialize Mobile Ads SDK. You need to call this function before you load any Ads. Generally, you call this function when the root component of your app is mounted.
+Use this function to get each mediation adapter's initialization status.
 
 ## Usage example
 
@@ -12,16 +12,13 @@ Use this function to initialize Mobile Ads SDK. You need to call this function b
 import AdMob from '@react-native-admob/admob';
 
 export default function App() {
-  const [loading, setLoading] = useState(true);
-
   useEffect(() => {
-    const init = async () => {
-      await AdMob.initialize();
-
-      setLoading(false);
+    const getStatus = async () => {
+      const initializationStatus = await AdMob.getInitializationStatus();
+      console.log(initializationStatus);
     };
 
-    init();
+    getStatus();
   }, []);
 
   return (/* Your App code */)

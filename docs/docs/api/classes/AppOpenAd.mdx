@@ -1,10 +1,6 @@
----
-id: AppOpenAd
-title: AppOpenAd
-sidebar_label: AppOpenAd
----
-
 Creates [App Open Ad](https://developers.google.com/admob/android/app-open-ads) and register event listeners to various events.
+
+Unlike other `FullScreenAd`s, only one `AppOpenAd` instance can exist in an application. Doing so, `AppOpenAd` supports static methods as well as instance methods. Calling these static methods acts same as calling instance methods for shared ad instance.
 
 :::tip
 
@@ -24,7 +20,7 @@ TODO
 static createAd(unitId: string, options?: AppOpenAdOptions): AppOpenAd
 ```
 
-Creates an ad instance. If you create ad more than once, ad created before is destroyed. Ad is loaded automatically after created and dismissed.
+Creates an shared ad instance. If you create ad more than once, ad created before is destroyed. Ad is loaded automatically after created and after dismissed.
 
 **Parameters**
 
@@ -40,6 +36,22 @@ Properties :
 
 - `requestOptions` : [RequestOptions](RequestOptions) used to load the ad.
 
+**Returns**
+
+`AppOpenAd` instance.
+
+### getAd()
+
+```js
+static getAd(): AppOpenAd
+```
+
+Returns created AppOpenAd shared instance.
+
+**Returns**
+
+`AppOpenAd` shared instance.
+
 ### load()
 
 ```js
@@ -52,7 +64,7 @@ Generally you don't need to call this function because ad is loaded automaticall
 
 **Parameters**
 
-`requestOptions` (Optional) : [RequestOptions](RequestOptions) used to load the ad. 
+`requestOptions` (Optional) : [RequestOptions](RequestOptions) used to load the ad.
 
 **Returns**
 

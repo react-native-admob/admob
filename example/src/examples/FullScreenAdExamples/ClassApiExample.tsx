@@ -18,7 +18,7 @@ interface Props {
   isPaid: boolean;
 }
 
-class ClassComponentExample extends React.Component<Props, State> {
+class ClassApiExample extends React.Component<Props, State> {
   state: State = {
     adLoaded: false,
     interstitialAd: this.props.isPaid ? null : this.createAd(),
@@ -78,5 +78,5 @@ class ClassComponentExample extends React.Component<Props, State> {
 export default function () {
   const navigation = useNavigation<RootStackNavigationProps<'Examples'>>();
   const { isPaid } = usePaidState();
-  return <ClassComponentExample navigation={navigation} isPaid={isPaid} />;
+  return <ClassApiExample navigation={navigation} isPaid={isPaid} />;
 }

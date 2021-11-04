@@ -1,9 +1,3 @@
----
-id: GAMBannerAd
-title: GAMBannerAd
-sidebar_label: GAMBannerAd
----
-
 Renders a Google Ad Manager [Banner Ad](https://support.google.com/admanager/answer/10017110).
 
 ```jsx
@@ -14,7 +8,7 @@ export default function App() {
   return (
     <View>
       <GAMBannerAd
-        size={BannerAdSize.BANNER}
+        sizes={[BannerAdSize.BANNER]}
         unitId={UNIT_ID_BANNER}
         onAdFailedToLoad={(error) => console.error(error)}
         ref={bannerRef}
@@ -35,14 +29,6 @@ Your Banner Ad's [ad Unit ID](https://support.google.com/admanager/answer/623870
 | :----- |
 | string |
 
-### `size`
-
-The size of the banner. Can be a predefined size via `BannerAdSize` or custom dimensions, e.g. `300x200`.
-
-| Type                                    |
-| :-------------------------------------- |
-| [BannerAdSize](#banneradsize) \| string |
-
 ### `sizes`
 
 The available sizes of the banner. Can be a predefined sizes via `BannerAdSize` or custom dimensions, e.g. `300x200`.
@@ -53,7 +39,7 @@ The available sizes of the banner. Can be a predefined sizes via `BannerAdSize` 
 
 ### `requestOptions`
 
-Optional RequestOptions used to load the ad. 
+Optional RequestOptions used to load the ad.
 
 | Type                                       |
 | :----------------------------------------- |

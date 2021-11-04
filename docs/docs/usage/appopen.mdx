@@ -1,0 +1,68 @@
+---
+title: Setup App Open Ad
+sidebar_position: 5
+---
+
+App Open Ad is slightly different from other Full Screen Ads.
+While other Full Screen Ads can be created multiple times and each ads have their own instance, only one AppOpenAd instance can be exist in a app.
+
+So, `AppOpenAd` class have static `sharedInstance` internally and when you create App Open Ad using `AppOpenAd.createAd()` method,
+it will replace existing `sharedInstance` and app will always have signle `AppOpenAd` instance.
+
+Also, you have to wrap your app components with [AppOpenAdProvider](/docs/api/components/AppOpenAdProvider) to use `useAppOpenAd` hook.
+`AppOpenAdProvider` is needed beacuse it provides sigleton `AppOpenAd` instance to hooks.
+
+Example below uses external library [react-native-bootsplash](https://github.com/zoontek/react-native-bootsplash) to implement splash screen.
+This is not necessary, but we recommend you to use this library with App Open Ad because App Open Ad must be showed before the app content showed.
+
+```tsx title=App.tsx
+import { AppOpenAdProvider, TestIds } from '@react-native-admob/admob';
+
+export default function App() {
+  const [splashDismissed, setSplashDismissed] = useState(false);
+
+  return (
+    <AppOpenAdProvider
+      unitId={TestIds.APP_OPEN}
+      options={{ showOnColdStart: true }}
+    >
+      {splashDismissed ? (
+        <MainScreen />
+      ) : (
+        <SplashScreen onSplashDismissed={() => setSplashDismissed(true)} />
+      )}
+    </AppOpenAdProvider>
+  );
+}
+```
+
+```tsx title=SplashScreen.tsx
+import RNBootSplash from 'react-native-bootsplash';
+import { useAppOpenAd } from '@react-native-admob/admob';
+
+export default function SplashScreen({ onSplashDismissed }) {
+  const [loaded, setLoaded] = useState(false);
+  const { adDismissed, adLoadError } = useAppOpenAd();
+
+  useEffect(() => {
+    const load = async () => {
+      // Dummy Long Running Task
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      setLoaded(true);
+    };
+    load();
+  }, []);
+
+  useEffect(() => {
+    async function hide() {
+      await RNBootSplash.hide({ fade: true });
+      onSplashDismissed();
+    }
+    if (loaded && (adDismissed || adLoadError)) {
+      hide();
+    }
+  }, [loaded, adDismissed, adLoadError, onSplashDismissed]);
+
+  return <View />;
+}
+```

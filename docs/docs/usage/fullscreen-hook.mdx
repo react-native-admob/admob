@@ -1,0 +1,113 @@
+---
+title: Creating Full Screen Ad with Hook API
+sidebar_position: 3
+---
+
+## Creating ad
+
+You can create ad by adding a corresponding ad type's hook to your component.
+
+```tsx {4-8}
+import { useInterstitialAd, TestIds } from '@react-native-admob/admob';
+
+export default function App() {
+  const interstitialAd = useInterstitialAd(TestIds.REWARDED_INTERSTITIAL, {
+    requestOptions: {
+      requestNonPersonalizedAdsOnly: true,
+    },
+  });
+
+  return <View>{/* ... */}</View>;
+}
+```
+
+First parameter is `unitId` parameter. Set this to the ad unit ID created in the AdMob console. You can use one of the `TestIds` to test your ad implementation.
+
+`unitId` parameter is also can be used to manage creation and destruction of ad.
+If `unitId` is set or changed, new ad instance will be created automatically and previous ad instance will be destroyed.
+If `unitId` is set to `null`, ad will be destroyed automatically. As ad destroys, derived states will be initialized to initial state.
+
+As second parameter, you can provide `FullScreenAdOptions` object as a second parameter, `options`. About the options, please refer to [FullScreenAdOptions](/docs/api/types/FullScreenAdOptions).
+
+After the ad is created, ad will be loaded automatically if you didn't specify `loadOnMounted` option to `false` since its default value is `true`.
+
+## Using derived states
+
+The hook returns several derived states and functions to control ad.
+
+```tsx
+import { useInterstitialAd } from '@react-native-admob/admob';
+
+export default function App({ navigation }) {
+  const { adLoaded, adDismissed, show } = useInterstitialAd(
+    TestIds.REWARDED_INTERSTITIAL,
+    {
+      requestOptions: {
+        requestNonPersonalizedAdsOnly: true,
+      },
+    }
+  );
+
+  useEffect(() => {
+    if (adDismissed) {
+      navigation.navigate('NextScreen');
+    }
+  }, [adDismissed, navigation]);
+
+  return (
+    <View>
+      <Button
+        title="Navigate to next screen"
+        onPress={() => {
+          if (adLoaded) {
+            show();
+          } else {
+            navigation.navigate('NextScreen');
+          }
+        }}
+      />
+    </View>
+  );
+}
+```
+
+Using derived states and some `useEffect` hooks, you can interact with ad. Above example shows how to show loaded ad and navigate to next screen when ad is dismissed.
+Also, you can see you can show ad only if ad is loaded.
+
+| Name           | Type                     | Description                                                                                                                      |
+| :------------- | :----------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
+| adLoaded       | boolean                  | Whether your ad is loaded and ready to present.                                                                                  |
+| adPresented    | boolean                  | Whether your ad is presented to user. Value is remained `true` until **new ad is requested**.                                    |
+| adDismissed    | boolean                  | Whether your ad is dismissed. Value is remained `true` until new ad is requested.                                                |
+| adShowing      | boolean                  | Whether your ad is showing. The value is equal with `adPresented && !adDismissed`.                                               |
+| adLoadError    | Error \| undefined       | `Error` object throwed during ad load.                                                                                           |
+| adPresentError | Error \| undefined       | `Error` object throwed during ad present.                                                                                        |
+| reward         | [Reward](#) \| undefined | Reward earned by user. The value is `undefined` until user earns reward. Available only in RewardedAd or RewardedInterstitialAd. |
+
+:::tip
+
+Note that `adPresented` value remains `true` after the ad is dismissed.
+The value changes to `false` when ad is initialized via `load()`.
+To determine whether the ad is showing, use `adShowing` value.
+
+:::
+
+:::caution
+
+When using with `loadOnDismissed` option to `true`, changed `adDimissed` and `reward` value will appear for a very short time and initialized to `false` and `undefined` respectively as derived states are initialized just after new ad is requested.
+
+:::
+
+## Loading and showing ad
+
+Depending on your options, you may need to load or show ad manually.
+Not only derived states listed above, hook also returns `load` and `show` functions to control ad as shown in example above. You can use these functions to show ad and load ad.
+
+| Name | Type     | Description                                                                                   |
+| :--- | :------- | :-------------------------------------------------------------------------------------------- |
+| load | Function | Loads new ad. Can not call this function if the ad is loaded but not presented and dismissed. |
+| show | Function | Shows loaded ad. Ad must be loaded prior to this call.                                        |
+
+## Handling errors
+
+WIP

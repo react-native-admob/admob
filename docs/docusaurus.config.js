@@ -41,6 +41,9 @@ module.exports = {
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Jay Kim, Built with Docusaurus.`,
     },
+    prism: {
+      additionalLanguages: ['ruby'],
+    },
   },
   presets: [
     [
@@ -48,8 +51,27 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
+          sidebarItemsGenerator: async function ({
+            defaultSidebarItemsGenerator,
+            docs,
+            ...args
+          }) {
+            const filteredDocs = docs.filter(
+              (doc) =>
+                !doc.id.toLowerCase().includes('fullscreenad') ||
+                doc.id.toLowerCase().includes('options')
+            );
+            const sidebarItems = await defaultSidebarItemsGenerator({
+              docs: filteredDocs,
+              ...args,
+            });
+            return sidebarItems;
+          },
           editUrl:
             'https://github.com/react-native-admob/admob/edit/master/docs/',
+          remarkPlugins: [
+            [require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }],
+          ],
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

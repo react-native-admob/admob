@@ -1,20 +1,4 @@
----
-id: InterstitialAd
-title: InterstitialAd
-sidebar_label: InterstitialAd
----
-
-Creates [Interstitial Ad](https://developers.google.com/admob/android/interstitial) and register event listeners to various events.
-
-:::tip
-
-If you are going to use Interstitial Ad inside _functional component_, consider using [`useInterstitialAd`](useInterstitialAd).
-
-:::
-
-## Useage Example
-
-TODO
+import CodeBlock from '@theme/CodeBlock';
 
 ## Methods
 
@@ -26,44 +10,43 @@ Methods listed below except [`createAd()`](#createad) must be called from instan
 
 ### createAd()
 
-```js
-static createAd(unitId: string, options?: FullScreenAdOptions): InterstitialAd
-```
+<CodeBlock className="language-ts">
+  static createAd(unitId: string, options?: FullScreenAdOptions):{' '}
+  {props.type || 'FullScreen'}Ad
+</CodeBlock>
 
 Creates an ad instance.
 
 **Parameters**
 
-`unitId` : Interstitial Ad [unitId](https://support.google.com/admob/answer/7356431).
+`unitId` : Ad [unitId](https://support.google.com/admob/answer/7356431).
 
-`options` (Optional) : Options for this ad. 
+`options` (Optional) : Options for this ad.
 
 Properties:
 
-| Name            | Type                             | Default | Description                                                |
-| :-------------- | :------------------------------- | :------ | :--------------------------------------------------------- |
-| loadOnMounted   | boolean                          | `true`  | Whether your ad to load automatically on mounted.          |
-| showOnLoaded    | boolean                          | `false` | Whether your ad to show automatically on loaded.           |
-| loadOnDismissed | boolean                          | `false` | Whether your ad to load new ad automatically on dismissed. |
-| requestOptions  | [RequestOptions](RequestOptions) | {}      | Optional RequestOptions used to load the ad.               |
+| Name            | Type                                      | Default | Description                                                |
+| :-------------- | :---------------------------------------- | :------ | :--------------------------------------------------------- |
+| loadOnMounted   | boolean                                   | `true`  | Whether your ad to load automatically on mounted.          |
+| showOnLoaded    | boolean                                   | `false` | Whether your ad to show automatically on loaded.           |
+| loadOnDismissed | boolean                                   | `false` | Whether your ad to load new ad automatically on dismissed. |
+| requestOptions  | [RequestOptions](../types/RequestOptions) | `{}`    | Optional RequestOptions used to load the ad.               |
 
 **Returns**
 
-`InterstitialAd` instance
+<code>{props.type || 'FullScreen'}Ad</code> instance
 
 ### load()
 
-```js
+```ts
 load(requestOptions?: RequestOptions): Promise<void>
 ```
 
-Loads new Interstitial Ad.
-
-Can not call this function if the ad is already loaded but not presented and dismissed. 
+Loads new Ad.
 
 **Parameters**
 
-`requestOptions` (Optional) : [RequestOptions](RequestOptions) used to load the ad. 
+`requestOptions` (Optional) : [RequestOptions](../types/RequestOptions) used to load the ad.
 
 **Returns**
 
@@ -71,13 +54,13 @@ Can not call this function if the ad is already loaded but not presented and dis
 
 ### show()
 
-```js
+```ts
 show(): Promise<void>
 ```
 
-Shows loaded Interstitial Ad. 
+Shows loaded Ad.
 
-Ad must be loaded before calling this function. 
+Ad must be loaded before calling this function.
 
 **Returns**
 
@@ -85,7 +68,7 @@ Ad must be loaded before calling this function.
 
 ### addEventListener()
 
-```js
+```ts
 addEventListener(event: string, handler: (event?: any) => any): void
 ```
 
@@ -102,12 +85,13 @@ Adds an event handler for an ad event.
 | adPresented       | Fires when the ad is presented to user.                                                                |
 | adFailedToPresent | Fires when an error occurred while presenting ad. The argument to the event handler is `Error` object. |
 | adDismissed       | Fires when the ad is dismissed.                                                                        |
+| rewarded          | Fires when user earned reward. The argument to the event handler is `Reward` object.                   |
 
 `handler` : An event handler.
 
 ### removeAllListeners()
 
-```js
+```ts
 removeAllListeners(): void
 ```
 
@@ -115,7 +99,7 @@ Removes all registered event handlers for this ad.
 
 ### setRequestOptions()
 
-```js
+```ts
 setRequestOptions(requestOptions?: RequestOptions): void
 ```
 
@@ -123,4 +107,4 @@ Sets RequestOptions for this Ad instance.
 
 **Parameters**
 
-`requestOptions` : [RequestOptions](RequestOptions) used to load the ad.
+`requestOptions` : [RequestOptions](../types/RequestOptions) used to load the ad.

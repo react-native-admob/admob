@@ -1,0 +1,111 @@
+---
+title: Creating Full Screen Ad with Class API
+sidebar_position: 4
+---
+
+## Creating Ad
+
+You can create ad by calling `createAd` static method of corresponding ad type. `createAd` returns an instance of corresponding ad class.
+
+```tsx {9}
+import { InterstitialAd, TestIds } from '@react-native-admob/admob';
+
+export default function App() {
+  const [interstitialAd, setInterstitialAd] = useState<InterstitialAd | null>(
+    null
+  );
+
+  useEffect(() => {
+    const interstitial = InterstitialAd.createAd(TestIds.INTERSTITIAL);
+    setInterstitialAd(interstitial);
+  }, []);
+
+  return <View>{/* ... */}</View>;
+}
+```
+
+First parameter is `unitId` parameter. Set this to the ad unit ID created in the AdMob console. You can use one of the `TestIds` to test your ad implementation.
+
+As second parameter, you can provide `FullScreenAdOptions` object as a second parameter, `options`. About the options, please refer to [FullScreenAdOptions](/docs/api/types/FullScreenAdOptions).
+
+After the ad is created, ad will be loaded automatically if you didn't specify `loadOnMounted` option to `false` since its default value is `true`.
+
+## Listening to Ad Events
+
+Call `addEventListener` method of the ad instance to listen to ad events.
+
+```tsx {14-23}
+import { InterstitialAd, TestIds } from '@react-native-admob/admob';
+
+export default function App() {
+  const [interstitialAd, setInterstitialAd] = useState<InterstitialAd | null>(
+    null
+  );
+  const [adLoaded, setAdLoaded] = useState(false);
+  const [adDismissed, setAdDismissed] = useState(false);
+
+  useEffect(() => {
+    const interstitial = InterstitialAd.createAd(TestIds.INTERSTITIAL);
+    setInterstitialAd(interstitial);
+
+    const subscriptions = [
+      interstitial.addEventListener('onAdLoaded', () => {
+        setAdLoaded(true);
+      }),
+      interstitial.addEventListener('onAdDismissed', () => {
+        setAdDismissed(true);
+      }),
+    ];
+
+    return () => subscriptions.forEach((sub) => sub.remove());
+  }, []);
+
+  return <View>{/* ... */}</View>;
+}
+```
+
+Supported events:
+
+| Event Name        | Description                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------------ |
+| adLoaded          | Fires when the ad has finished loading.                                                                |
+| adFailedToLoad    | Fires when the ad has failed to load. The argument to the event handler is `Error` object.             |
+| adPresented       | Fires when the ad is presented to user.                                                                |
+| adFailedToPresent | Fires when an error occurred while presenting ad. The argument to the event handler is `Error` object. |
+| adDismissed       | Fires when the ad is dismissed.                                                                        |
+| rewarded          | Fires when user earned reward. The argument to the event handler is `Reward` object.                   |
+
+Don't forget to remove event listeners in your clean up code. You can do this by calling `remove()` returned by `addEventListener`.
+
+## Loading and showing ad
+
+Depending on your options, you may need to load or show ad manually.
+
+```tsx {18}
+import { InterstitialAd, TestIds } from '@react-native-admob/admob';
+
+export default function App({ navigation }) {
+  const [interstitialAd, setInterstitialAd] = useState<InterstitialAd | null>(
+    null
+  );
+  const [adLoaded, setAdLoaded] = useState(false);
+  const [adDismissed, setAdDismissed] = useState(false);
+
+  // ...
+
+  return (
+    <View>
+      <Button
+        title="Navigate to next screen"
+        onPress={() => {
+          if (adLoaded) {
+            interstitialAd?.show();
+          } else {
+            navigation.navigate('NextScreen');
+          }
+        }}
+      />
+    </View>
+  );
+}
+```
