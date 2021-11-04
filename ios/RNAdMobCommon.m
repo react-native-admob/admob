@@ -81,6 +81,7 @@
 + (GAMRequest *)buildAdRequest:(NSDictionary *)requestOptions {
     GAMRequest *request = [GAMRequest request];
     NSMutableDictionary *extras = [@{} mutableCopy];
+    NSMutableDictionary *targets = [@{} mutableCopy];
 
     if (requestOptions[@"requestNonPersonalizedAdsOnly"] && [requestOptions[@"requestNonPersonalizedAdsOnly"] boolValue]) {
         extras[@"npa"] = @"1";
@@ -109,6 +110,15 @@
     if (requestOptions[@"contentUrl"]) {
         request.contentURL = requestOptions[@"contentUrl"];
     }
+    
+    if (requestOptions[@"targets"]) {
+        for (NSString *key in requestOptions[@"targets"]) {
+            NSString *value = requestOptions[@"targets"][key];
+            targets[key] = value;
+        }
+    }
+    
+    request.customTargeting = targets;
     
     return request;
 }

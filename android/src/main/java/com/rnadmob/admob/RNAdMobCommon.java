@@ -120,6 +120,16 @@ public class RNAdMobCommon {
             builder.setLocation(location);
         }
 
+        if (requestOptions.hasKey("targets")) {
+            Map<String, Object> networkExtras = Objects.requireNonNull(requestOptions.getMap("targets")).toHashMap();
+
+            for (Map.Entry<String, Object> entry : networkExtras.entrySet()) {
+                String key = entry.getKey();
+                String value = (String) entry.getValue();
+                builder.addCustomTargeting(key, value);
+            }
+        }
+
         return builder.build();
     }
 }
