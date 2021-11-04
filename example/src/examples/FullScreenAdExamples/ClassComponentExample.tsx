@@ -1,3 +1,4 @@
+/* eslint-disable react/no-did-update-set-state */
 import React from 'react';
 import { Button } from 'react-native';
 import { InterstitialAd, TestIds } from '@react-native-admob/admob';
@@ -33,35 +34,39 @@ class ClassComponentExample extends React.Component<Props, State> {
       this.setState({ adLoaded: true });
     });
     ad.addEventListener('adDismissed', () => {
-      this.props.navigation.navigate('Second');
+      this.navigateToSecondScreen();
     });
     return ad;
   }
-  createAndSetAd() {
-    this.setState({ interstitialAd: this.createAd() });
-  }
+
+  navigateToSecondScreen = () => this.props.navigation.navigate('Second');
+
   componentDidUpdate(prevProps: Props, prevState: State) {
-    if (this.props.isPaid && !prevProps.isPaid) {
-      this.createAndSetAd();
+    if (this.props.isPaid !== prevProps.isPaid) {
+      this.setState({
+        interstitialAd: this.props.isPaid ? null : this.createAd(),
+      });
     }
     if (this.state.interstitialAd !== prevState.interstitialAd) {
+      this.setState({ adLoaded: false });
       prevState.interstitialAd?.destroy();
     }
   }
+
   componentWillUnmount() {
     this.state.interstitialAd?.destroy();
   }
+
   render() {
     return (
       <ExampleGroup title="Interstitial">
         <Button
           title="Show Interstitial Ad and move to next screen"
-          disabled={!this.state.adLoaded}
           onPress={() => {
-            if (this.props.isPaid) {
-              this.props.navigation.navigate('Second');
-            } else {
+            if (this.state.adLoaded) {
               this.state.interstitialAd?.show();
+            } else {
+              this.navigateToSecondScreen();
             }
           }}
         />

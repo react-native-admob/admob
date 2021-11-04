@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from 'react-native';
 import {
   FullScreenAdOptions,
@@ -26,12 +26,17 @@ const FunctionComponentExample = () => {
   );
   const navigation = useNavigation<RootStackNavigationProps<'Examples'>>();
 
+  const navigateToSecondScreen = useCallback(
+    () => navigation.navigate('Second'),
+    [navigation]
+  );
+
   useEffect(() => {
     if (adDismissed) {
       setModalVisible(false);
-      navigation.navigate('Second');
+      navigateToSecondScreen();
     }
-  }, [adDismissed, navigation]);
+  }, [adDismissed, navigateToSecondScreen]);
 
   useEffect(() => {
     if (reward) {
@@ -45,8 +50,13 @@ const FunctionComponentExample = () => {
       <ExampleGroup title="Rewarded Interstitial">
         <Button
           title="Show Rewarded Interstitial Ad and move to next screen"
-          disabled={!adLoaded}
-          onPress={() => setModalVisible(true)}
+          onPress={() => {
+            if (adLoaded) {
+              setModalVisible(true);
+            } else {
+              navigateToSecondScreen();
+            }
+          }}
         />
       </ExampleGroup>
       {modalVisible && (
@@ -54,7 +64,7 @@ const FunctionComponentExample = () => {
           visible={modalVisible}
           onCancel={() => {
             setModalVisible(false);
-            navigation.navigate('Second');
+            navigateToSecondScreen();
           }}
           onTimeout={show}
         />

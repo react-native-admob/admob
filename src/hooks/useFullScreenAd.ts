@@ -21,9 +21,10 @@ export default function useFullScreenAd<
   const [adPresentError, setAdPresentError] = useState<Error>();
   const [reward, setReward] = useState<Reward>();
 
-  const init = () => {
+  const initialize = () => {
     setAdLoaded(false);
     setAdPresented(false);
+    setAdDismissed(false);
     setAdLoadError(undefined);
     setAdPresentError(undefined);
     setReward(undefined);
@@ -37,7 +38,7 @@ export default function useFullScreenAd<
   const load = useCallback(
     (requestOptions?: RequestOptions) => {
       if (ad) {
-        init();
+        initialize();
         ad.load(requestOptions);
       }
     },
@@ -52,6 +53,7 @@ export default function useFullScreenAd<
 
   useEffect(() => {
     if (!ad) {
+      initialize();
       return;
     }
     const loadListener = ad.addEventListener('adLoaded', () => {
