@@ -21,6 +21,7 @@
   "scripts": {
     "lint:js": "eslint --ext '.js,.ts,.tsx' src/ && yarn prettier --check src/",
     "release": "release-it",
+    "type:check": "yarn tsc --noEmit",
     "prepare": "bob build"
   },
   "keywords": [
@@ -57,12 +58,30 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "eslint-plugin-unused-imports": "^1.1.5",
+    "husky": "^7.0.4",
+    "lint-staged": "^11.2.6",
     "prettier": "^2.4.1",
     "react": "17.0.2",
     "react-native": "0.66.1",
     "react-native-builder-bob": "^0.18.2",
     "release-it": "^14.11.6",
     "typescript": "^4.4.4"
+  },
+  "lint-staged": {
+    "*.(js|ts|tsx)": [
+      "eslint --ext '.js,.ts,.tsx' src/ --ignore-pattern src/reanimated1 --ignore-pattern react-native-reanimated.d.ts",
+      "prettier --write"
+    ]
+  },
+  "release-it": {
+    "npm": {
+      "publish": true
+    },
+    "github": {
+      "release": true,
+      "releaseName": "Release ${version}",
+      "web": true
+    }
   },
   "react-native-builder-bob": {
     "source": "src",
