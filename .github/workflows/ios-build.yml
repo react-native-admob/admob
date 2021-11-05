@@ -35,4 +35,4 @@ jobs:
         run: pod install
       - name: Build app
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: npx react-native run-ios
+        run: yarn ios
