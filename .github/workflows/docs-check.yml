@@ -1,0 +1,23 @@
+name: Test docs build
+on:
+  pull_request:
+    branches: 
+      - master
+    paths:
+      - 'docs/**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2.3.1
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          cache: 'yarn'
+      - name: Install and Build 🔧
+        working-directory: docs
+        run: |
+          yarn
+          yarn build
