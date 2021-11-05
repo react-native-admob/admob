@@ -1,8 +1,15 @@
 {
   "extends": "../tsconfig.json",
-  "baseUrl": ".",
-  "allowJs": true,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@react-native-admob/admob": [
+        "../src"
+      ]
+    },
+  },
   "include": [
-    "**/*"
+    "index.js",
+    "src/**/*",
   ]
 }
