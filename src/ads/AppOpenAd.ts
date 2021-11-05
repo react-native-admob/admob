@@ -46,7 +46,7 @@ export default class AppOpenAd extends FullScreenAd<
     if (this.sharedInstance) {
       if (this.sharedInstance.unitId === unitId) {
         this.sharedInstance.options = _options;
-        this.sharedInstance.load();
+        this.sharedInstance.load().catch(() => {});
         return this.sharedInstance;
       }
       this.sharedInstance.destroy();
