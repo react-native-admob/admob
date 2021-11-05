@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import AppOpenAd from 'src/ads/AppOpenAd';
 
+import AppOpenAd from '../ads/AppOpenAd';
 import InterstitialAd from '../ads/InterstitialAd';
 import RewardedAd from '../ads/RewardedAd';
 import RewardedInterstitialAd from '../ads/RewardedInterstitialAd';

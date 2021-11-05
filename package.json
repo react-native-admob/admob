@@ -19,7 +19,7 @@
     "!ios/build"
   ],
   "scripts": {
-    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "lint:js": "eslint --ext '.js,.ts,.tsx' src/ && yarn prettier --check src/",
     "release": "release-it",
     "prepare": "bob build"
   },
