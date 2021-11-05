@@ -1,17 +1,8 @@
 ---
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
----
-
----
-name: "\U0001F41E Bug report"
+name: "🐞 Bug report"
 about: Report an issue with Reanimated
 title: ''
-labels: "\U0001F41E Bug"
+labels: "🐞 Bug"
 assignees: ''
 ---
 
