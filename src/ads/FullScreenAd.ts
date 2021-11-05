@@ -66,7 +66,7 @@ export default class FullScreenAd<
       type === 'AppOpen' ||
       (this.options as FullScreenAdOptions).loadOnMounted
     ) {
-      this.load();
+      this.load().catch(() => {});
     }
   }
 
