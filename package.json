@@ -52,6 +52,7 @@
     "@babel/core": "^7.16.0",
     "@babel/eslint-parser": "^7.16.0",
     "@react-native-community/eslint-config": "^3.0.0",
+    "@release-it/conventional-changelog": "^3.3.0",
     "@types/react-native": "^0.66.2",
     "eslint": "^7.32.0",
     "eslint-plugin-import": "^2.25.2",
@@ -81,6 +82,30 @@
       "release": true,
       "releaseName": "Release ${version}",
       "web": true
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": {
+          "name": "conventionalcommits",
+          "types": [
+            {
+              "type": "feat",
+              "section": "💡 Features"
+            },
+            {
+              "type": "fix",
+              "section": "🐛 Bug Fixes"
+            },
+            {
+              "type": "docs",
+              "section": "📓 Docs improvements"
+            }
+          ]
+        },
+        "parserOpts": {
+          "noteKeywords": ["🚨 Breaking changes"]
+        }
+      }
     }
   },
   "react-native-builder-bob": {
