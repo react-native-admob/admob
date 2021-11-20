@@ -53,10 +53,20 @@ repositories {
     mavenCentral()
 }
 
+configurations.all {
+    resolutionStrategy.force 'androidx.work:work-runtime:2.6.0'
+}
+
 dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation 'com.google.android.gms:play-services-ads:[20.0, 21.0['
+
+    api(group: "androidx.work", name: "work-runtime") {
+        version {
+            strictly "2.6.0"
+        }
+    }
 
     def lifecycle_version = "2.3.0"
     implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
