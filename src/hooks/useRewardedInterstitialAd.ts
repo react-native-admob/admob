@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import useDeepCompareEffect from 'use-deep-compare-effect';
 
 import RewardedInterstitialAd from '../ads/RewardedInterstitialAd';
 import { AdHookReturns, FullScreenAdOptions } from '../types';
@@ -16,20 +17,13 @@ export default function useRewardedInterstitialAd(
 ): AdHookReturns {
   const [rewardedInterstitialAd, setRewardedInterstitialAd] =
     useState<RewardedInterstitialAd | null>(null);
-  const returns = useFullScreenAd(rewardedInterstitialAd);
 
-  useEffect(() => {
-    if (!unitId) {
-      setRewardedInterstitialAd((prevAd) => {
-        if (prevAd) {
-          prevAd.destroy();
-        }
-        return null;
-      });
-      return;
-    }
-    setRewardedInterstitialAd(RewardedInterstitialAd.createAd(unitId, options));
+  useDeepCompareEffect(() => {
+    setRewardedInterstitialAd((prevAd) => {
+      prevAd?.destroy();
+      return unitId ? RewardedInterstitialAd.createAd(unitId, options) : null;
+    });
   }, [unitId, options]);
 
-  return returns;
+  return useFullScreenAd(rewardedInterstitialAd);
 }

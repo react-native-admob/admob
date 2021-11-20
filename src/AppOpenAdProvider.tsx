@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import useDeepCompareEffect from 'use-deep-compare-effect';
 
 import AppOpenAd from './ads/AppOpenAd';
 import AppOpenAdContext from './AppOpenAdContext';
@@ -17,17 +18,11 @@ const AppOpenAdProvider = ({
 }: AppOpenAdProviderProps) => {
   const [appOpenAd, setAppOpenAd] = useState<AppOpenAd | null>(null);
 
-  useEffect(() => {
-    if (!unitId) {
-      setAppOpenAd((prevAd) => {
-        if (prevAd) {
-          prevAd.destroy();
-        }
-        return null;
-      });
-      return;
-    }
-    setAppOpenAd(AppOpenAd.createAd(unitId, options));
+  useDeepCompareEffect(() => {
+    setAppOpenAd((prevAd) => {
+      prevAd?.destroy();
+      return unitId ? AppOpenAd.createAd(unitId, options) : null;
+    });
   }, [unitId, options]);
 
   return (
