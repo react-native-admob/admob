@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import useDeepCompareEffect from 'use-deep-compare-effect';
 
 import RewardedAd from '../ads/RewardedAd';
 import { AdHookReturns, FullScreenAdOptions } from '../types';
@@ -15,20 +16,13 @@ export default function useRewardedAd(
   options?: FullScreenAdOptions
 ): AdHookReturns {
   const [rewardedAd, setRewardedAd] = useState<RewardedAd | null>(null);
-  const returns = useFullScreenAd(rewardedAd);
 
-  useEffect(() => {
-    if (!unitId) {
-      setRewardedAd((prevAd) => {
-        if (prevAd) {
-          prevAd.destroy();
-        }
-        return null;
-      });
-      return;
-    }
-    setRewardedAd(RewardedAd.createAd(unitId, options));
+  useDeepCompareEffect(() => {
+    setRewardedAd((prevAd) => {
+      prevAd?.destroy();
+      return unitId ? RewardedAd.createAd(unitId, options) : null;
+    });
   }, [unitId, options]);
 
-  return returns;
+  return useFullScreenAd(rewardedAd);
 }

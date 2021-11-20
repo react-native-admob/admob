@@ -16,7 +16,6 @@ export default function useAppOpenAd(): Omit<AdHookReturns, 'reward'> {
       'AppOpenAdProvider is not found. You should wrap your components with AppOpenProvider to use useAppOpenAd hook.'
     );
   }
-  const returns = useFullScreenAd(appOpenAdContext.appOpenAd);
 
-  return returns;
+  return useFullScreenAd(appOpenAdContext.appOpenAd);
 }
