@@ -102,6 +102,22 @@ export interface RequestOptions {
    * @ios
    */
   locationAccuracy?: number;
+
+  /**
+   * Custom key-value pairs to target Google Ad Manager campaigns.
+   *
+   * Takes an object.
+   *
+   * #### Example
+   *
+   * ```js
+   * await interstitialAd.requestAd({
+   *   targets: {
+   *     age: '25',
+   *   },
+   * });
+   */
+  targets?: { [key: string]: string };
 }
 
 export interface InitializationStatus {
