@@ -23,7 +23,18 @@ class RNAdMobFullScreenAd<T>: NSObject {
     }
     
     func getViewController(reject: RCTPromiseRejectBlock?) -> UIViewController? {
-        let viewController = RCTPresentedViewController()
+        var viewController = RCTKeyWindow()?.rootViewController
+        while true {
+            if let presented = viewController?.presentedViewController {
+                viewController = presented
+            } else if let nav = viewController as? UINavigationController {
+                viewController = nav.visibleViewController
+            } else if let tab = viewController as? UITabBarController {
+                viewController = tab.selectedViewController
+            } else {
+                break
+            }
+        }
         if (viewController == nil && reject != nil) {
             reject!("E_NIL_VC", "Cannot process Ad because the current View Controller is nil.", nil)
         }
