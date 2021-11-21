@@ -1,24 +1,6 @@
 import Foundation
 import GoogleMobileAds
 
-extension UIWindow {
-    func visibleViewController() -> UIViewController? {
-        var top = self.rootViewController
-        while true {
-            if let presented = top?.presentedViewController {
-                top = presented
-            } else if let nav = top as? UINavigationController {
-                top = nav.visibleViewController
-            } else if let tab = top as? UITabBarController {
-                top = tab.selectedViewController
-            } else {
-                break
-            }
-        }
-        return top
-    }
-}
-
 class RNAdMobFullScreenAd<T>: NSObject {
     let adHolder = RNAdMobAdHolder<T>()
     let presentPromiseHolder = RNAdMobPromiseHolder()
@@ -41,7 +23,18 @@ class RNAdMobFullScreenAd<T>: NSObject {
     }
     
     func getViewController(reject: RCTPromiseRejectBlock?) -> UIViewController? {
-        let viewController = RCTKeyWindow()?.visibleViewController()
+        var viewController = RCTKeyWindow()?.rootViewController
+        while true {
+            if let presented = viewController?.presentedViewController {
+                viewController = presented
+            } else if let nav = viewController as? UINavigationController {
+                viewController = nav.visibleViewController
+            } else if let tab = viewController as? UITabBarController {
+                viewController = tab.selectedViewController
+            } else {
+                break
+            }
+        }
         if (viewController == nil && reject != nil) {
             reject!("E_NIL_VC", "Cannot process Ad because the current View Controller is nil.", nil)
         }
