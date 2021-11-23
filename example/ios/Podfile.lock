@@ -404,10 +404,10 @@ PODS:
     - React-jsi (= 0.66.1)
     - React-logger (= 0.66.1)
     - React-perflogger (= 0.66.1)
-  - RNAdMob (1.1.2):
+  - RNAdMob (1.3.0):
     - Google-Mobile-Ads-SDK (~> 8.0)
     - React-Core
-  - RNBootSplash (3.2.4):
+  - RNBootSplash (3.2.6):
     - React-Core
   - RNScreens (3.9.0):
     - React-Core
@@ -626,8 +626,8 @@ SPEC CHECKSUMS:
   React-RCTVibration: 6600b5eed7c0fda4a433fa1198d1cb2690151791
   React-runtimeexecutor: 33a949a51bec5f8a3c9e8d8092deb259600d761e
   ReactCommon: 620442811dc6f707b4bf5e3b27d4f19c12d5a821
-  RNAdMob: e66c1c3a29af34fb8ed3d896982d8bdce86d40cc
-  RNBootSplash: 4844706cbb56a3270556c9b94e59dedadccd47e4
+  RNAdMob: 7ae03504e9f3b15cd0356aef09f1beab383c0200
+  RNBootSplash: 51eef7e143faeab63f81ddbb7c1de38b8fba66ed
   RNScreens: 4d79118be80f79fa1f4aa131909a1d6e86280af3
   Yoga: 2b4a01651f42a32f82e6cef3830a3ba48088237f
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
