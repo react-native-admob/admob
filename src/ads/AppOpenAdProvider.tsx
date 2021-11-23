@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 
-import { AppOpenAd } from './ads/fullscreen';
+import { AppOpenAdOptions } from '../types';
+
 import AppOpenAdContext from './AppOpenAdContext';
-import { AppOpenAdOptions } from './types';
+import { AppOpenAd } from './fullscreen';
 
 export interface AppOpenAdProviderProps {
   unitId: string | null;
