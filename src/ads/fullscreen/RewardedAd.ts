@@ -2,7 +2,7 @@ import {
   FullScreenAdOptions,
   RewardedAdEvent,
   RewardedAdHandlerType,
-} from '../types';
+} from '../../types';
 
 import FullScreenAd from './FullScreenAd';
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 
-import RewardedInterstitialAd from '../ads/RewardedInterstitialAd';
+import { RewardedInterstitialAd } from '../ads/fullscreen';
 import { AdHookReturns, FullScreenAdOptions } from '../types';
 
 import useFullScreenAd from './useFullScreenAd';
