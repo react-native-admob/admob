@@ -20,10 +20,7 @@ const AppOpenAdProvider = ({
   const [appOpenAd, setAppOpenAd] = useState<AppOpenAd | null>(null);
 
   useDeepCompareEffect(() => {
-    setAppOpenAd((prevAd) => {
-      prevAd?.destroy();
-      return unitId ? AppOpenAd.createAd(unitId, options) : null;
-    });
+    setAppOpenAd(unitId ? AppOpenAd.createAd(unitId, options) : null);
   }, [unitId, options]);
 
   return (
