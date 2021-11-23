@@ -1,4 +1,4 @@
-package com.rnadmob.admob;
+package com.rnadmob.admob.ads.banner;
 
 import androidx.annotation.Nullable;
 

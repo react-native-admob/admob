@@ -1,4 +1,4 @@
-package com.rnadmob.admob.ads;
+package com.rnadmob.admob.ads.fullscreen;
 
 import android.app.Activity;
 

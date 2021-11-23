@@ -1,4 +1,4 @@
-package com.rnadmob.admob.ads;
+package com.rnadmob.admob.ads.fullscreen;
 
 import static com.rnadmob.admob.RNAdMobEventModule.AD_DISMISSED;
 import static com.rnadmob.admob.RNAdMobEventModule.AD_FAILED_TO_LOAD;

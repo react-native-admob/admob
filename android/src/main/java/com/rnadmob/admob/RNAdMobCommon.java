@@ -20,7 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RNAdMobCommon {
-    static AdSize getAdSizeForAdaptiveBanner(ReactViewGroup reactViewGroup) {
+    static public AdSize getAdSizeForAdaptiveBanner(ReactViewGroup reactViewGroup) {
         try {
             Display display = Objects.requireNonNull(((ReactContext) reactViewGroup.getContext()).getCurrentActivity()).getWindowManager().getDefaultDisplay();
 
@@ -34,7 +34,7 @@ public class RNAdMobCommon {
         }
     }
 
-    static AdSize stringToAdSize(String value) {
+    static public AdSize stringToAdSize(String value) {
         Pattern pattern = Pattern.compile("([0-9]+)x([0-9]+)");
         Matcher matcher = pattern.matcher(value);
 
@@ -65,7 +65,7 @@ public class RNAdMobCommon {
         }
     }
 
-    static AdSize getAdSize(String preDefinedAdSize, ReactViewGroup reactViewGroup) {
+    static public AdSize getAdSize(String preDefinedAdSize, ReactViewGroup reactViewGroup) {
         if ("ADAPTIVE_BANNER".equals(preDefinedAdSize)) {
             return RNAdMobCommon.getAdSizeForAdaptiveBanner(reactViewGroup);
         } else {
@@ -73,7 +73,7 @@ public class RNAdMobCommon {
         }
     }
 
-    static boolean getIsAdManager(String unitId) {
+    static public boolean getIsAdManager(String unitId) {
         if (unitId == null) return false;
         return unitId.startsWith("/");
     }

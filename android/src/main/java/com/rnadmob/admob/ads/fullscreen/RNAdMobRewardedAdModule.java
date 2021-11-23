@@ -1,4 +1,4 @@
-package com.rnadmob.admob.ads;
+package com.rnadmob.admob.ads.fullscreen;
 
 import static com.rnadmob.admob.RNAdMobEventModule.REWARDED;
 
@@ -16,14 +16,14 @@ import com.google.android.gms.ads.AdLoadCallback;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.admanager.AdManagerAdRequest;
-import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd;
-import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback;
+import com.google.android.gms.ads.rewarded.RewardedAd;
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 
-public class RNAdMobRewardedInterstitialAdModule extends RNAdMobFullScreenAdModule<RewardedInterstitialAd> {
+public class RNAdMobRewardedAdModule extends RNAdMobFullScreenAdModule<RewardedAd> {
 
-    public static final String AD_TYPE = "RewardedInterstitial";
+    public static final String AD_TYPE = "Rewarded";
 
-    public RNAdMobRewardedInterstitialAdModule(ReactApplicationContext reactContext) {
+    public RNAdMobRewardedAdModule(ReactApplicationContext reactContext) {
         super(reactContext);
     }
 
@@ -51,11 +51,11 @@ public class RNAdMobRewardedInterstitialAdModule extends RNAdMobFullScreenAdModu
     }
 
     @Override
-    protected void load(String unitId, AdManagerAdRequest adRequest, AdLoadCallback<RewardedInterstitialAd> adLoadCallback, FullScreenContentCallback fullScreenContentCallback) {
-        RewardedInterstitialAd.load(getReactApplicationContext(), unitId, adRequest,
-                new RewardedInterstitialAdLoadCallback() {
+    protected void load(String unitId, AdManagerAdRequest adRequest, AdLoadCallback<RewardedAd> adLoadCallback, FullScreenContentCallback fullScreenContentCallback) {
+        RewardedAd.load(getReactApplicationContext(), unitId, adRequest,
+                new RewardedAdLoadCallback() {
                     @Override
-                    public void onAdLoaded(@NonNull RewardedInterstitialAd ad) {
+                    public void onAdLoaded(@NonNull RewardedAd ad) {
                         ad.setFullScreenContentCallback(fullScreenContentCallback);
                         adLoadCallback.onAdLoaded(ad);
                     }
@@ -68,7 +68,7 @@ public class RNAdMobRewardedInterstitialAdModule extends RNAdMobFullScreenAdModu
     }
 
     @Override
-    protected void show(RewardedInterstitialAd ad, Activity activity, int requestId) {
+    protected void show(RewardedAd ad, Activity activity, int requestId) {
         ad.show(activity, rewardItem -> {
             WritableMap reward = Arguments.createMap();
             reward.putInt("amount", rewardItem.getAmount());
