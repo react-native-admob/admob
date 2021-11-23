@@ -1,7 +1,8 @@
 import * as React from 'react';
 
-import AppOpenAd from './ads/AppOpenAd';
-import { AppOpenAdOptions } from './types';
+import { AppOpenAdOptions } from '../types';
+
+import { AppOpenAd } from './fullscreen';
 
 interface AppOpenAdContextState {
   unitId: string | null;

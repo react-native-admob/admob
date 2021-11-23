@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import AppOpenAd from '../ads/AppOpenAd';
-import InterstitialAd from '../ads/InterstitialAd';
-import RewardedAd from '../ads/RewardedAd';
-import RewardedInterstitialAd from '../ads/RewardedInterstitialAd';
+import {
+  AppOpenAd,
+  InterstitialAd,
+  RewardedAd,
+  RewardedInterstitialAd,
+} from '../ads/fullscreen';
 import { AdHookReturns, RequestOptions, Reward } from '../types';
 
 export default function useFullScreenAd<

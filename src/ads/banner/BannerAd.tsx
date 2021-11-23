@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { BannerAdProps } from '../types';
+import { BannerAdProps } from '../../types';
 
 import BaseAd, { RNAdMobBannerView } from './BaseAd';
 

@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import AppOpenAdContext from '../AppOpenAdContext';
+import AppOpenAdContext from '../ads/AppOpenAdContext';
 import { AdHookReturns } from '../types';
 
 import useFullScreenAd from './useFullScreenAd';

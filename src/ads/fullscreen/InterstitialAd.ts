@@ -2,7 +2,7 @@ import {
   FullScreenAdOptions,
   HandlerType,
   InterstitialAdEvent,
-} from '../types';
+} from '../../types';
 
 import FullScreenAd from './FullScreenAd';
 

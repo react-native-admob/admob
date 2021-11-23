@@ -3,7 +3,7 @@ import {
   AppOpenAdOptions,
   HandlerType,
   RequestOptions,
-} from '../types';
+} from '../../types';
 
 import FullScreenAd from './FullScreenAd';
 
