@@ -1,9 +1,6 @@
 #import "RNAdMobEvent.h"
 
 @implementation RNAdMobEvent
-{
-    BOOL hasListeners;
-}
 
 + (id)allocWithZone:(NSZone *)zone {
     static RNAdMobEvent *sharedInstance = nil;
@@ -15,14 +12,18 @@
 }
 
 + (void)sendEvent:(NSString *)eventName type:(NSString *)type requestId:(NSNumber*) requestId data:(NSDictionary *)data {
+    RNAdMobEvent* eventModule = [RNAdMobEvent allocWithZone: nil];
+    if (!eventModule.hasListeners) {
+        return;
+    }
     if (data) {
-        [[RNAdMobEvent allocWithZone: nil] sendEventWithName:eventName body:@{
+        [eventModule sendEventWithName:eventName body:@{
             @"type": type,
             @"requestId": requestId,
             @"data": data
         }];
     } else {
-        [[RNAdMobEvent allocWithZone: nil] sendEventWithName:eventName body:@{
+        [eventModule sendEventWithName:eventName body:@{
             @"type": type,
             @"requestId": requestId
         }];
@@ -46,12 +47,12 @@ RCT_EXPORT_MODULE();
 
 - (void)startObserving
 {
-    hasListeners = YES;
+    _hasListeners = YES;
 }
 
 - (void)stopObserving
 {
-    hasListeners = NO;
+    _hasListeners = NO;
 }
 
 @end
