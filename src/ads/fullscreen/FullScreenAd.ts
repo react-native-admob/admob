@@ -9,7 +9,7 @@ import {
   AppOpenAdOptions,
   FullScreenAdOptions,
   RequestOptions,
-} from '../types';
+} from '../../types';
 
 const RNAdMobEvent = NativeModules.RNAdMobEvent;
 

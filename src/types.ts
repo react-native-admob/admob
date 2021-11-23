@@ -1,6 +1,6 @@
 import { ViewProps } from 'react-native';
 
-import BannerAdSize from './BannerAdSize';
+import BannerAdSize from './constants/BannerAdSize';
 
 export type MaxAdContentRating = 'G' | 'MA' | 'PG' | 'T';
 

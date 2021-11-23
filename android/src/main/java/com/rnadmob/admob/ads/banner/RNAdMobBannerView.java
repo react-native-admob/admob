@@ -1,11 +1,11 @@
-package com.rnadmob.admob;
+package com.rnadmob.admob.ads.banner;
 
-import static com.rnadmob.admob.RNAdMobBannerViewManager.EVENT_AD_CLOSED;
-import static com.rnadmob.admob.RNAdMobBannerViewManager.EVENT_AD_FAILED_TO_LOAD;
-import static com.rnadmob.admob.RNAdMobBannerViewManager.EVENT_AD_LOADED;
-import static com.rnadmob.admob.RNAdMobBannerViewManager.EVENT_AD_OPENED;
-import static com.rnadmob.admob.RNAdMobBannerViewManager.EVENT_APP_EVENT;
-import static com.rnadmob.admob.RNAdMobBannerViewManager.EVENT_SIZE_CHANGE;
+import static com.rnadmob.admob.ads.banner.RNAdMobBannerViewManager.EVENT_AD_CLOSED;
+import static com.rnadmob.admob.ads.banner.RNAdMobBannerViewManager.EVENT_AD_FAILED_TO_LOAD;
+import static com.rnadmob.admob.ads.banner.RNAdMobBannerViewManager.EVENT_AD_LOADED;
+import static com.rnadmob.admob.ads.banner.RNAdMobBannerViewManager.EVENT_AD_OPENED;
+import static com.rnadmob.admob.ads.banner.RNAdMobBannerViewManager.EVENT_APP_EVENT;
+import static com.rnadmob.admob.ads.banner.RNAdMobBannerViewManager.EVENT_SIZE_CHANGE;
 
 import android.content.Context;
 
@@ -22,6 +22,7 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.admanager.AdManagerAdRequest;
 import com.google.android.gms.ads.admanager.AdManagerAdView;
 import com.google.android.gms.ads.admanager.AppEventListener;
+import com.rnadmob.admob.RNAdMobCommon;
 
 import java.util.Objects;
 
