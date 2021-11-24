@@ -13,7 +13,7 @@ import useFullScreenAd from './useFullScreenAd';
  */
 export default function useInterstitialAd(
   unitId: string | null,
-  options?: FullScreenAdOptions
+  options: FullScreenAdOptions = {}
 ): Omit<AdHookReturns, 'reward'> {
   const [interstitialAd, setInterstitialAd] = useState<InterstitialAd | null>(
     null

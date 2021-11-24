@@ -14,7 +14,7 @@ export interface AppOpenAdProviderProps {
 
 const AppOpenAdProvider = ({
   unitId,
-  options,
+  options = {},
   children,
 }: AppOpenAdProviderProps) => {
   const [appOpenAd, setAppOpenAd] = useState<AppOpenAd | null>(null);
