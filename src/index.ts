@@ -1,5 +1,6 @@
-export { default as AdMob } from './AdMob';
-export * from './AdMob';
+import AdMob from './AdMob';
+export default AdMob;
+
 export * from './ads';
 export * from './constants';
 export * from './hooks';
