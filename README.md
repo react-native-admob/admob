@@ -30,10 +30,6 @@ See [Installation Guide](https://react-native-admob.github.io/admob/docs/install
 
 Head over [Documentation Page](https://react-native-admob.github.io/admob/docs/usage/banner)
 
-## Change Log
-
-See [Change Log](CHANGELOG.md)
-
 ## License
 
 MIT
