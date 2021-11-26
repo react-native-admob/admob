@@ -11,16 +11,18 @@ Properties:
 | Name           | Type     | Description                                                                                   |
 | :------------- | :------- | :-------------------------------------------------------------------------------------------- |
 | adLoaded       | boolean  | Whether your ad is loaded and ready to present.                                               |
-| adPresented    | boolean  | Whether your ad is presented to user. Value is remained `true` until new ad is **loaded**.    |
-| adDismissed    | boolean  | Whether your ad is dismissed. Value is remained `true` until new ad is **presented**.         |
+| adPresented    | boolean  | Whether your ad is presented to user. The value remains `true` until **new ad is requested**. |
+| adDismissed    | boolean  | Whether your ad is dismissed. The value remains `true` until new ad is requested.             |
 | adShowing      | boolean  | Whether your ad is showing. The value is equal with `adPresented && !adDismissed`.            |
 | adLoadError    | Error    | Error during ad load.                                                                         |
 | adPresentError | Error    | Error during ad present.                                                                      |
-| load           | Function | Loads new ad. Can not call this function if the ad is loaded but not presented and dismissed. |
+| load           | Function | Loads new ad.                                                                                 |
 | show           | Function | Shows loaded ad. Ad must be loaded prior to this call.                                        |
 
 :::tip
 
-Note that `adPresented` value remains `true` after the ad is dismissed. The value changes to `false` when ad is initialized via `load()`. Also, `adDismissed` value remains `true` until new ad is presented even if after a new ad is loaded. To determine whether the ad is showing, use `adShowing` value.
+Note that `adPresented` value remains `true` after the ad is dismissed.
+The value changes to `false` when ad is initialized via `load()`.
+To determine whether the ad is showing, use `adShowing` value.
 
 :::

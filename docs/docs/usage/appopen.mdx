@@ -4,13 +4,43 @@ sidebar_position: 5
 ---
 
 App Open Ad is slightly different from other Full Screen Ads.
+
+## Creating App Open Ad
+
+### Hook API
+
+Simplest way to add App Open Ad to your app is wrapping your app components with `AppOpenAdProvider` and using `useAppOpenAd` hook.
+
+When you wrap your app components with `AppOpenAdProvider` it automatically creates `AppOpenAd` instance and start to provide App Open Ad to your app.
+
+### Class API
+
+If you are not going to use `useAppOpenAd` hook, you don't need to wrap your app with `AppOpenAdProvider`. But, you need to create ad instance using `AppOpenAd.create` method.
 While other Full Screen Ads can be created multiple times and each ads have their own instance, only one AppOpenAd instance can be exist in a app.
+If you create App Open Ad using `AppOpenAd.createAd()` static method more than once,
+previous ad instance will be destroyed and newly created ad instance will replace it.
 
-So, `AppOpenAd` class have static `sharedInstance` internally and when you create App Open Ad using `AppOpenAd.createAd()` method,
-it will replace existing `sharedInstance` and app will always have signle `AppOpenAd` instance.
+You don't need to keep reference to `AppOpenAd` instance because it is managed to be singleton and you can access the ad via static methods.
 
-Also, you have to wrap your app components with [AppOpenAdProvider](/docs/api/components/AppOpenAdProvider) to use `useAppOpenAd` hook.
-`AppOpenAdProvider` is needed beacuse it provides sigleton `AppOpenAd` instance to hooks.
+## Loading App Open Ad
+
+Library automatically loads ad when it is created or dismissed.
+
+Also, ad is automatically loaded when app comes to foreground from background, but has no ad loaded.
+
+## Showing App Open Ad
+
+Ad is automatically shown when app comes to foreground and has loaded ad previously.
+
+### Cold starts and loading screens
+
+"Cold starts" occur when your app is launched but was not previously suspended in memory.
+
+An example of a cold start is when a user opens your app for the first time. With cold starts, you won't have a previously loaded app open ad that's ready to be shown right away. The delay between when you request an ad and receive an ad back can create a situation where users are able to briefly use your app before being surprised by an out of context ad. This should be avoided because it is a bad user experience.
+
+The preferred way to use app open ads on cold starts is to use a loading screen to load your game or app assets, and to only show the ad from the loading screen. If your app has completed loading and has sent the user to the main content of your app, do not show the ad.
+
+## Usage Example
 
 Example below uses external library [react-native-bootsplash](https://github.com/zoontek/react-native-bootsplash) to implement splash screen.
 This is not necessary, but we recommend you to use this library with App Open Ad because App Open Ad must be showed before the app content showed.

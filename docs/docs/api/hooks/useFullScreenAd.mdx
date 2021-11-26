@@ -39,13 +39,13 @@ Properties:
 | Name           | Type                     | Description                                                                                                                      |
 | :------------- | :----------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
 | adLoaded       | boolean                  | Whether your ad is loaded and ready to present.                                                                                  |
-| adPresented    | boolean                  | Whether your ad is presented to user. Value is remained `true` until **new ad is requested**.                                    |
-| adDismissed    | boolean                  | Whether your ad is dismissed. Value is remained `true` until new ad is requested.                                                |
+| adPresented    | boolean                  | Whether your ad is presented to user. The value remains `true` until **new ad is requested**.                                    |
+| adDismissed    | boolean                  | Whether your ad is dismissed. The value remains `true` until new ad is requested.                                                |
 | adShowing      | boolean                  | Whether your ad is showing. The value is equal with `adPresented && !adDismissed`.                                               |
 | adLoadError    | Error \| undefined       | `Error` object throwed during ad load.                                                                                           |
 | adPresentError | Error \| undefined       | `Error` object throwed during ad present.                                                                                        |
 | reward         | [Reward](#) \| undefined | Reward earned by user. The value is `undefined` until user earns reward. Available only in RewardedAd or RewardedInterstitialAd. |
-| load           | Function                 | Loads new ad. Can not call this function if the ad is loaded but not presented and dismissed.                                    |
+| load           | Function                 | Loads new ad.                                                                                                                    |
 | show           | Function                 | Shows loaded ad. Ad must be loaded prior to this call.                                                                           |
 
 :::tip
