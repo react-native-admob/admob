@@ -189,15 +189,13 @@ export type FullScreenAdEvent =
   | 'adLoaded'
   | 'adFailedToLoad';
 
-export type InterstitialAdEvent = FullScreenAdEvent;
-
 export type RewardedAdEvent = FullScreenAdEvent | 'rewarded';
 
-export type AppOpenAdEvent = FullScreenAdEvent;
+export type FullScreenAdHandlerType = (() => void) | ((error: Error) => void);
 
-export type HandlerType = (() => void) | ((error: Error) => void);
-
-export type RewardedAdHandlerType = HandlerType | ((reward: Reward) => void);
+export type RewardedAdHandlerType =
+  | FullScreenAdHandlerType
+  | ((reward: Reward) => void);
 
 export interface Reward {
   type: string;

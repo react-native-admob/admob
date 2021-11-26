@@ -1,7 +1,7 @@
 import {
-  AppOpenAdEvent,
   AppOpenAdOptions,
-  HandlerType,
+  FullScreenAdEvent,
+  FullScreenAdHandlerType,
   RequestOptions,
 } from '../../types';
 
@@ -15,10 +15,7 @@ const defaultOptions: AppOpenAdOptions = {
 
 let _appOpenRequest = 0;
 
-export default class AppOpenAd extends FullScreenAd<
-  AppOpenAdEvent,
-  HandlerType
-> {
+export default class AppOpenAd extends FullScreenAd {
   private constructor(
     requestId: number,
     unitId: string,
@@ -97,7 +94,10 @@ export default class AppOpenAd extends FullScreenAd<
    * @param event Event name
    * @param handler Event handler
    */
-  static addEventListener(event: AppOpenAdEvent, handler: HandlerType) {
+  static addEventListener(
+    event: FullScreenAdEvent,
+    handler: FullScreenAdHandlerType
+  ) {
     this.checkInstance();
     return this.sharedInstance!.addEventListener(event, handler);
   }

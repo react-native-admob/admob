@@ -1,17 +1,10 @@
-import {
-  FullScreenAdOptions,
-  HandlerType,
-  InterstitialAdEvent,
-} from '../../types';
+import { FullScreenAdOptions } from '../../types';
 
 import FullScreenAd from './FullScreenAd';
 
 let _interstitialRequest = 0;
 
-export default class InterstitialAd extends FullScreenAd<
-  InterstitialAdEvent,
-  HandlerType
-> {
+export default class InterstitialAd extends FullScreenAd {
   private constructor(
     requestId: number,
     unitId: string,

@@ -7,8 +7,12 @@ import {
 import {
   AdType,
   AppOpenAdOptions,
+  FullScreenAdEvent,
+  FullScreenAdHandlerType,
   FullScreenAdOptions,
   RequestOptions,
+  RewardedAdEvent,
+  RewardedAdHandlerType,
 } from '../../types';
 
 const RNAdMobEvent = NativeModules.RNAdMobEvent;
@@ -39,14 +43,14 @@ const defaultOptions: FullScreenAdOptions = {
 };
 
 export default class FullScreenAd<
-  E extends string,
-  H extends (event?: any) => any
+  E extends RewardedAdEvent = FullScreenAdEvent,
+  H extends RewardedAdHandlerType = FullScreenAdHandlerType
 > {
-  type: AdType;
-  requestId: number;
-  unitId: string;
-  listeners: EmitterSubscription[];
-  options: FullScreenAdOptions | AppOpenAdOptions;
+  readonly type: AdType;
+  readonly requestId: number;
+  readonly unitId: string;
+  readonly options: FullScreenAdOptions | AppOpenAdOptions;
+  private listeners: EmitterSubscription[];
   private nativeModule: FullScreenAdInterface;
 
   protected constructor(
