@@ -7,8 +7,7 @@ import {
   ViewStyle,
 } from 'react-native';
 
-import { GAMBannerAdProps } from '../..';
-import { BannerAdProps } from '../../types';
+import { BannerAdProps, GAMBannerAdProps } from '../../types';
 
 interface BannerAdState {
   style: StyleProp<ViewStyle>;

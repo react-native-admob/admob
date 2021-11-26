@@ -6,7 +6,12 @@ import {
   RewardedAd,
   RewardedInterstitialAd,
 } from '../ads/fullscreen';
-import { AdHookReturns, RequestOptions, Reward } from '../types';
+import {
+  AdHookReturns,
+  FullScreenAdOptions,
+  RequestOptions,
+  Reward,
+} from '../types';
 
 export default function useFullScreenAd<
   T extends
@@ -41,7 +46,7 @@ export default function useFullScreenAd<
     (requestOptions?: RequestOptions) => {
       if (ad) {
         initialize();
-        ad.load(requestOptions);
+        ad.load(requestOptions).catch(() => {});
       }
     },
     [ad]
@@ -49,7 +54,7 @@ export default function useFullScreenAd<
 
   const show = useCallback(() => {
     if (ad) {
-      ad.show();
+      ad.show().catch(() => {});
     }
   }, [ad]);
 
@@ -58,28 +63,29 @@ export default function useFullScreenAd<
       initialize();
       return;
     }
-    const isRewardedAd =
-      ad instanceof RewardedAd || ad instanceof RewardedInterstitialAd;
     const listeners = [
       ad.addEventListener('adLoaded', () => {
         setAdLoaded(true);
-        setAdPresented(false);
       }),
       ad.addEventListener('adFailedToLoad', (error: Error) =>
         setAdLoadError(error)
       ),
       ad.addEventListener('adPresented', () => {
         setAdPresented(true);
-        setAdDismissed(false);
       }),
       ad.addEventListener('adFailedToPresent', (error: Error) =>
         setAdPresentError(error)
       ),
       ad.addEventListener('adDismissed', () => {
         setAdDismissed(true);
-        setAdLoaded(false);
+        if (
+          ad.type !== 'AppOpen' &&
+          (ad.options as FullScreenAdOptions).loadOnDismissed
+        ) {
+          initialize();
+        }
       }),
-      isRewardedAd
+      ad.type === 'Rewarded' || ad.type === 'RewardedInterstitial'
         ? (ad as RewardedAd | RewardedInterstitialAd).addEventListener(
             'rewarded',
             (r: Reward) => setReward(r)
