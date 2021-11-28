@@ -2,7 +2,6 @@ package com.rnadmob.admob.ads.fullscreen;
 
 import static com.rnadmob.admob.RNAdMobEventModule.AD_FAILED_TO_PRESENT;
 
-import android.app.Activity;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
@@ -97,7 +96,7 @@ public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd>
     }
 
     @Override
-    protected void show(AppOpenAd ad, Activity activity, int requestId) {
+    protected void show(AppOpenAd ad, int requestId) {
         if (isAdExpired()) {
             presentPromiseHolder.reject(requestId, "E_AD_NOT_READY", "Ad is expired.");
             WritableMap error = Arguments.createMap();
@@ -106,7 +105,7 @@ public class RNAdMobAppOpenAdModule extends RNAdMobFullScreenAdModule<AppOpenAd>
             requestAd(requestId, unitId, options, null);
             return;
         }
-        ad.show(activity);
+        ad.show(currentActivity);
     }
 
     private boolean isAdExpired() {
