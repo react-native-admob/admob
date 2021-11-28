@@ -42,8 +42,8 @@ Properties:
 | adPresented    | boolean                  | Whether your ad is presented to user. The value remains `true` until **new ad is requested**.                                    |
 | adDismissed    | boolean                  | Whether your ad is dismissed. The value remains `true` until new ad is requested.                                                |
 | adShowing      | boolean                  | Whether your ad is showing. The value is equal with `adPresented && !adDismissed`.                                               |
-| adLoadError    | Error \| undefined       | `Error` object throwed during ad load.                                                                                           |
-| adPresentError | Error \| undefined       | `Error` object throwed during ad present.                                                                                        |
+| adLoadError    | AdError \| undefined     | `AdError` object throwed during ad load.                                                                                         |
+| adPresentError | AdError \| undefined     | `AdError` object throwed during ad present.                                                                                      |
 | reward         | [Reward](#) \| undefined | Reward earned by user. The value is `undefined` until user earns reward. Available only in RewardedAd or RewardedInterstitialAd. |
 | load           | Function                 | Loads new ad.                                                                                                                    |
 | show           | Function                 | Shows loaded ad. Ad must be loaded prior to this call.                                                                           |
