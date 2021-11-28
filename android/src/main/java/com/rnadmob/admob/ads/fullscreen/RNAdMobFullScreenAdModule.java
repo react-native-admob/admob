@@ -6,15 +6,12 @@ import static com.rnadmob.admob.RNAdMobEventModule.AD_FAILED_TO_PRESENT;
 import static com.rnadmob.admob.RNAdMobEventModule.AD_LOADED;
 import static com.rnadmob.admob.RNAdMobEventModule.AD_PRESENTED;
 
-import android.app.Activity;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.google.android.gms.ads.AdError;
@@ -22,6 +19,7 @@ import com.google.android.gms.ads.AdLoadCallback;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.admanager.AdManagerAdRequest;
+import com.rnadmob.admob.ActivityAwareJavaModule;
 import com.rnadmob.admob.RNAdMobAdHolder;
 import com.rnadmob.admob.RNAdMobCommon;
 import com.rnadmob.admob.RNAdMobEventModule;
@@ -30,7 +28,7 @@ import com.rnadmob.admob.RNAdMobPromiseHolder;
 import java.util.Locale;
 import java.util.Objects;
 
-public abstract class RNAdMobFullScreenAdModule<T> extends ReactContextBaseJavaModule {
+public abstract class RNAdMobFullScreenAdModule<T> extends ActivityAwareJavaModule {
 
     RNAdMobAdHolder<T> adHolder = new RNAdMobAdHolder<>();
     RNAdMobPromiseHolder presentPromiseHolder = new RNAdMobPromiseHolder();
@@ -56,7 +54,7 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ReactContextBaseJavaM
 
     protected abstract void load(String unitId, AdManagerAdRequest adRequest, AdLoadCallback<T> adLoadCallback, FullScreenContentCallback fullScreenContentCallback);
 
-    protected abstract void show(T ad, Activity activity, int requestId);
+    protected abstract void show(T ad, int requestId);
 
     protected void sendEvent(String eventName, int requestId, @Nullable WritableMap data) {
         RNAdMobEventModule.sendEvent(eventName, getAdType(), requestId, data);
@@ -158,13 +156,12 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ReactContextBaseJavaM
     }
 
     protected void requestAd(int requestId, String unitId, ReadableMap options, final Promise promise) {
-        Activity activity = getCurrentActivity(promise);
-        if (activity == null) {
+        if (currentActivity == null) {
             return;
         }
 
         adHolder.remove(requestId);
-        activity.runOnUiThread(() -> {
+        currentActivity.runOnUiThread(() -> {
             AdManagerAdRequest adRequest = RNAdMobCommon.buildAdRequest(Objects.requireNonNull(options.getMap("requestOptions")));
             AdLoadCallback<T> adLoadCallback = getAdLoadCallback(requestId, options, promise);
             FullScreenContentCallback fullScreenContentCallback = getFullScreenContentCallback(requestId, unitId, options);
@@ -173,16 +170,15 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ReactContextBaseJavaM
     }
 
     protected void presentAd(int requestId, final Promise promise) {
-        Activity activity = getCurrentActivity(promise);
-        if (activity == null) {
+        if (currentActivity == null) {
             return;
         }
 
-        activity.runOnUiThread(() -> {
+        currentActivity.runOnUiThread(() -> {
             T ad = adHolder.get(requestId);
             if (ad != null) {
                 presentPromiseHolder.add(requestId, promise);
-                show(ad, activity, requestId);
+                show(ad, requestId);
             } else {
                 if (promise != null) {
                     promise.reject("E_AD_NOT_READY", "Ad is not ready.");
