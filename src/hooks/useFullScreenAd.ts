@@ -80,7 +80,7 @@ export default function useFullScreenAd<
       ad.addEventListener('adDismissed', () => {
         setAdDismissed(true);
         if (
-          ad.type !== 'AppOpen' &&
+          ad.type === 'AppOpen' ||
           (ad.options as FullScreenAdOptions).loadOnDismissed
         ) {
           initialize();
