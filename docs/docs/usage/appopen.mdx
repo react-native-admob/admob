@@ -40,6 +40,12 @@ An example of a cold start is when a user opens your app for the first time. Wit
 
 The preferred way to use app open ads on cold starts is to use a loading screen to load your game or app assets, and to only show the ad from the loading screen. If your app has completed loading and has sent the user to the main content of your app, do not show the ad.
 
+## Accessing Ad's status
+
+You can access to ad's status by using derived values of `useAppOpenAd` hook.
+
+If you are using Class API instead of using hook, add listeners to listen for ad's status changes such as `adDismissed` event.
+
 ## Usage Example
 
 Example below uses external library [react-native-bootsplash](https://github.com/zoontek/react-native-bootsplash) to implement splash screen.

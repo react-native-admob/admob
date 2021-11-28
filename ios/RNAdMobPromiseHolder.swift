@@ -23,20 +23,11 @@ class RNAdMobPromiseHolder {
         rejectArray.removeValue(forKey: requestId)
     }
     
-    func reject(requestId: Int, error: Error) {
+    func reject(requestId: Int, errorData: Dictionary<String, Any>) {
         let rejectBlock = rejectArray[requestId]
         if (rejectBlock != nil) {
-            let code = String.localizedStringWithFormat("E_AD_PRESENT_FAILED(%d)", (error as NSError).code)
-            rejectBlock!(code, error.localizedDescription, error)
-        }
-        resolveArray.removeValue(forKey: requestId)
-        rejectArray.removeValue(forKey: requestId)
-    }
-    
-    func reject(requestId: Int, code: String, message: String) {
-        let rejectBlock = rejectArray[requestId]
-        if (rejectBlock != nil) {
-            rejectBlock!(code, message, nil)
+            let error = NSError.init(domain: "com.rnadmob.admob", code: 0, userInfo: errorData)
+            rejectBlock!(kEventAdFailedToPresent, "Error occurred while showing ad.", error)
         }
         resolveArray.removeValue(forKey: requestId)
         rejectArray.removeValue(forKey: requestId)

@@ -22,6 +22,35 @@ class RNAdMobFullScreenAd<T>: NSObject {
         RNAdMobEvent.send(eventName, type: getAdType(), requestId: NSNumber(value: requestId), data: data)
     }
     
+    func sendError(eventName: String, requestId: Int, reject: RCTPromiseRejectBlock?, errorData: Dictionary<String, Any>) {
+        let error = NSError.init(domain: "com.rnadmob.admob", code: 0, userInfo: errorData)
+        if (reject != nil) {
+            var message = ""
+            if (eventName == kEventAdFailedToLoad) {
+                message = "Error occurred while loading ad."
+            } else {
+                message = "Error occurred while showing ad."
+            }
+            reject!(eventName, message, error)
+        } else if (eventName == kEventAdFailedToPresent) {
+            presentPromiseHolder.reject(requestId: requestId, errorData: errorData)
+        }
+        sendEvent(eventName: eventName, requestId: requestId, data: errorData)
+    }
+    
+    func createErrorData(code: Int?, message: String) -> Dictionary<String, Any> {
+        var error = Dictionary<String, Any>()
+        if (code != nil) {
+            error.updateValue(code!, forKey: "code")
+        }
+        error.updateValue(message, forKey: "message")
+        return error
+    }
+    
+    func createErrorData(error: Error) -> Dictionary<String, Any> {
+        return createErrorData(code: (error as NSError).code, message: error.localizedDescription)
+    }
+    
     func getViewController(reject: RCTPromiseRejectBlock?) -> UIViewController? {
         var viewController = RCTKeyWindow()?.rootViewController
         while true {
@@ -34,9 +63,6 @@ class RNAdMobFullScreenAd<T>: NSObject {
             } else {
                 break
             }
-        }
-        if (viewController == nil && reject != nil) {
-            reject!("E_NIL_VC", "Cannot process Ad because the current View Controller is nil.", nil)
         }
         return viewController
     }
@@ -76,15 +102,8 @@ class RNAdMobFullScreenAd<T>: NSObject {
             }
         }
         func onAdFailedToLoad(error: Error) {
-            if (reject != nil) {
-                let code = String.localizedStringWithFormat("E_AD_LOAD_FAILED(%d)", (error as NSError).code)
-                reject!(code, error.localizedDescription, error)
-            }
-            
-            var data = Dictionary<String, Any>()
-            data.updateValue((error as NSError).code, forKey: "code")
-            data.updateValue(error.localizedDescription, forKey: "message")
-            module.sendEvent(eventName: kEventAdFailedToLoad, requestId: requestId, data: data)
+            let errorData = module.createErrorData(error: error)
+            module.sendError(eventName: kEventAdFailedToLoad, requestId: requestId, reject: reject, errorData: errorData)
             
             if (module.getAdType() == RNAdMobAppOpen.AD_TYPE) {
                 if (!RNAdMobAppOpen.appStarted) {
@@ -110,13 +129,8 @@ class RNAdMobFullScreenAd<T>: NSObject {
             module.sendEvent(eventName: kEventAdPresented, requestId: requestId, data: nil)
         }
         func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
-            module.presentPromiseHolder.reject(requestId: requestId, error: error)
-            module.sendEvent(eventName: kEventAdFailedToPresent, requestId: requestId, data: nil)
-            
-            var data = Dictionary<String, Any>()
-            data.updateValue((error as NSError).code, forKey: "code")
-            data.updateValue(error.localizedDescription, forKey: "message")
-            module.sendEvent(eventName: kEventAdFailedToLoad, requestId: requestId, data: data)
+            let errorData = module.createErrorData(error: error)
+            module.sendError(eventName: kEventAdFailedToPresent, requestId: requestId, reject: nil, errorData: errorData)
             
             module.adHolder.remove(requestId: requestId)
         }
@@ -155,6 +169,8 @@ class RNAdMobFullScreenAd<T>: NSObject {
         DispatchQueue.main.async { [self] in
             let viewController = getViewController(reject: reject)
             if (viewController == nil) {
+                let errorData = createErrorData(code: nil, message: "Current view controller is nil.")
+                sendError(eventName: kEventAdFailedToPresent, requestId: requestId, reject: reject, errorData: errorData)
                 return
             }
             
@@ -165,18 +181,16 @@ class RNAdMobFullScreenAd<T>: NSObject {
                 }
                 self.show(ad: ad!, viewController: viewController!, requestId: requestId)
             } else {
-                if (reject != nil) {
-                    reject!("E_AD_NOT_READY", "Ad is not ready", nil)
-                }
-                var error = Dictionary<String, Any>()
-                error.updateValue("Ad is not ready", forKey: "message")
-                sendEvent(eventName: kEventAdFailedToPresent, requestId: requestId, data: error)
+                let errorData = createErrorData(code: nil, message: "Ad is not loaded.")
+                sendError(eventName: kEventAdFailedToPresent, requestId: requestId, reject: nil, errorData: errorData)
             }
         }
     }
     
     func destroyAd(_ requestId: Int) {
         adHolder.remove(requestId: requestId)
-        presentPromiseHolder.reject(requestId: requestId, code: "E_AD_DESTROYED", message: "Ad has been destroyed")
+        
+        let errorData = createErrorData(code: nil, message: "Ad has been destroyed.")
+        presentPromiseHolder.reject(requestId: requestId, errorData: errorData)
     }
 }

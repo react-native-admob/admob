@@ -1,8 +1,11 @@
 package com.rnadmob.admob;
 
+import static com.rnadmob.admob.RNAdMobEventModule.AD_FAILED_TO_PRESENT;
+
 import android.util.SparseArray;
 
 import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.WritableMap;
 import com.google.android.gms.ads.AdError;
 
 import java.util.Locale;
@@ -26,19 +29,10 @@ public class RNAdMobPromiseHolder {
         }
     }
 
-    public void reject(int requestId, AdError adError) {
+    public void reject(int requestId, WritableMap error) {
         Promise promise = promiseArray.get(requestId);
         if (promise != null) {
-            String code = String.format(Locale.getDefault(),"E_AD_PRESENT_FAILED(%d)", adError.getCode());
-            promise.reject(code, adError.getMessage());
-            promiseArray.delete(requestId);
-        }
-    }
-
-    public void reject(int requestId, String code, String message) {
-        Promise promise = promiseArray.get(requestId);
-        if (promise != null) {
-            promise.reject(code, message);
+            promise.reject(AD_FAILED_TO_PRESENT, "Error occurred while presenting ad.", error);
             promiseArray.delete(requestId);
         }
     }
