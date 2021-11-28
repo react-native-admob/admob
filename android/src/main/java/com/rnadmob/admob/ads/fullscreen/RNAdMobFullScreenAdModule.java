@@ -25,7 +25,6 @@ import com.rnadmob.admob.RNAdMobCommon;
 import com.rnadmob.admob.RNAdMobEventModule;
 import com.rnadmob.admob.RNAdMobPromiseHolder;
 
-import java.util.Locale;
 import java.util.Objects;
 
 public abstract class RNAdMobFullScreenAdModule<T> extends ActivityAwareJavaModule {
@@ -60,12 +59,33 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ActivityAwareJavaModu
         RNAdMobEventModule.sendEvent(eventName, getAdType(), requestId, data);
     }
 
-    protected Activity getCurrentActivity(Promise promise) {
-        Activity activity = super.getCurrentActivity();
-        if (activity == null && promise != null) {
-            promise.reject("E_NULL_ACTIVITY", "Cannot process Ad because the current Activity is null.");
+    protected void sendError(String eventName, int requestId, @Nullable Promise promise, WritableMap error) {
+        if (promise != null) {
+            String message;
+            if (eventName.equals(AD_FAILED_TO_LOAD)) {
+                message = "Error occurred while loading ad.";
+            } else {
+                message = "Error occurred while showing ad.";
+            }
+            promise.reject(eventName, message, error.copy());
+        } else if (eventName.equals(AD_FAILED_TO_PRESENT)) {
+            presentPromiseHolder.reject(requestId, error.copy());
         }
-        return activity;
+        sendEvent(eventName, requestId, error.copy());
+    }
+
+    protected WritableMap createErrorObject(@Nullable Integer code, String message) {
+        WritableMap error = Arguments.createMap();
+        if (code == null)
+            error.putNull("code");
+        else
+            error.putInt("code", code);
+        error.putString("message", message);
+        return error;
+    }
+
+    protected WritableMap createErrorObject(AdError adError) {
+        return createErrorObject(adError.getCode(), adError.getMessage());
     }
 
     private AdLoadCallback<T> getAdLoadCallback(int requestId, ReadableMap options, Promise promise) {
@@ -95,15 +115,8 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ActivityAwareJavaModu
 
             @Override
             public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                if (promise != null) {
-                    String code = String.format(Locale.getDefault(), "E_AD_LOAD_FAILED(%d)", loadAdError.getCode());
-                    promise.reject(code, loadAdError.getMessage());
-                }
-
-                WritableMap error = Arguments.createMap();
-                error.putInt("code", loadAdError.getCode());
-                error.putString("message", loadAdError.getMessage());
-                sendEvent(AD_FAILED_TO_LOAD, requestId, error);
+                WritableMap error = createErrorObject(loadAdError);
+                sendError(AD_FAILED_TO_LOAD, requestId, promise, error);
 
                 if (getAdType().equals(RNAdMobAppOpenAdModule.AD_TYPE)) {
                     if (!RNAdMobAppOpenAdModule.appStarted) {
@@ -136,12 +149,8 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ActivityAwareJavaModu
 
             @Override
             public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
-                presentPromiseHolder.reject(requestId, adError);
-
-                WritableMap error = Arguments.createMap();
-                error.putInt("code", adError.getCode());
-                error.putString("message", adError.getMessage());
-                sendEvent(AD_FAILED_TO_PRESENT, requestId, error);
+                WritableMap error = createErrorObject(adError);
+                sendError(AD_FAILED_TO_PRESENT, requestId, null, error);
 
                 adHolder.remove(requestId);
             }
@@ -149,7 +158,6 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ActivityAwareJavaModu
             @Override
             public void onAdShowedFullScreenContent() {
                 presentPromiseHolder.resolve(requestId);
-
                 sendEvent(AD_PRESENTED, requestId, null);
             }
         };
@@ -157,6 +165,8 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ActivityAwareJavaModu
 
     protected void requestAd(int requestId, String unitId, ReadableMap options, final Promise promise) {
         if (currentActivity == null) {
+            WritableMap error = createErrorObject(null, "Current activity is null.");
+            sendError(AD_FAILED_TO_LOAD, requestId, promise, error);
             return;
         }
 
@@ -171,6 +181,8 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ActivityAwareJavaModu
 
     protected void presentAd(int requestId, final Promise promise) {
         if (currentActivity == null) {
+            WritableMap error = createErrorObject(null, "Current activity is null.");
+            sendError(AD_FAILED_TO_PRESENT, requestId, promise, error);
             return;
         }
 
@@ -180,18 +192,16 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ActivityAwareJavaModu
                 presentPromiseHolder.add(requestId, promise);
                 show(ad, requestId);
             } else {
-                if (promise != null) {
-                    promise.reject("E_AD_NOT_READY", "Ad is not ready.");
-                }
-                WritableMap error = Arguments.createMap();
-                error.putString("message", "Ad is not ready.");
-                sendEvent(AD_FAILED_TO_PRESENT, requestId, error);
+                WritableMap error = createErrorObject(null, "Ad is not loaded.");
+                sendError(AD_FAILED_TO_PRESENT, requestId, promise, error);
             }
         });
     }
 
     protected void destroyAd(int requestId) {
         adHolder.remove(requestId);
-        presentPromiseHolder.reject(requestId, "E_AD_DESTROYED", "Ad has been destroyed.");
+
+        WritableMap error = createErrorObject(null, "Ad has been destroyed.");
+        presentPromiseHolder.reject(requestId, error);
     }
 }

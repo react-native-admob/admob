@@ -55,10 +55,9 @@ class RNAdMobAppOpen: RNAdMobFullScreenAd<GADAppOpenAd> {
     
     override func show(ad: GADAppOpenAd, viewController: UIViewController, requestId: Int) {
         if (isAdExpired()) {
-            presentPromiseHolder.reject(requestId: requestId, code: "E_AD_NOT_READY", message: "Ad is expired")
-            var error = Dictionary<String, Any>()
-            error.updateValue("Ad is expired", forKey: "message")
-            sendEvent(eventName: kEventAdFailedToPresent, requestId: requestId, data: error)
+            let errorData = createErrorData(code: nil, message: "Ad is expired.")
+            sendError(eventName: kEventAdFailedToPresent, requestId: requestId, reject: nil, errorData: errorData)
+            
             requestAd(requestId, unitId: unitId!, options: options!, resolve: nil, reject: nil)
             return
         }

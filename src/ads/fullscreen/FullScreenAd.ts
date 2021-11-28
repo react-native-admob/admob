@@ -4,6 +4,7 @@ import {
   NativeModules,
 } from 'react-native';
 
+import AdError from '../../AdError';
 import {
   AdType,
   AppOpenAdOptions,
@@ -90,7 +91,12 @@ export default class FullScreenAd<
   addEventListener(event: E, handler: H) {
     const eventHandler = (e: Event) => {
       if (e.type === this.type && e.requestId === this.requestId) {
-        handler(e.data);
+        if (event === 'adFailedToLoad' || event === 'adFailedToPresent') {
+          // @ts-ignore
+          handler(new AdError(e.data.message, e.data.code));
+        } else {
+          handler(e.data);
+        }
       }
     };
     const listener = eventEmitter.addListener(event, eventHandler);
@@ -118,21 +124,41 @@ export default class FullScreenAd<
    * Loads a new Ad.
    * @param requestOptions Optional RequestOptions used to load the ad.
    */
-  load(requestOptions: RequestOptions = {}) {
+  async load(requestOptions: RequestOptions = {}) {
     const options = {
       ...this.options,
       ...({
         requestOptions,
       } as FullScreenAdOptions | AppOpenAdOptions),
     };
-    return this.nativeModule.requestAd(this.requestId, this.unitId, options);
+    try {
+      return this.nativeModule.requestAd(this.requestId, this.unitId, options);
+    } catch (error: any) {
+      if (error.code === 'adFailedToLoad') {
+        return Promise.reject(
+          new AdError(error.userInfo.message, error.userInfo.code)
+        );
+      } else {
+        return Promise.reject(error);
+      }
+    }
   }
 
   /**
    * Shows loaded Ad.
    */
-  show() {
-    return this.nativeModule.presentAd(this.requestId);
+  async show() {
+    try {
+      return this.nativeModule.presentAd(this.requestId);
+    } catch (error: any) {
+      if (error.code === 'adFailedToPresent') {
+        return Promise.reject(
+          new AdError(error.userInfo.message, error.userInfo.code)
+        );
+      } else {
+        return Promise.reject(error);
+      }
+    }
   }
 
   /**

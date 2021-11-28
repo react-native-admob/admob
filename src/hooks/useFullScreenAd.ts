@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import AdError from '../AdError';
 import {
   AppOpenAd,
   InterstitialAd,
@@ -24,8 +25,8 @@ export default function useFullScreenAd<
   const [adLoaded, setAdLoaded] = useState(false);
   const [adPresented, setAdPresented] = useState(false);
   const [adDismissed, setAdDismissed] = useState(false);
-  const [adLoadError, setAdLoadError] = useState<Error>();
-  const [adPresentError, setAdPresentError] = useState<Error>();
+  const [adLoadError, setAdLoadError] = useState<AdError>();
+  const [adPresentError, setAdPresentError] = useState<AdError>();
   const [reward, setReward] = useState<Reward>();
 
   const adShowing = useMemo(
@@ -67,13 +68,13 @@ export default function useFullScreenAd<
       ad.addEventListener('adLoaded', () => {
         setAdLoaded(true);
       }),
-      ad.addEventListener('adFailedToLoad', (error: Error) =>
+      ad.addEventListener('adFailedToLoad', (error: AdError) =>
         setAdLoadError(error)
       ),
       ad.addEventListener('adPresented', () => {
         setAdPresented(true);
       }),
-      ad.addEventListener('adFailedToPresent', (error: Error) =>
+      ad.addEventListener('adFailedToPresent', (error: AdError) =>
         setAdPresentError(error)
       ),
       ad.addEventListener('adDismissed', () => {

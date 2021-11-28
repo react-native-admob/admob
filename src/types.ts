@@ -1,6 +1,7 @@
 import { ViewProps } from 'react-native';
 
 import BannerAdSize from './constants/BannerAdSize';
+import AdError from './AdError';
 
 export type MaxAdContentRating = 'G' | 'MA' | 'PG' | 'T';
 
@@ -191,7 +192,7 @@ export type FullScreenAdEvent =
 
 export type RewardedAdEvent = FullScreenAdEvent | 'rewarded';
 
-export type FullScreenAdHandlerType = (() => void) | ((error: Error) => void);
+export type FullScreenAdHandlerType = (() => void) | ((error: AdError) => void);
 
 export type RewardedAdHandlerType =
   | FullScreenAdHandlerType
@@ -242,11 +243,11 @@ export interface AdHookReturns {
   /**
    * Error during ad load.
    */
-  adLoadError?: Error;
+  adLoadError?: AdError;
   /**
    * Error during ad present.
    */
-  adPresentError?: Error;
+  adPresentError?: AdError;
   /**
    * Reward earned by Rewarded Ad.
    */

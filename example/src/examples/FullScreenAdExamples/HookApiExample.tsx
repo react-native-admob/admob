@@ -20,10 +20,8 @@ const hookOptions: FullScreenAdOptions = {
 
 const HookApiExample = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const { adLoaded, adDismissed, reward, show } = useRewardedInterstitialAd(
-    TestIds.REWARDED_INTERSTITIAL,
-    hookOptions
-  );
+  const { adLoaded, adDismissed, reward, show, adLoadError } =
+    useRewardedInterstitialAd(TestIds.REWARDED_INTERSTITIAL, hookOptions);
   const navigation = useNavigation<RootStackNavigationProps<'Examples'>>();
 
   const navigateToSecondScreen = useCallback(
@@ -44,6 +42,13 @@ const HookApiExample = () => {
       console.log(reward);
     }
   }, [reward]);
+
+  useEffect(() => {
+    if (adLoadError) {
+      const { code, message } = adLoadError;
+      console.log(`Ad failed to load with code ${code} - ${message}`);
+    }
+  }, [adLoadError]);
 
   return (
     <>
