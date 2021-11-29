@@ -71,6 +71,7 @@ public abstract class ActivityAwareJavaModule extends ReactContextBaseJavaModule
     public void onHostDestroy() {
         if (application != null) {
             application.unregisterActivityLifecycleCallbacks(this);
+            application = null;
         }
     }
 }
