@@ -30,7 +30,7 @@ const AppOpenAdExample = ({ onSplashDismissed }: AppOpenAdExampleProps) => {
     if (loaded && (isPaid || adDismissed || adLoadError)) {
       hide();
     }
-  }, [loaded, adDismissed, adLoadError, onSplashDismissed, isPaid]);
+  }, [loaded, adDismissed, adLoadError, isPaid, onSplashDismissed]);
 
   return <View />;
 };

@@ -222,7 +222,7 @@ export interface FullScreenAdOptions {
   requestOptions?: RequestOptions;
 }
 
-export interface AdHookReturns {
+export interface FullScreenAdState {
   /**
    * Whether your ad is loaded and ready to present.
    */
@@ -236,11 +236,6 @@ export interface AdHookReturns {
    */
   adDismissed: boolean;
   /**
-   * Whether your ad is showing.
-   * The value is equal with `adPresented && !adDismissed`.
-   */
-  adShowing: boolean;
-  /**
    * Error during ad load.
    */
   adLoadError?: AdError;
@@ -252,6 +247,14 @@ export interface AdHookReturns {
    * Reward earned by Rewarded Ad.
    */
   reward?: Reward;
+}
+
+export interface AdHookReturns extends FullScreenAdState {
+  /**
+   * Whether your ad is showing.
+   * The value is equal with `adPresented && !adDismissed`.
+   */
+  adShowing: boolean;
   /**
    * Loads new ad.
    * @param requestOptions Optional RequestOptions used to load the ad.

@@ -1,25 +1,14 @@
 import React from 'react';
-import { AppOpenAdProvider, TestIds } from '@react-native-admob/admob';
 
 import Navigator from './Navigator';
-import { usePaidState } from './PaidProvider';
 import PaidProvider from './PaidProvider';
 
 function App() {
-  const { isPaid } = usePaidState();
-
   return (
-    <AppOpenAdProvider
-      unitId={isPaid ? null : TestIds.APP_OPEN}
-      options={{ showOnColdStart: true }}
-    >
+    <PaidProvider>
       <Navigator />
-    </AppOpenAdProvider>
+    </PaidProvider>
   );
 }
 
-export default () => (
-  <PaidProvider>
-    <App />
-  </PaidProvider>
-);
+export default App;

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Reducer, useCallback, useEffect, useReducer } from 'react';
 
 import AdError from '../AdError';
 import {
@@ -9,10 +9,19 @@ import {
 } from '../ads/fullscreen';
 import {
   AdHookReturns,
-  FullScreenAdOptions,
+  FullScreenAdState,
   RequestOptions,
   Reward,
 } from '../types';
+
+const initialState: FullScreenAdState = {
+  adLoaded: false,
+  adPresented: false,
+  adDismissed: false,
+  adLoadError: undefined,
+  adPresentError: undefined,
+  reward: undefined,
+};
 
 export default function useFullScreenAd<
   T extends
@@ -22,31 +31,15 @@ export default function useFullScreenAd<
     | AppOpenAd
     | null
 >(ad: T): AdHookReturns {
-  const [adLoaded, setAdLoaded] = useState(false);
-  const [adPresented, setAdPresented] = useState(false);
-  const [adDismissed, setAdDismissed] = useState(false);
-  const [adLoadError, setAdLoadError] = useState<AdError>();
-  const [adPresentError, setAdPresentError] = useState<AdError>();
-  const [reward, setReward] = useState<Reward>();
-
-  const adShowing = useMemo(
-    () => adPresented && !adDismissed,
-    [adPresented, adDismissed]
-  );
-
-  const initialize = () => {
-    setAdLoaded(false);
-    setAdPresented(false);
-    setAdDismissed(false);
-    setAdLoadError(undefined);
-    setAdPresentError(undefined);
-    setReward(undefined);
-  };
+  const [state, setState] = useReducer<
+    Reducer<FullScreenAdState, Partial<FullScreenAdState>>
+  >((prevState, newState) => ({ ...prevState, ...newState }), initialState);
+  const adShowing = state.adPresented && !state.adDismissed;
 
   const load = useCallback(
     (requestOptions?: RequestOptions) => {
       if (ad) {
-        initialize();
+        setState(initialState);
         ad.load(requestOptions).catch(() => {});
       }
     },
@@ -60,36 +53,29 @@ export default function useFullScreenAd<
   }, [ad]);
 
   useEffect(() => {
+    setState(initialState);
     if (!ad) {
-      initialize();
       return;
     }
     const listeners = [
-      ad.addEventListener('adLoaded', () => {
-        setAdLoaded(true);
-      }),
+      ad.addEventListener('adLoaded', () => setState({ adLoaded: true })),
       ad.addEventListener('adFailedToLoad', (error: AdError) =>
-        setAdLoadError(error)
+        setState({ adLoadError: error })
       ),
-      ad.addEventListener('adPresented', () => {
-        setAdPresented(true);
-      }),
+      ad.addEventListener('adPresented', () => setState({ adPresented: true })),
       ad.addEventListener('adFailedToPresent', (error: AdError) =>
-        setAdPresentError(error)
+        setState({ adPresentError: error })
       ),
       ad.addEventListener('adDismissed', () => {
-        setAdDismissed(true);
-        if (
-          ad.type === 'AppOpen' ||
-          (ad.options as FullScreenAdOptions).loadOnDismissed
-        ) {
-          initialize();
+        setState({ adDismissed: true });
+        if (ad.options.loadOnDismissed) {
+          setState(initialState);
         }
       }),
       ad.type === 'Rewarded' || ad.type === 'RewardedInterstitial'
         ? (ad as RewardedAd | RewardedInterstitialAd).addEventListener(
             'rewarded',
-            (r: Reward) => setReward(r)
+            (reward: Reward) => setState({ reward })
           )
         : undefined,
     ];
@@ -99,13 +85,8 @@ export default function useFullScreenAd<
   }, [ad]);
 
   return {
-    adLoaded,
-    adPresented,
-    adDismissed,
+    ...state,
     adShowing,
-    adLoadError,
-    adPresentError,
-    reward,
     load,
     show,
   };

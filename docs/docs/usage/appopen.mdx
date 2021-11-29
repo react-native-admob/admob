@@ -51,6 +51,9 @@ If you are using Class API instead of using hook, add listeners to listen for ad
 Example below uses external library [react-native-bootsplash](https://github.com/zoontek/react-native-bootsplash) to implement splash screen.
 This is not necessary, but we recommend you to use this library with App Open Ad because App Open Ad must be showed before the app content showed.
 
+In this example, we want to show app open ad when app starts and when app comes to foreground from background.
+Also, we want to run async task on app startup while showing ad to user and until the job is done and ad is dismissed, we need to show splash screen.
+
 ```tsx title=App.tsx
 import { AppOpenAdProvider, TestIds } from '@react-native-admob/admob';
 
@@ -60,7 +63,7 @@ export default function App() {
   return (
     <AppOpenAdProvider
       unitId={TestIds.APP_OPEN}
-      options={{ showOnColdStart: true }}
+      options={{ showOnColdStart: true, loadOnDismissed: splashDismissed }}
     >
       {splashDismissed ? (
         <MainScreen />
@@ -71,6 +74,10 @@ export default function App() {
   );
 }
 ```
+
+In order to display ad as soon as the ad loads (only on app startup), we need to set `showOnColdStart` to `true`.
+Also, we need to set `loadOnDismissed` to `splashDismissed` because in the splash screen, we don't want to let ad to be loaded as soon as it is dismissed,
+otherwise, derived value `adDismissed` will be initialized to `false` as soon as new ad is requested.
 
 ```tsx title=SplashScreen.tsx
 import RNBootSplash from 'react-native-bootsplash';
@@ -102,3 +109,6 @@ export default function SplashScreen({ onSplashDismissed }) {
   return <View />;
 }
 ```
+
+In the splash screen component, we use `useAppOpenAd` hook to watch for ad's status changes.
+If ad gets error or dismissed, we need to hide the splash screen.
