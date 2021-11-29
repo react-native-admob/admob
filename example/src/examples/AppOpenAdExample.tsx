@@ -11,7 +11,7 @@ interface AppOpenAdExampleProps {
 
 const AppOpenAdExample = ({ onSplashDismissed }: AppOpenAdExampleProps) => {
   const [loaded, setLoaded] = useState(false);
-  const { adDismissed, adLoadError, load: loadAd } = useAppOpenAd();
+  const { adDismissed, adLoadError } = useAppOpenAd();
   const { isPaid } = usePaidState();
 
   useEffect(() => {
@@ -25,13 +25,12 @@ const AppOpenAdExample = ({ onSplashDismissed }: AppOpenAdExampleProps) => {
   useEffect(() => {
     async function hide() {
       await RNBootSplash.hide({ fade: true });
-      loadAd();
       onSplashDismissed();
     }
     if (loaded && (isPaid || adDismissed || adLoadError)) {
       hide();
     }
-  }, [loaded, adDismissed, adLoadError, isPaid, loadAd, onSplashDismissed]);
+  }, [loaded, adDismissed, adLoadError, isPaid, onSplashDismissed]);
 
   return <View />;
 };
