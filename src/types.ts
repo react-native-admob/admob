@@ -274,6 +274,10 @@ export interface AppOpenAdOptions {
    */
   showOnAppForeground?: boolean;
   /**
+   * Whether App Open Ad to load new ad automatically on dismissed. Defaults to `true`.
+   */
+  loadOnDismissed?: boolean;
+  /**
    * Optional RequestOptions used to load the ad.
    */
   requestOptions?: RequestOptions;
