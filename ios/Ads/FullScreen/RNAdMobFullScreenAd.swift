@@ -140,8 +140,6 @@ class RNAdMobFullScreenAd<T>: NSObject {
             var haveToRequest = false
             if (options["loadOnDismissed"] != nil) {
                 haveToRequest = options["loadOnDismissed"] as! Bool
-            } else if (module.getAdType() == RNAdMobAppOpen.AD_TYPE) {
-                haveToRequest = true
             }
             
             if (haveToRequest) {

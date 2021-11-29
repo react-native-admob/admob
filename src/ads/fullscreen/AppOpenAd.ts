@@ -10,6 +10,7 @@ import FullScreenAd from './FullScreenAd';
 const defaultOptions: AppOpenAdOptions = {
   showOnColdStart: false,
   showOnAppForeground: true,
+  loadOnDismissed: true,
   requestOptions: {},
 };
 

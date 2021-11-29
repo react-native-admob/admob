@@ -136,8 +136,6 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ActivityAwareJavaModu
                 boolean haveToRequest = false;
                 if (options.hasKey("loadOnDismissed")) {
                     haveToRequest = options.getBoolean("loadOnDismissed");
-                } else if (getAdType().equals(RNAdMobAppOpenAdModule.AD_TYPE)) {
-                    haveToRequest = true;
                 }
 
                 if (haveToRequest) {
