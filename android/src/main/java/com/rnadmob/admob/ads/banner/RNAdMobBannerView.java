@@ -8,6 +8,7 @@ import static com.rnadmob.admob.ads.banner.RNAdMobBannerViewManager.EVENT_APP_EV
 import static com.rnadmob.admob.ads.banner.RNAdMobBannerViewManager.EVENT_SIZE_CHANGE;
 
 import android.content.Context;
+import android.view.ViewGroup;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
@@ -49,6 +50,7 @@ public class RNAdMobBannerView extends ReactViewGroup implements AppEventListene
             adView.destroy();
         }
         adView = new AdManagerAdView(getContext());
+        adView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         adView.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
