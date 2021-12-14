@@ -12,4 +12,6 @@
 
 + (GAMRequest *)buildAdRequest:(NSDictionary *)requestOptions;
 
++ (GADServerSideVerificationOptions *)buildServerSideVerificationOptions:(NSDictionary *)requestOptions;
+
 @end

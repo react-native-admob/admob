@@ -15,6 +15,9 @@ const hookOptions: FullScreenAdOptions = {
   loadOnDismissed: true,
   requestOptions: {
     requestNonPersonalizedAdsOnly: true,
+    serverSideVerificationOptions: {
+      userId: '123',
+    },
   },
 };
 

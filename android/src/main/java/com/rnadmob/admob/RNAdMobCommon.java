@@ -12,6 +12,7 @@ import com.facebook.react.views.view.ReactViewGroup;
 import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.admanager.AdManagerAdRequest;
+import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -133,5 +134,26 @@ public class RNAdMobCommon {
         return builder.build();
     }
 
+    public static ServerSideVerificationOptions buildServerSideVerificationOptions(ReadableMap requestOptions) {
+        if (requestOptions.hasKey("serverSideVerificationOptions")) {
+            ReadableMap serverSideVerificationOptions =
+                    requestOptions.getMap("serverSideVerificationOptions");
 
+            if (serverSideVerificationOptions != null) {
+                ServerSideVerificationOptions.Builder options =
+                        new ServerSideVerificationOptions.Builder();
+
+                if (serverSideVerificationOptions.hasKey("userId")) {
+                    options.setUserId(Objects.requireNonNull(serverSideVerificationOptions.getString("userId")));
+                }
+
+                if (serverSideVerificationOptions.hasKey("customData")) {
+                    options.setCustomData(
+                            Objects.requireNonNull(serverSideVerificationOptions.getString("customData")));
+                }
+                return options.build();
+            }
+        }
+        return null;
+    }
 }

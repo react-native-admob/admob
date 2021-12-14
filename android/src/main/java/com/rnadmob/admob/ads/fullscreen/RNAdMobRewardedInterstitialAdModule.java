@@ -2,8 +2,6 @@ package com.rnadmob.admob.ads.fullscreen;
 
 import static com.rnadmob.admob.RNAdMobEventModule.REWARDED;
 
-import android.app.Activity;
-
 import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.Arguments;
