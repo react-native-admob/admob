@@ -1,7 +1,5 @@
 package com.rnadmob.admob.ads.fullscreen;
 
-import android.app.Activity;
-
 import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.Promise;

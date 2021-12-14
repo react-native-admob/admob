@@ -83,6 +83,13 @@ class RNAdMobFullScreenAd<T>: NSObject {
         func onAdLoaded(ad: T) {
             module.adHolder.add(requestId: requestId, ad: ad)
             
+            let ssv = RNAdMobCommon.buildServerSideVerificationOptions(options["requestOptions"] as? [AnyHashable : Any])
+            if (module.getAdType() == RNAdMobRewarded.AD_TYPE) {
+                (ad as! GADRewardedAd).serverSideVerificationOptions = ssv
+            } else if (module.getAdType() == RNAdMobRewardedInterstitial.AD_TYPE) {
+                (ad as! GADRewardedInterstitialAd).serverSideVerificationOptions = ssv
+            }
+            
             if (resolve != nil) {
                 resolve!(nil)
             }

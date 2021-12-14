@@ -19,6 +19,9 @@ import com.google.android.gms.ads.AdLoadCallback;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.admanager.AdManagerAdRequest;
+import com.google.android.gms.ads.rewarded.RewardedAd;
+import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions;
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd;
 import com.rnadmob.admob.ActivityAwareJavaModule;
 import com.rnadmob.admob.RNAdMobAdHolder;
 import com.rnadmob.admob.RNAdMobCommon;
@@ -93,6 +96,17 @@ public abstract class RNAdMobFullScreenAdModule<T> extends ActivityAwareJavaModu
             @Override
             public void onAdLoaded(@NonNull T ad) {
                 adHolder.add(requestId, ad);
+
+                ReadableMap requestOptions = Objects.requireNonNull(options.getMap("requestOptions"));
+                ServerSideVerificationOptions ssv = RNAdMobCommon.buildServerSideVerificationOptions(requestOptions);
+
+                if (ssv != null) {
+                    if (ad instanceof RewardedAd) {
+                        ((RewardedAd) ad).setServerSideVerificationOptions(ssv);
+                    } else if (ad instanceof RewardedInterstitialAd) {
+                        ((RewardedInterstitialAd) ad).setServerSideVerificationOptions(ssv);
+                    }
+                }
 
                 if (promise != null) promise.resolve(null);
 
