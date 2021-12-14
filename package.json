@@ -1,6 +1,6 @@
 {
   "name": "@react-native-admob/admob",
-  "version": "1.5.1",
+  "version": "2.0.0",
   "description": "Admob for React Native with powerful hooks and components",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
