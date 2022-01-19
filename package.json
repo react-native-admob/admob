@@ -125,6 +125,5 @@
   ],
   "dependencies": {
     "use-deep-compare-effect": "^1.8.1"
-  },
-  "packageManager": "yarn@3.1.1"
+  }
 }
