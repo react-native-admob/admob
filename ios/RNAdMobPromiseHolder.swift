@@ -1,5 +1,3 @@
-import React
-
 class RNAdMobPromiseHolder {
     private var resolveArray = Dictionary<Int, RCTPromiseResolveBlock>()
     private var rejectArray = Dictionary<Int, RCTPromiseRejectBlock>()
