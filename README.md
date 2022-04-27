@@ -1,3 +1,7 @@
+# This library is deprecated. Use [react-native-google-mobile-ads][0] instead.
+
+Please migrate to the [new library][0] if you were using this library as this library is no longer maintained. Now more stronger features are available in the [new library][0].
+
 <p align="center">
   <img alt="cover with mockup" src="./docs/static/img/logo_admob.png" width="192px">
   <h1 align="center">
@@ -33,3 +37,5 @@ Head over [Documentation Page](https://react-native-admob.github.io/admob/docs/u
 ## License
 
 MIT
+
+[0]: https://github.com/invertase/react-native-google-mobile-ads
